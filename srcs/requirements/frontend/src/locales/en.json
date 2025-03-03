@@ -1,0 +1,40 @@
+{
+  "english": "English",
+  "russian": "Русский",
+  "thai": "ภาษาไทย",
+  "french": "Français",
+
+  "player": "Player",
+
+  "menu.items.item.quick_start.title": "Quick Start",
+  "menu.items.item.quick_start.description": "Start a quick game against AI",
+
+  "menu.items.item.new_game.title": "New Game",
+  "menu.items.item.new_game.description": "Set up and start a new game",
+
+  "menu.items.item.online.title": "Online",
+  "menu.items.item.online.description": "Join other players around the World",
+
+  "menu.items.item.profile.title": "Profile",
+  "menu.items.item.profile.description": "Configure your profile settings",
+
+  "menu.items.item.settings.title": "Settings",
+  "menu.items.item.settings.description": "Configure game settings",
+
+  "menu.settings": "Settings",
+  "menu.settings.game": "Game",
+  "menu.settings.game.language": "Language",
+
+  "game_settings.start": "Start",
+  "game_settings.tabs.sides.title": "Sides",
+  "game_settings.tabs.sides.controllers.not_enough_controllers_message": "At least one Controller should be set for each side",
+  "game_settings.tabs.gameplay.title": "Gameplay",
+  "game_settings.tabs.ball_skin.title": "Ball Skin",
+  "game_settings.tabs.ball_skin.colors.title": "Colors",
+  "game_settings.tabs.ball_skin.skins_list.regular.title": "Regular",
+  "game_settings.tabs.ball_skin.skins_list.special.title": "Special",
+  "game_settings.tabs.ball_skin.ball_preview.direction": "Direction",
+  "game_settings.tabs.ball_skin.ball_preview.rotation_speed": "Rotation Speed",
+
+  "form.validation.required": "Field is required"
+}

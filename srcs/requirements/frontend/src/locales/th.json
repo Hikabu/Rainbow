@@ -1,0 +1,25 @@
+{
+  "english": "English",
+  "russian": "Русский",
+  "thai": "ภาษาไทย",
+  "french": "Français",
+
+  "player": "Player",
+
+  "menu.items.item.quick_start.title": "เริ่มเกมส์",
+  "menu.items.item.quick_start.description": "เล่นเกมส์กับ AI",
+  "menu.items.item.new_game.title": "เริ่มต้นเกมส์ใหม่",
+  "menu.items.item.new_game.description": "ตั้งค่าเริ่มเกมส์ใหม่",
+  "menu.items.item.online.title": "ออนไลน์",
+  "menu.items.item.online.description": "เล่นเกมส์กับคนทั่วโลก",
+  "menu.items.item.profile.title": "ประวัติ",
+  "menu.items.item.profile.description": "ตั้งค่าประวัติ",
+  "menu.items.item.settings.title": "ตั้งค่า",
+  "menu.items.item.settings.description": "ตั้งค่าเกมส์",
+
+  "menu.settings": "ตั้งค่า",
+  "menu.settings.game": "เกมส์",
+  "menu.settings.game.language": "ภาษา",
+
+  "form.validation.required": "Field is required"
+}

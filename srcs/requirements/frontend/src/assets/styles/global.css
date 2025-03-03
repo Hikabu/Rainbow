@@ -1,0 +1,50 @@
+@keyframes grow {
+    from {
+      transform: scale(0.5);
+      opacity: 0;
+    }
+  
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .grow {
+    animation: grow 0.4s ease-in-out forwards;
+  }
+  
+  :root {
+    /* colors */
+    --primary-color: #fc3b3b;
+    --primary-color-opacity-50: rgb(252 59 59 / 0.5);
+    --primary-color-opacity-70: rgb(252 59 59 / 0.7);
+    --primary-color-opacity-90: rgb(252 59 59 / 0.9);
+    --secondary-color: #36a2eb;
+    --secondary-color-opacity-50: rgba(54 162 235 / 0.5);
+    --complementary-1-color: #3bfc97;
+    --complementary-1-color-opacity-50: rgba(59 252 151 / 0.5);
+    --complementary-2-color: #fc3bf4;
+    --complementary-2-color-opacity-50: rgba(252 59 244 / 0.5);
+    --complementary-3-color: #9b36eb;
+    --complementary-3-color-opacity-50: rgba(155 54 235 / 0.5);
+    --complementary-4-color: #36ebc1;
+    --complementary-4-color-opacity-50: rgba(54 235 193 / 0.5);
+    --light-color: #e0ded6;
+    --light-color-opacity-50: rgb(224 222 214 / 0.5);
+    --light-color-opacity-90: rgb(224 222 214 / 0.9);
+    --dark-color: #242428;
+    --dark-color-opacity-50: rgb(36 36 40 / 0.5);
+    --dark-color-opacity-90: rgb(36 36 40 / 0.9);
+    --dark-color-opacity-95: rgb(36 36 40 / 0.95);
+    --darker-color: #323236;
+  
+    /* dimensions */
+    --small-space: 6px;
+    --smaller-space: 10px;
+    --regular-space: 14px;
+    --bigger-space: 20px;
+    --big-space: 30px;
+    --large-space: 40;
+  }
+  

@@ -1,0 +1,21 @@
+{
+    "english": "English",
+    "russian": "Русский",
+    "thai": "ภาษาไทย",
+    "french": "Français",
+  
+    "menu.items.item.quick_start.title": "Partie Rapide",
+    "menu.items.item.quick_start.description": "Commencez une partie rapide contre l'IA",
+    "menu.items.item.new_game.title": "Nouvelle Partie",
+    "menu.items.item.new_game.description": "Configuez et démarrez une nouvelle partie",
+    "menu.items.item.online.title": "En Ligne",
+    "menu.items.item.online.description": "Rejoignez d'autres joueurs dans le monde",
+    "menu.items.item.profile.title": "Profil",
+    "menu.items.item.profile.description": "Configurez les paramètres de votre profil",
+    "menu.items.item.settings.title": "Paramètres",
+    "menu.items.item.settings.description": "Configurez les paramètres du jeu",
+  
+    "menu.settings": "Paramètres",
+    "menu.settings.game": "Jeu",
+    "menu.settings.game.language": "Langue"
+  }
