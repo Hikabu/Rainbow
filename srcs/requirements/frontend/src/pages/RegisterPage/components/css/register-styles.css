@@ -37,7 +37,7 @@ img {
 
 .register__title {
   text-align: center;
-  font-size: 2rem;
+  font-size: rem;
   margin-bottom: var(--regular-space);
 }
 

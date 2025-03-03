@@ -125,17 +125,20 @@ img {
 }
 
 .login__button {
-  width: 100%;
-  padding: var(--regular-space);
-  margin-bottom: var(--regular-space);
-  border-radius: var(--regular-space);
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.4s;
-}
+    width: 100%;
+    padding: var(--regular-space);
+    background-color: var(--light-color-opacity-90);
+    color: var(--dark-color);
+    border: none;
+    border-radius: var(--regular-space);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: var(--big-space);
+  }
 
 .login__button:hover {
-  background-color: var(--light-color-opacity-90); 
+  background-color: var(--light-color-opacity-50);
 }
 
 .login__register {
@@ -149,6 +152,7 @@ img {
   color: var(--light-color); 
   font-weight: 500;
   margin-left: 9rem;
+  
   
 }
 
