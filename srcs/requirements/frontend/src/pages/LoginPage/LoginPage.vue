@@ -53,9 +53,6 @@
           />
           <label for="remember-me" class="login__check-label">Remember me</label>
         </div>
-        <router-link to="/forgot-password" class="login__forgot">
-          Forgot Password?
-        </router-link>
       </div>
 
       <!-- Buttons -->
@@ -108,7 +105,7 @@
 
       <!-- Register Link -->
       <div class="login__register">
-        Don't have an account? 
+        Don't have an account ?
         <router-link to="/register">Register</router-link>
       </div>
     </form>

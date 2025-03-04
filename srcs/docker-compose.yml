@@ -67,7 +67,8 @@ services:
       context: ./requirements/nginx
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      # - "80:80"
+      - "8080:8080"
       - "443:443"
     volumes:
       - frontend_build:/usr/share/nginx/html

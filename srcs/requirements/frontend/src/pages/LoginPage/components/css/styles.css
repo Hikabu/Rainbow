@@ -120,9 +120,9 @@ img {
   accent-color: var(--light-color); 
 }
 
-.login__forgot:hover {
+/* .login__forgot:hover {
   text-decoration: underline;
-}
+} */
 
 .login__button {
     width: 100%;
@@ -160,10 +160,10 @@ img {
   text-decoration: underline;
 }
 
-.login__forgot {
+/* .login__forgot {
   color: var(--secondary-color); 
   text-decoration: none;
-}
+} */
 
 .login__oauth-button {
   background-color: var(--secondary-color); 
@@ -175,7 +175,9 @@ img {
   transition: background-color 0.4s;
   /* margin-top: var(--regular-space); */
   margin-bottom: var(--regular-space);
-  margin-left: 2.2rem; 
+  margin-left: 0.0rem;
+  /* margin-left: 9rem;  */
+
 }
 
 .login__oauth-button:hover {
