@@ -85,6 +85,7 @@ img {
 
 .register__button {
   width: 100%;
+  font-size: 1.10rem; /* rem */
   padding: var(--regular-space);
   background-color: var(--light-color-opacity-90);
   color: var(--dark-color);
