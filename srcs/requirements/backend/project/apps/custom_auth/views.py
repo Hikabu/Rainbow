@@ -1,21 +1,23 @@
-# from django.http import JsonResponse
+#API views in DRF
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework import status
-from .serializer import UserSerializer,  OTPRequestSerializer, OTPVerifySerializer
-from django.contrib.auth import authenticate
+from rest_framework.permissions import IsAuthenticated #permissiom classes 
+from rest_framework.response import Response #return data from api
+from rest_framework import status #result of requests
+from rest_framework import viewsets#for rrouting make views in single calss
+#for env
 import os
+from django.contrib.auth import get_user_model #currently active user model in project
+#custom serializers 
+from .serializer import UserSerializer,  OTPRequestSerializer, OTPVerifySerializer, ProfileSerializer
 #otp verification
-from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated
-# from rest_framework_simplejwt.authentication import JWTAuthentication
 import pyotp
-import resend
-import requests
-from django.core.cache import cache
-# from datetime import datetime, timedelta #
+import resend #sed emails
+import requests #interact with api
+from django.core.cache import cache #to not use db 
+from project.apps.intrauth.models import Profile #additional userelated information
+
+from rest_framework.permissions import AllowAny# unrestricted access to a view/endpoint
+
 
 
 User = get_user_model()
@@ -65,11 +67,13 @@ def send_email(email, otp):
 			print(response.text)
 	except Exception as e:
 		print(f'Error sending email: {str(e)}')
+  
+  
         
 class GetOTPView(APIView):
+	permission_classes = [AllowAny] #DELETE AFTER USE POSTMAN
 
 	def post(self, request):
-     	# print('in api great')
 		serializer = OTPRequestSerializer(data=request.data)
 		if serializer.is_valid():
 			username = serializer.validated_data['username']
@@ -97,7 +101,22 @@ class VerifyOTPView(APIView):
 			return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
-            
+
+"""
+  ModelViewSet provided by DRF.
+ It automatically provides CRUD operations
+  (Create, Retrieve, Update, Delete) for the Profile model.
+"""
+class ProfileViewSet(viewsets.ModelViewSet):
+    #this api read write
+    #view list automatica;;y provides list create retrieve update destroy actions
+    #list will return a collection if user objects
+    #retrieve requests a pecific user endpoint=details of a single user
+	permission_classes = [AllowAny] #remove after postman 
+	queryset = Profile.objects.all()
+	serializer_class = ProfileSerializer
+ 
+ 
 class AuthStatusView(APIView):
     permission_classes = [IsAuthenticated]  # Only authenticated users can access this endpoint
     def get(self, request):
@@ -110,11 +129,4 @@ class LogoutView(APIView):
         response.delete_cookie('refresh_token') #refresh token
         return response
 
-"""
-  ModelViewSet provided by DRF.
- It automatically provides CRUD operations
-  (Create, Retrieve, Update, Delete) for the Profile model.
-"""
-# class ProfileViewSet(viewsets.ModelViewSet):
-# 	queryset = Profile.objects.all()
-# 	serializer_class = ProfileSerializer
+

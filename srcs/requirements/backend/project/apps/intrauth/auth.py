@@ -32,17 +32,3 @@ class IntraAuthenticationBackend(BaseBackend):
             return CustomUser.objects.get(pk=user_id)
         except CustomUser.DoesNotExist:
             return None
-    #     user_found = CustomUser.objects.filter(id=user['id'])
-    #     if len(user_found) == 0:
-    #         print("Creating new User")
-    #         new_user = CustomUser.objects.create_new_intra_user(user)
-    #         print(new_user)
-    #         return new_user
-    #     # return user_found
-    #     return list(user_found).pop()
-
-    # def get_user(self, user_id):
-    #     try:
-    #         return CustomUser.objects.get(pk=user_id)
-    #     except CustomUser.DoesNotExist:
-    #         return None

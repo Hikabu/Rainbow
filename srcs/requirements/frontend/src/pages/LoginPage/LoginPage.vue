@@ -112,7 +112,6 @@
   </div>
 </template>
 
-<!-- <script src="./components/composables/useAuth.js"></script> -->
 
 <script setup>
   

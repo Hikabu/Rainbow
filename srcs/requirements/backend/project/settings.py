@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     # Custom Project Apps
     "project.apps.pong",
-    "project.apps.chat",
     "project.apps.custom_auth",
     "project.apps.intrauth",
 ]

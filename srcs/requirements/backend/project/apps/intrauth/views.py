@@ -44,6 +44,8 @@ def intra_login_redirect(request):
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
         response = redirect("https://localhost/game")
+        
+        
         response.set_cookie('access_token', access_token, secure=True, max_age=60 * 15)
         response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True, max_age=60 * 60 * 24 * 7)
         return response
