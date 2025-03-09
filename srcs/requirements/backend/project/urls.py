@@ -9,26 +9,13 @@ from rest_framework.decorators import permission_classes
 
 # tokens
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from project.apps.custom_auth.views import UserCreateView, GetOTPView, VerifyOTPView, AuthStatusView
+from project.apps.custom_auth.views import UserCreateView, GetOTPView, VerifyOTPView, AuthStatusView, ProfileViewSet
 from project.apps.intrauth.views import home, intra_login, intra_login_redirect, get_authenticated_user
 
-""" 
-    don’t need to define each URL pattern manually.
-    Only register views with the router, which 
-    then automatically generates the necessary CRUD routes.
-    for profile
-    so for profile view  it will be 
-    GET /profiles/ -> List all profiles
-    POST /profiles/ -> Create a new profile.
-    GET /profiles/<id>/ -> Retrieve a specific profile.
-    PUT /profiles/<id>/ ->Update a specific profile.
-    DELETE /profiles/<id>/ ->Delete a specific profile.
-    for vue ot will be (/api/profiles/) using a GET
-"""
-# from rest_framework.routers import DefaultRouter
+from rest_framework.routers import DefaultRouter
 
-# router = DefaultRouter()
-# router.register(r'profiles', ProfileViewSet)
+router = DefaultRouter()
+router.register(r'profiles', ProfileViewSet)
 
 
 def home(request):
