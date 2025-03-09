@@ -15,6 +15,16 @@ CustomUser :  provides default fields for user authentication
 
 Profile Table : store profile-related data, including fields like 
 """    
+class Profile(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,  # Links to the CustomUser model(can be changed- so direct link to the model)
+        on_delete=models.CASCADE,  #profile deleted link delets too
+        related_name='profile'     #accrss profile like user.profile
+        )
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    wins = models.PositiveIntegerField(default=0)
+    losses = models.PositiveIntegerField(default=0)
+    friends = models.ManyToManyField('self', blank=True)
 
 class CustomUser(AbstractUser):
     # Traditional
@@ -38,18 +48,5 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = [] 
 
-# class Profile(models.Model):
-#     user = models.OneToOneField(
-#         settings.AUTH_USER_MODEL,  # Links to the CustomUser model(can be changed- so direct link to the model)
-#         on_delete=models.CASCADE,  #profile deleted link delets too
-#         related_name='profile'     #accrss profile like user.profile
-#         )
-#     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
-#     wins = models.PositiveIntegerField(default=0)
-#     losses = models.PositiveIntegerField(default=0)
-#     friends = models.ManyToManyField('self', blank=True)
-
-# def __str__(self):
-#         return f"{self.user.username}'s Profile"
 def is_authenticated(self, request):
     return True
