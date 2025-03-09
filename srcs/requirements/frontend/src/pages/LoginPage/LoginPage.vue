@@ -6,6 +6,8 @@
       alt="background" 
       class="login__bg" 
     />
+    <!-- Golden Snitch -->
+    <GoldenSnitch />
     <!-- Login Form -->
     <form class="login__form" @submit.prevent="handleSubmit">
       <h1 class="login__title">Login</h1>
@@ -118,6 +120,7 @@
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
 
+  import GoldenSnitch from '@/pages/LoginPage/components/composables/GoldenSnitch.vue';//snitch
   import { useAuth} from '@/pages/LoginPage/components/composables/useAuth'
 
   const router = useRouter()
