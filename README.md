@@ -7,7 +7,9 @@
 - **main**: The stable branch, containing production-ready code.
 - **dev**: The primary development branch, close to production-ready code.
 - **debug/**_keywords_for_problem_: If someone encounters an issue they cannot solve, they should push the code here with an appropriate keyword in the branch name (e.g., `debug/login_error`).
+  - ❗ **Never create a branch named just `debug`** (it would block `debug/*` branches).
 - **features/**_feature_name_: Dedicated branch for new feature implementations, mainly for Arturo’s ideas (e.g., `features/tunnel`).
+ - ❗ **Never create a branch named just `features`** (it would block `features/*` branches).  
 
 ### Frontend
 - Uses Vue.js (not the best framework, but it handles cookies and routing well).
@@ -67,4 +69,3 @@
 5. New features should be developed in `features/your_feature_name`.
 
 Happy coding! 🚀
-
