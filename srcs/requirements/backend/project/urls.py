@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 
 # Rest Framework
@@ -25,6 +25,7 @@ def home(request):
 urlpatterns = [
     path("", home),
     path("admin/", admin.site.urls),
+     path('api/', include(router.urls)),
     
     path('auth/user/', get_authenticated_user, name='get_authenticated_user'),
     path('oauth/', home, name='oauth'),

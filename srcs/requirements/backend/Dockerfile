@@ -33,6 +33,3 @@ ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
 
 # Start Daphne server using Pipenv
 CMD ["pipenv", "run", "daphne", "-b", "0.0.0.0", "-p", "8000", "project.asgi:application"]
-# CMD sh -c "python3 manage.py makemigrations --noinput && \
-#            python3 manage.py migrate --noinput && \
-#            daphne -b 0.0.0.0 -p 8000 project.asgi:application"
