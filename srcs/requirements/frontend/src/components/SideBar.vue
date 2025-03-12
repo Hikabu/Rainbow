@@ -1,5 +1,5 @@
 <template>
-    <aside :class="`${is_expanded && 'is-expanded'}`">
+    <aside :class="`${isExpanded && 'is-expanded'}`">
         <img :src="logo" alt="snitch" class="logo">
         <div class="menu-toggle-wrap">
             <button class="menu-toggle" @click="ToggleMenu">
@@ -9,17 +9,26 @@
 
         <h3>Menu</h3>
         <div class="menu">
-          <router-link class="button" to="/settings">
-            <span class="Logo"><Icon icon="guidance:24-hours"/> </span>
-            <span class="text">Settings</span>
+          <router-link class="button" to="/mainpage">
+            <span class="Logo"><Icon icon="guidance:yoga"/> </span>
+            <span class="text">Home</span>
           </router-link>
           <router-link class="button" to="/profile">
-            <span class="Logo"><Icon icon="guidance:yoga"/> </span>
+            <span class="Logo"><Icon icon="guidance:skate-park"/> </span>
             <span class="text">Profile</span>
           </router-link>
           <router-link class="button" to="/">
             <span class="Logo"><Icon icon="guidance:bowling"/> </span>
             <span class="text">Turnament</span>
+          </router-link>
+        </div>
+
+        <div class="flex"></div>
+
+        <div class="menu">
+          <router-link class="button" to="/settings">
+            <span class="Logo"><Icon icon="guidance:24-hours"/> </span>
+            <span class="text">Settings</span>
           </router-link>
           <router-link class="button" to="/login">
             <span class="Logo"><Icon icon="guidance:pull"/></span>
@@ -30,14 +39,18 @@
 </template>
 
 <script setup >
-import logo from '../assets/logo.png';
 import { Icon } from "@iconify/vue";
 import { ref } from 'vue';
 
-const is_expanded = ref(false)
+import logo from '../assets/logo.png';
 
+const isExpanded = ref(localStorage.getItem("isExpanded") === "true")
+
+//for rememnering users choice
 const ToggleMenu = () => {
-    is_expanded.value = !is_expanded.value
+    isExpanded.value = !isExpanded.value
+
+    localStorage.setItem("isExpanded", isExpanded.value)
 }
 </script>
 
@@ -56,6 +69,10 @@ aside {
   color: var(--light);
 
   transition: 0.2s ease-out; 
+//for settings
+  .flex {
+    flex: 1 1 0;
+  }
   .menu-toggle-wrap {
     display: flex;
     justify-content: flex-end;
@@ -89,6 +106,12 @@ aside {
     opacity: 0;
     transition: 0.3s ease-out;
   }
+  h3{
+    color: var(--grey);
+    font-size: 0.875rem;
+    margin-bottom: 0.5ren;
+    text-transform: uppercase;
+  }
 
   .menu{
     transition: 0.2s ease-out;
@@ -111,11 +134,15 @@ aside {
         transition: 0.2s ease-out;
         color: var(--gold);
       }
-      &:hover {
+      &:hover, &.router-link-exact-active {
         background-color:  var(--gold4);
         .Logo .text {
           color: var(--background-color);
         }
+      }
+
+      .router-link-exact-active {
+        border-right: 5px solir var(--gold5)
       }
     }
     
