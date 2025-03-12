@@ -19,7 +19,6 @@ from project.apps.intrauth.models import Profile #additional userelated informat
 from rest_framework.permissions import AllowAny# unrestricted access to a view/endpoint
 
 
-
 User = get_user_model()
 ###registration
 class UserCreateView(APIView):
@@ -115,6 +114,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
 	permission_classes = [AllowAny] #remove after postman 
 	queryset = Profile.objects.all()
 	serializer_class = ProfileSerializer
+	def get_queryset(self):
+		return Profile.objects.filter(user=self.request.user)
+	def perform_update(self, serializer):
+        # users can only update their own profile
+		serializer.save(user=self.request.user)
  
  
 class AuthStatusView(APIView):
