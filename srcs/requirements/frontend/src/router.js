@@ -5,6 +5,7 @@ import Game from '@/features/Game/Game.vue';
 import LoginPage from '@/pages/LoginPage/LoginPage.vue';
 import NotFound from '@/pages/NotFound.vue';
 import RegisterPage from '@/pages/RegisterPage/RegisterPage.vue';
+
 import MainPage from './pages/MainPage/MainPage.vue';
 import Profile from './pages/smallPages/Profile.vue';
 import Settings from './pages/smallPages/Settings.vue';
