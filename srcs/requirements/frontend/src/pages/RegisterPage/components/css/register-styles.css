@@ -30,7 +30,7 @@ img {
   background-color: hsla(0, 0%, 100%, .01);
   border: 2px solid hsla(0, 0%, 100%, .7);
   padding: var(--big-space) var(--regular-space);
-  color: var(--light-color);
+  color: var(--light);
   border-radius: var(--regular-space);
   backdrop-filter: blur(16px);
 }
@@ -60,14 +60,14 @@ img {
 .register__input {
   width: 100%;
   background: none;
-  color: var(--light-color);
+  color: var(--light);
   padding-block: var(--regular-space);
   border: none;
   outline: none;
 }
 
 .register__input::placeholder {
-  color: var(--light-color);
+  color: var(--light);
 }
 
 .register__box i {
@@ -87,8 +87,8 @@ img {
   width: 100%;
   font-size: 1.10rem; /* rem */
   padding: var(--regular-space);
-  background-color: var(--light-color-opacity-90);
-  color: var(--dark-color);
+  background-color: var(--light-opacity-90);
+  color: var(--dark);
   border: none;
   border-radius: var(--regular-space);
   font-weight: 500;
@@ -98,7 +98,7 @@ img {
 }
 
 .register__button:hover {
-  background-color: var(--light-color-opacity-50);
+  background-color: var(--light-opacity-50);
 }
 
 .register__login {
@@ -108,10 +108,16 @@ img {
 }
 
 .register__login a {
-  color: var(--light-color);
+  color: var(--light);
   font-weight: 500;
 }
 
 .register__login a:hover {
   text-decoration: underline;
+}
+.register
+{
+  align-items: center; 
+  justify-content: center;
+  padding: 150px;
 }

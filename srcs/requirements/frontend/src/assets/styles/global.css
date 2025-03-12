@@ -16,35 +16,30 @@
   
   :root {
     /* colors */
-    --primary-color: #fc3b3b;
-    --primary-color-opacity-50: rgb(252 59 59 / 0.5);
-    --primary-color-opacity-70: rgb(252 59 59 / 0.7);
-    --primary-color-opacity-90: rgb(252 59 59 / 0.9);
-    --secondary-color: #36a2eb;
-    --secondary-color-opacity-50: rgba(54 162 235 / 0.5);
-    --complementary-1-color: #3bfc97;
-    --complementary-1-color-opacity-50: rgba(59 252 151 / 0.5);
-    --complementary-2-color: #fc3bf4;
-    --complementary-2-color-opacity-50: rgba(252 59 244 / 0.5);
-    --complementary-3-color: #9b36eb;
-    --complementary-3-color-opacity-50: rgba(155 54 235 / 0.5);
-    --complementary-4-color: #36ebc1;
-    --complementary-4-color-opacity-50: rgba(54 235 193 / 0.5);
-    --light-color: #e0ded6;
-    --light-color-opacity-50: rgb(224 222 214 / 0.5);
-    --light-color-opacity-90: rgb(224 222 214 / 0.9);
-    --dark-color: #242428;
-    --dark-color-opacity-50: rgb(36 36 40 / 0.5);
-    --dark-color-opacity-90: rgb(36 36 40 / 0.9);
-    --dark-color-opacity-95: rgb(36 36 40 / 0.95);
-    --darker-color: #323236;
+    --primary-color: #0A2A36;
+    --background-color: #36a2eb;
+    --background-color-opacity-50: rgba(54 162 235 / 0.5);
+    --icons-extanded: #ce5c22;
+    --gold1: #A38A00;
+    --gold2: #D1B000;
+    --gold: #FFD700;
+    --gold4: #ffe02e2b;
+    --light: #ebe9e1;
+    --light-opacity-50: rgb(224 222 214 / 0.5);
+    --light-opacity-90: rgb(224 222 214 / 0.9);
+    --dark: #242428;
+    --dark-opacity-50: rgba(40, 40, 44, 0.5);
+    --dark-opacity-90: rgb(43 36 40 / 0.9);
+    --dark-opacity-95: rgb(43 36 40 / 0.95);
+    --darker-color: #2c2c2e;
+    --sidebar-width: 200px;
   
     /* dimensions */
-    --small-space: 6px;
-    --smaller-space: 10px;
-    --regular-space: 14px;
-    --bigger-space: 20px;
-    --big-space: 30px;
-    --large-space: 40;
+    --small-space: 5px;
+    --smaller-space: 11px;
+    --regular-space: 13px;
+    --logo-space: 23px;
+    --big-space: 31px;
+    --large-space: 190px;
   }
   
