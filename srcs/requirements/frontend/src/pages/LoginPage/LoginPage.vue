@@ -115,7 +115,7 @@
 
 <script setup>
   
-  import { ref } from 'vue'
+  import { ref } from 'vue' //is a reactive data source that stores a value.
   import { useRouter } from 'vue-router'
 
   import { useAuth} from '@/pages/LoginPage/components/composables/useAuth'
@@ -206,5 +206,4 @@
 </script>
 <style scoped>
   @import "@/pages/LoginPage/components/css/styles.css";
-
 </style>

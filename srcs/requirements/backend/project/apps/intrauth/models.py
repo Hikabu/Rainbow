@@ -25,6 +25,8 @@ class Profile(models.Model):
     wins = models.PositiveIntegerField(default=0)
     losses = models.PositiveIntegerField(default=0)
     friends = models.ManyToManyField('self', blank=True)
+    display_name = models.CharField(max_length=100, null=True, blank=True)
+    is_online = models.BooleanField(default=False)
 
 class CustomUser(AbstractUser):
     # Traditional
@@ -38,11 +40,6 @@ class CustomUser(AbstractUser):
     intra_id = models.BigIntegerField(unique=True, blank=True, null=True)
     intra_login = models.CharField(max_length=8, unique=True, blank=True, null=True)
     intra_avatar = models.URLField(max_length=200, blank=True, null=True)
-
-    # Additional fields (common to all users)
-    is_online = models.BooleanField(default=False)
-    friends = models.JSONField(default=list, blank=True)
-    display_name = models.CharField(max_length=100, null=True, blank=True)
 
     # name as the primary identifier
     USERNAME_FIELD = 'username'

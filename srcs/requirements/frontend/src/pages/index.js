@@ -1,8 +1,10 @@
 import LoginPage from './LoginPage/LoginPage.vue';
 import MainPage from './MainPage/MainPage.vue';
 import RegisterPage from './RegisterPage/RegisterPage.vue';
-
+import Settings from './smallPage/Settings.vue';
+import Profile from './smallPage/Profile.vue';
 export { LoginPage };
 export { RegisterPage };
 export { MainPage };
-
+export { Settings };
+export { Profile };

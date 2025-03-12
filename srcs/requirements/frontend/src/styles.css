@@ -11,11 +11,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
-  color: var(--light-color);
+  color: var(--light);
   text-rendering: optimizelegibility;
 
   color-scheme: light dark;
-  background-color: var(--dark-color);
+  background-color: var(--dark);
 
   font-synthesis: none;
 }
