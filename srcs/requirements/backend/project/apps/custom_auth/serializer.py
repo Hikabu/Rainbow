@@ -17,17 +17,28 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)  # Hash the password
         user.save()
         return user
-    
+        
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
-    is_online = serializers.BooleanField(source='user.is_online', read_only=True)
+    display_name = serializers.CharField()
+    is_online = serializers.BooleanField()
 
     class Meta:
         model = Profile
-        fields = ['id', 'username', 'email', 'is_online', 'avatar', 'wins', 'losses', 'friends']
-        read_only_fields = ['id', 'username', 'email', 'is_online']
-        
+        fields = [
+            'id', 'username', 'email', 'display_name', 'is_online',
+            'avatar', 'wins', 'losses', 'friends'
+        ]
+        read_only_fields = ['id', 'username', 'email']
+
+    def update(self, instance, validated_data):
+        # Update display_name and is_online directly in Profile
+        instance.display_name = validated_data.get('display_name', instance.display_name)
+        instance.is_online = validated_data.get('is_online', instance.is_online)
+        instance.save()
+        return instance
+    
 class OTPRequestSerializer(serializers.Serializer):
 	username = serializers.CharField()
 

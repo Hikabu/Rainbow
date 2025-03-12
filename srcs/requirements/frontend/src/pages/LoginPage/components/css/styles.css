@@ -10,6 +10,7 @@ input,
 button {
   font-family: "Poppins", sans-serif;
   font-size: var(--regular-space);
+  
 }
 
 a {
@@ -51,7 +52,7 @@ img {
   background-color: hsla(0, 0%, 100%, .01);
   border: 2px solid hsla(0, 0%, 100%, .7);
   padding: var(--big-space) var(--regular-space);
-  color: var(--light-color); 
+  color: var(--light); 
   border-radius: var(--regular-space);
   backdrop-filter: blur(16px);
 }
@@ -90,13 +91,13 @@ img {
 .login__input {
   width: 100%;
   background: none;
-  color: var(--light-color); 
+  color: var(--light); 
   padding-block: var(--regular-space);
   font-size: inherit;
 }
 
 .login__input::placeholder {
-  color: var(--light-color); 
+  color: var(--light); 
 }
 
 .login__box i {
@@ -117,34 +118,28 @@ img {
 .login__check-input {
   width: var(--small-space);
   height: var(--small-space);
-  accent-color: var(--light-color); 
+  accent-color: var(--light); 
 }
-
-/* .login__forgot:hover {
-  text-decoration: underline;
-} */
 
 .login__button {
     width: 100%;
     font-size: 1.10rem; /* rem */
     padding: var(--regular-space);
-    background-color: var(--light-color-opacity-90);
-    color: var(--dark-color);
+    background-color: var(--light-opacity-90);
+    color: var(--dark);
     border: none;
     border-radius: var(--regular-space);
     font-weight: 600; /* 500 */ /* 700 Make it bold */
     cursor: pointer;
     transition: background-color 0.3s;
     margin-top: var(--big-space);
-    /* letter-spacing: 0.5em; */
   }
 
 .login__button:hover {
-  background-color: var(--light-color-opacity-50);
-}
+  background-color: var(--light-opacity-50);
+} 
 
 .login__register {
-  /* font-size: 0.813rem; */
   font-size: var(--small-font-size);
   text-align: center;
   margin-bottom: 0.5rem;
@@ -152,34 +147,25 @@ img {
 }
 
 .login__register a {
-  color: var(--light-color); 
+  color: var(--light); 
   font-weight: 700;
   margin-left: 9rem;
-  
-  
 }
 
 .login__register a:hover {
   text-decoration: underline;
 }
 
-/* .login__forgot {
-  color: var(--secondary-color); 
-  text-decoration: none;
-} */
-
 .login__oauth-button {
-  background-color: var(--secondary-color); 
+  background-color: var(--background-color); 
   color: white;
   padding: var(--regular-space) var(--big-space);
   border: none;
   border-radius: var(--regular-space);
   cursor: pointer;
   transition: background-color 0.4s;
-  /* margin-top: var(--regular-space); */
   margin-bottom: var(--regular-space);
   margin-left: 0.0rem;
-  /* margin-left: 9rem;  */
 
 }
 
@@ -198,7 +184,7 @@ img {
   display: flex;
   align-items: center;
   padding: var(--small-space);
-  border: 1px solid var(--dark-color-opacity-50); 
+  border: 1px solid var(--dark-opacity-50); 
   border-radius: var(--small-space);
   width: 150px;
 }
@@ -213,7 +199,7 @@ img {
 }
 
 .login__verify-otp-button:disabled {
-  background-color: var(--light-color-opacity-50); 
+  background-color: var(--light-opacity-50); 
   cursor: not-allowed;
 }
 
@@ -233,7 +219,7 @@ img {
   padding: var(--small-space);
   margin-right: var(--small-space);
   color: inherit;
-  border: 1px solid var(--dark-color); 
+  border: 1px solid var(--dark); 
   border-radius: var(--small-space);
   font-family: inherit;
   font-size: 1.5rem; 
@@ -245,5 +231,10 @@ img {
 }
 
 .input:focus {
-  border: 2px solid var(--dark-color); 
+  border: 2px solid var(--dark); 
+}
+.login {
+  align-items: center; 
+  justify-content: center;
+  padding: 150px;
 }
