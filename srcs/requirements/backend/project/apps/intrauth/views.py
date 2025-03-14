@@ -9,6 +9,11 @@ from rest_framework.decorators import api_view
 from django.http import HttpResponseBadRequest
 import requests
 import os
+from dotenv import load_dotenv
+load_dotenv() 
+
+import logging
+logger = logging.getLogger(__name__)
 
 def home(request : HttpRequest) -> JsonResponse:
     return JsonResponse({"msg" : "success"})
@@ -19,17 +24,20 @@ def get_authenticated_user(request : HttpRequest) :
     return JsonResponse({"msg": "Authenticated"})
 
 def intra_login(request : HttpRequest):
-    client_id = os.getenv("CLIENT_ID")
-    redirect_uri = "http://localhost:8000/oauth/redirect"
+    # client_id = os.getenv("CLIENT_ID")
+    client_id = 'u-s4t2ud-c691b276ef7aa2660fa1d1be08026efd0282c75fdb314fb7307fdcfd7f61d6ce'
+    redirect_uri = "http://localhost:8000/oauth/redirect/"
     auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
     print("Redirecting to:", auth_url)
     return redirect(auth_url)
 
 def intra_login_redirect(request):
+    print("Received code:")
     code = request.GET.get("code")
     if not code:
         print("Code is missing in the request")
         return redirect("https://localhost/")
+    
     print("Received code:", code)
     try:
         user_data = exhange_code(code)
@@ -54,6 +62,8 @@ def intra_login_redirect(request):
         return HttpResponseBadRequest(f"An error occurred: {str(e)}")
 
 def exhange_code(code: str):
+    logger.debug("Starting code exchange...")
+    logger.debug("CLIENT_SECRET:", os.getenv("CLIENT_SECRET"))
     token_url = "https://api.intra.42.fr/oauth/token"
     user_info_url = "https://api.intra.42.fr/v2/me"
     #token request data
@@ -71,6 +81,8 @@ def exhange_code(code: str):
     try:
         #request access token
         response = requests.post(token_url, data=data, headers=headers)
+        logger.debug(f"Token Response Status: {response.status_code}")
+        logger.debug(f"Token Response Content: {response.text}")  # Critical for debugging
         response.raise_for_status()  #raise an exception for HTTP errors
         credentials = response.json()
         access_token = credentials['access_token']
