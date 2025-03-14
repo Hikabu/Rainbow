@@ -29,19 +29,19 @@ const router = createRouter({
       path: '/mainpage',
       name: 'MainPage',
       component: MainPage,
-      meta: { requiresAuth: false }//change true
+      meta: { requiresAuth: true }//change true
     },
     {
       path: '/profile',
       name: 'Profile',
       component: Profile,
-      meta: { requiresAuth: false }//change true
+      meta: { requiresAuth: true }//change true
     },
     {
       path: '/settings',
       name: 'Settings',
       component: Settings,
-      meta: { requiresAuth: false }//change true
+      meta: { requiresAuth: true }//change true
     },
     {
       path: '/game',
