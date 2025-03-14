@@ -70,7 +70,6 @@ def send_email(email, otp):
   
         
 class GetOTPView(APIView):
-	permission_classes = [AllowAny] #DELETE AFTER USE POSTMAN
 
 	def post(self, request):
 		serializer = OTPRequestSerializer(data=request.data)
