@@ -62,7 +62,7 @@
           type="submit" 
           class="login__button" 
           :disabled="loading" 
-          @click="handleSubmit"
+          
         >
           {{ loading ? 'Sending...' : 'Send Otp' }}
         </button>
@@ -133,6 +133,7 @@
   const { loading, errors, sendOTP, checkOTP,handleOAuthLogin } = useAuth()
 
   const verifyUser = async(username, password) => {
+    errors.value = []; // Clear previous errors
     try {
       if (!username || !password) {
         errors.value.push('Both username and password fields must be filled.');
@@ -150,12 +151,11 @@
           errors.value.push('Do not make code work for you three times.');
       }
     }
-    loading.value = true;
   }
 //send otp
   const handleSubmit = async() => {
-    if (loading.value) return; // Prevent multiple submissions
-    loading.value = true;
+    if (loading.value) return; //
+    loading.value = true; //to dosable hsendinf form multi times
     errors.value = []; // Clear previous errors
     try {
       const isValid = await verifyUser(username.value, password.value);
