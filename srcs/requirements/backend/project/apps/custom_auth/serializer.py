@@ -40,7 +40,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return instance
     
 class OTPRequestSerializer(serializers.Serializer):
-	username = serializers.CharField()
+    username = serializers.CharField()
 
 class OTPVerifySerializer(serializers.Serializer):
 	username = serializers.CharField()

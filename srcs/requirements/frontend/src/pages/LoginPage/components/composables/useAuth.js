@@ -10,30 +10,15 @@ export function useAuth() {
   const loading = ref(false)
   const errors = ref([])
 
-  const sendOTP = async (username, password) =>{
+  const sendOTP = async (username) =>{
     loading.value = true
     errors.value = []
-    if (!username || !password) {
-      errors.value.push('Both username and password fields must be filled.');
-      loading.value = false;
-      return false;
-    }
-    try {
-      const otpData = { username, password };
-      const tokenResponse = await axios.post('/api/token/', otpData, {
-        username,
-        password,
-      })
-      if (tokenResponse.status >= 200 && tokenResponse.status < 300){
-        const tokenData = tokenResponse.data;
-        
-      const responseOTP = await axios.post('api/get-otp/', otpData,
-      {
-          headers: {
-            'Authorization' : `Bearer ${tokenData.access}`,
-          },
-          withCredentials: true,// Include cookies if needed
-      });
+
+    try {   
+      const optData = {username};
+      const responseOTP = await axios.post('api/get-otp/', optData,{
+          withCredentials: true 
+        });
         if (responseOTP.status >= 200 && responseOTP.status < 300) {
           console.log('OTP Response:', responseOTP.data);
         } else {
@@ -41,18 +26,12 @@ export function useAuth() {
           errors.value.push('Failed to send OTP');
         }
         return true;
-      } else {
-        console.error('Failed to get token:', tokenResponse.statusText);
-        errors.value.push('Failed to get token');
-        return false;
-      }
     } catch (error) {
       handleError(error)
     }
   }
   const handleError = (error) => {
     if (error.response) {
-      // Handle specific status codes
       if (error.response.status === 401) {
         // Unauthorized access
         errors.value.push('No such user or invalid credentials.')
@@ -128,20 +107,6 @@ export function useAuth() {
       console.log(authUrl);
       window.location.href = authUrl;
   };
-  
-
-      // try {
-      //   const response = await axios.get('/oauth/redirect/');
-      //   const oauthToken = response.data.access_token;
-      //   console.log("OAuth Token:", oauthToken);
-      //   localStorage.setItem('access_token', oauthToken);
-    
-      //   router.push('/mainpage');
-      // } catch (error) {
-      //   console.error("Error fetching OAuth token:", error);
-      // }
-    // Once the the request approved, the OAuth provider will redirect usr back to specified 
-    // redirect_uri along with an authorization code.
   
 const checkAccessToken = () => {
   const accessToken = document.cookie.split('; ').find(row => row.startsWith('access_token='));

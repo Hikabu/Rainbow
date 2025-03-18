@@ -1,4 +1,5 @@
 <template>
+  
   <div class="login">
     <!-- Background Image -->
     <img 
@@ -119,6 +120,7 @@
   import { useRouter } from 'vue-router'
 
   import { useAuth} from '@/pages/LoginPage/components/composables/useAuth'
+  import axios from 'axios';
 
   const router = useRouter()
   const username = ref('');
@@ -128,30 +130,53 @@
   const otpLength = ref(6); // Number of OTP digits
   const otpArray = ref(Array(otpLength.value).fill('')); // Array to hold OTP digits
 
-  const { loading, errors,sendOTP, checkOTP,handleOAuthLogin } = useAuth()
+  const { loading, errors, sendOTP, checkOTP,handleOAuthLogin } = useAuth()
 
+  const verifyUser = async(username, password) => {
+    try {
+      if (!username || !password) {
+        errors.value.push('Both username and password fields must be filled.');
+        loading.value = false;
+        return false;
+      }
+      console.log("validatig member...");
+      await axios.post(('api/isuser/'), {username, password});
+      return true;
+    } catch (error){
+      console.error("Wrong credentials:", error);
+      if (error.response?.status === 401) {
+        errors.value.push('Invalid username or password.');
+      } else {
+          errors.value.push('Do not make code work for you three times.');
+      }
+    }
+    loading.value = true;
+  }
 //send otp
   const handleSubmit = async() => {
+    if (loading.value) return; // Prevent multiple submissions
+    loading.value = true;
+    errors.value = []; // Clear previous errors
     try {
-      console.log("validatig member...");
-      console.log("sending OTP");
-      loading.value = true;
-      const otpSentSuccessfully = await sendOTP(username.value, password.value);
-      if (otpSentSuccessfully) {
-        isOTPSent.value = true;
-        console.log(isOTPSent.value, "isOTPSent");
-    } else {
-        errors.value.push('Failed to send OTP. Please try again.');
-       }
-      console.log(isOTPSent.value, "isOTPSent");
+      const isValid = await verifyUser(username.value, password.value);
+      if (isValid) {
+          console.log("sending OTP")
+          const otpSentSuccessfully = await sendOTP(username.value);
+          if (otpSentSuccessfully) {
+            isOTPSent.value = true;
+            console.log(isOTPSent.value, "isOTPSent"); //delete later
+          }
+        }
     }
     catch (error) {
-      console.error("failed ot send otp:", error);
+      console.error("failed to send otp:", error);
       errors.value.push('Failed to send OTP. Please try again.');
     }
     loading.value = false;
     console.log("Loading state after OTP send:", loading.value);
   };
+
+
   const verifyOTP = async() =>{
     try{
       console.log("verifying OTP");
