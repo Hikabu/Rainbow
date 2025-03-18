@@ -89,9 +89,7 @@ def send_email(email, otp):
 			print(response.text)
 	except Exception as e:
 		print(f'Error sending email: {str(e)}')
-  
-  
-        
+       
 class GetOTPView(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
