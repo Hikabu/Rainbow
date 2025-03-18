@@ -15,11 +15,20 @@ import resend #sed emails
 import requests #interact with api
 from django.core.cache import cache #to not use db 
 from project.apps.intrauth.models import Profile #additional userelated information
-
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import AllowAny# unrestricted access to a view/endpoint
+
+from django.contrib.auth import authenticate #if its exists
+from rest_framework.throttling import AnonRateThrottle # no brutforce
+
+import logging
+logger = logging.getLogger(__name__)
+
+    
 
 
 User = get_user_model()
+     
 ###registration
 class UserCreateView(APIView):
     authentication_classes = []  # disable authentication
@@ -38,6 +47,20 @@ class UserCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
+class UserVerify(APIView):
+	authentication_classes = []  # Allow unauthenticated access
+	permission_classes = []
+	# throttle_classes = [AnonRateThrottle]
+  
+	def post(self, request):
+		username = request.data.get('username')
+		password = request.data.get('password')
+		user = authenticate(username=username, password=password)
+		
+		if not user:
+			return Response({'error': 'Invalid credentials'}, status=401)
+		return Response({'message': 'Good job, you are not invalid'}, status=200)
+
 ###OTP creation    
     
 resend = os.environ.get('RESEND') 
@@ -70,7 +93,9 @@ def send_email(email, otp):
   
         
 class GetOTPView(APIView):
-
+	authentication_classes = []  # Allow unauthenticated access
+	permission_classes = []
+	# throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPRequestSerializer(data=request.data)
 		if serializer.is_valid():
@@ -79,9 +104,9 @@ class GetOTPView(APIView):
 				user = User.objects.get(username=username)
 				otp = generate_otp()
 				cache.set(f'otp_{username}', otp, timeout=300)  # save for 5 min in cashe
-				print(f"Wow OTP is sent and is: {otp}")
 				send_email(user.email, otp)
 				return Response({'otp': otp}, status=status.HTTP_200_OK)
+				# return Response({'message': 'OTP sent if user exists'}, status=status.HTTP_200_OK)
 			except User.DoesNotExist:
 				return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -132,4 +157,5 @@ class LogoutView(APIView):
         response.delete_cookie('refresh_token') #refresh token
         return response
 
-
+# class MyTokenObtinPairView(TokenObtainPairView):
+#     def post(*arg, **kwargs, ): #capturing any additional arguments that the parent post method might need
