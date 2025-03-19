@@ -24,8 +24,7 @@ def get_authenticated_user(request : HttpRequest) :
     return JsonResponse({"msg": "Authenticated"})
 
 def intra_login(request : HttpRequest):
-    # client_id = os.getenv("CLIENT_ID")
-    client_id = 'u-s4t2ud-c691b276ef7aa2660fa1d1be08026efd0282c75fdb314fb7307fdcfd7f61d6ce'
+    client_id = os.getenv("CLIENT_ID")
     redirect_uri = "http://localhost:8000/oauth/redirect/"
     auth_url = f"https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
     print("Redirecting to:", auth_url)
@@ -38,7 +37,6 @@ def intra_login_redirect(request):
         print("Code is missing in the request")
         return redirect("https://localhost/")
     
-    print("Received code:", code)
     try:
         user_data = exhange_code(code)
         if not user_data:
