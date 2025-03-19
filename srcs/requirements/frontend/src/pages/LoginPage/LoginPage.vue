@@ -178,6 +178,7 @@
 
 
   const verifyOTP = async() =>{
+    errors.value = [];
     try{
       console.log("verifying OTP");
       const otp = otpArray.value.join(''); // make single string
