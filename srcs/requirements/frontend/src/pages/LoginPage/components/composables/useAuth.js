@@ -61,40 +61,25 @@ export function useAuth() {
   const checkOTP = async(username, password, otp) => {
     console.log('check OTP');
       try{
-          const tokenResponse =  await axios.post('/api/token/', {
-            username,
-            password,
-            otp
-        })
-        console.log('before cheing status', tokenResponse.status);
-        if (tokenResponse.status >= 200 && tokenResponse.status < 300 ){
-
-            const otpData = { username, otp };
-            console.log(otpData);
-            const tokenData = tokenResponse.data;
+        const otpData = { username, otp };
+        const responseOtp = await axios.post('/api/verify-otp/', otpData, {
+            withCredentials: true,// Include cookies if needed
+        });
+        console.log('the status of verification is: ', responseOtp.status)
+        const tokenData = {username, password };
+        if (responseOtp.status >= 200 && responseOtp.status < 300 ) {
+            const tokenResponse =  await axios.post('/api/token/', tokenData, {
+            withCredentials: true, 
+          });
+            console.log('the status of token is: ', tokenResponse.status)
+          if (tokenResponse.status >= 200 && tokenResponse.status < 300 ){
             console.log('JWT is set');
-            const responseOtp = await axios.post('/api/verify-otp/', otpData, 
-              {
-                headers: {
-                  'Authorization' : `Bearer ${tokenData.access}`,
-                },
-                withCredentials: true,// Include cookies if needed
-            });
-            if (responseOtp.status < 200 && responseOtp.status > 300 ) {
-              const errorText = await responseOtp.text(); //wait for code error with promise
-              console.log(errorText)
-            } else {
-              setToken(tokenData) // in components 
-              console.log('JWT is set');
-              router.push('/game')
-            }
-          } else {
-            errors.value.push('Invalid OTP. Please try again.');
-        }
+            router.push('/game')
+          } 
+        } 
       }
       catch (error) {
         console.error('wrong credentials (checking otp):', error);
-        errors.value.push('Invalid OTP. Please try again.');
       }
   }
 
