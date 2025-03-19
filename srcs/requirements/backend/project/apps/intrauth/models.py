@@ -27,6 +27,12 @@ class Profile(models.Model):
     friends = models.ManyToManyField('self', blank=True)
     display_name = models.CharField(max_length=100, null=True, blank=True)
     is_online = models.BooleanField(default=False)
+    
+    def __str__(self):
+        # Use display_name if set, fallback to user's username/email
+        if self.display_name:
+            return self.display_name
+        return f"Profile for {self.user.username}"  # Ensure this path returns a string
 
 class CustomUser(AbstractUser):
     # Traditional
@@ -44,6 +50,9 @@ class CustomUser(AbstractUser):
     # name as the primary identifier
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = [] 
+    
+    def __str__(self):
+        return self.username or self.email  # Must be indented under the class!
 
 def is_authenticated(self, request):
     return True

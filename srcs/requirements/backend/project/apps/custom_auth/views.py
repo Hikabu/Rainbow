@@ -15,11 +15,21 @@ import resend #sed emails
 import requests #interact with api
 from django.core.cache import cache #to not use db 
 from project.apps.intrauth.models import Profile #additional userelated information
-
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import AllowAny# unrestricted access to a view/endpoint
+
+from django.contrib.auth import authenticate #if its exists
+from rest_framework.throttling import AnonRateThrottle # no brutforce
+from django.conf import settings #taking jwt configs
+
+import logging
+logger = logging.getLogger(__name__)
+
+    
 
 
 User = get_user_model()
+     
 ###registration
 class UserCreateView(APIView):
     authentication_classes = []  # disable authentication
@@ -38,6 +48,20 @@ class UserCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
+class UserVerify(APIView):
+	authentication_classes = []  # Allow unauthenticated access
+	permission_classes = []
+	throttle_classes = [AnonRateThrottle]
+  
+	def post(self, request):
+		username = request.data.get('username')
+		password = request.data.get('password')
+		user = authenticate(username=username, password=password)
+		
+		if not user:
+			return Response({'error': 'Invalid credentials'}, status=401)
+		return Response({'message': 'Good job, you are not invalid'}, status=200)
+
 ###OTP creation    
     
 resend = os.environ.get('RESEND') 
@@ -66,11 +90,11 @@ def send_email(email, otp):
 			print(response.text)
 	except Exception as e:
 		print(f'Error sending email: {str(e)}')
-  
-  
-        
+       
 class GetOTPView(APIView):
-
+	authentication_classes = []  # Allow unauthenticated access
+	permission_classes = []
+	throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPRequestSerializer(data=request.data)
 		if serializer.is_valid():
@@ -79,14 +103,17 @@ class GetOTPView(APIView):
 				user = User.objects.get(username=username)
 				otp = generate_otp()
 				cache.set(f'otp_{username}', otp, timeout=300)  # save for 5 min in cashe
-				print(f"Wow OTP is sent and is: {otp}")
 				send_email(user.email, otp)
 				return Response({'otp': otp}, status=status.HTTP_200_OK)
+				# return Response({'message': 'OTP sent if user exists'}, status=status.HTTP_200_OK)
 			except User.DoesNotExist:
 				return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyOTPView(APIView):
+	authentication_classes = []  # Allow unauthenticated access
+	permission_classes = []
+	throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPVerifySerializer(data=request.data)
 		if serializer.is_valid():
@@ -123,7 +150,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 class AuthStatusView(APIView):
     permission_classes = [IsAuthenticated]  # Only authenticated users can access this endpoint
     def get(self, request):
-        return Response({'isAuthenticated': True})
+        return Response({'isAuthenticated': True}, status=200)
     
     
 class LogoutView(APIView):
@@ -132,4 +159,51 @@ class LogoutView(APIView):
         response.delete_cookie('refresh_token') #refresh token
         return response
 
+class MyTokenObtainPairView(TokenObtainPairView):
+	def post(self, request, *args, **kwargs ): #capturing any additional arguments that the parent post method might need
+		response = super().post(request, *args, **kwargs)
+		if response.status_code == 200:
+			access_token = response.data.get('access')
+			refresh_token = response.data.get('refresh')
 
+			response.set_cookie(
+				'access_token',
+				access_token,
+				httponly=True,
+				secure=True,
+				samesite='Lax',
+				max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+			)
+   
+			response.set_cookie(
+				'refresh_token',
+				refresh_token,
+				httponly=True,
+				secure=True,
+				samesite='Lax',
+				max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+			)
+			#remove from response body
+			del response.data['access']
+			del response.data['refresh']
+		return response
+
+class MyTokenRefreshView(TokenRefreshView):
+	def post(self, request, *args, **kwargs):
+		# refresh_token = request.COOKIES.get('refresh_token')
+		response = super().post(request, *args, **kwargs)
+		if response.status_code == 200:
+			new_access_token = response.data.get('access')
+   
+			response .set_cookie(
+				'access_token',
+				new_access_token,
+				httponly=True,
+				samesite='Lex',
+				max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFTIME'].total_seconds(),
+			)
+			del response.data['refresh']
+		return response
+
+    
+ 

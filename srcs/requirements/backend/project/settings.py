@@ -169,11 +169,16 @@ CSRF_TRUSTED_ORIGINS = [
 REST_FRAMEWORK = {
     'STATIC_URL': STATIC_URL,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'project.apps.custom_auth.authentication.CookieJwtAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '5/hour',  # For unauthenticated users
+    },
 }
 
 # Simple JWT settings
@@ -187,6 +192,9 @@ SIMPLE_JWT = {
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
+    "JSON_ENCODER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
     
     # Authentication Header
     'AUTH_HEADER_TYPES': ('Bearer',), #token must be sent in the Authorization header with the prefix Bearer
@@ -200,7 +208,8 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
     
     #for frontend if store in cookies very important for local just delete 
-    'AUTH_COOKIE': 'access_token',
+    'AUTH_COOKIE_ACCESS': 'access_token',
+    'AUTH_COOKIE_REFRESH': 'refresh_token',
     'AUTH_COOKIE_HTTP_ONLY': True,# Prevents JavaScript from accessing the cookie
     'AUTH_COOKIE_SECURE': True,#Ensures the cookie is only sent over HTTPS.
     'AUTH_COOKIE_SAMESITE': 'None',#Controls cross-site request behavior set to true but fronted
@@ -208,6 +217,8 @@ SIMPLE_JWT = {
     #User Identification
     'USER_ID_FIELD': 'id', #tells the server which field in the database identifies the user
     'USER_ID_CLAIM': 'user_id',#where to find the user"s id in the jwt blabla
+    
+    "JTI_CLAIM": "jti",
     
     #Token Classes
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
