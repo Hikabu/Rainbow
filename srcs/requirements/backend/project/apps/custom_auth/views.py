@@ -20,6 +20,7 @@ from rest_framework.permissions import AllowAny# unrestricted access to a view/e
 
 from django.contrib.auth import authenticate #if its exists
 from rest_framework.throttling import AnonRateThrottle # no brutforce
+from django.conf import settings #taking jwt configs
 
 import logging
 logger = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ class UserCreateView(APIView):
 class UserVerify(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
-	# throttle_classes = [AnonRateThrottle]
+	throttle_classes = [AnonRateThrottle]
   
 	def post(self, request):
 		username = request.data.get('username')
@@ -93,7 +94,7 @@ def send_email(email, otp):
 class GetOTPView(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
-	# throttle_classes = [AnonRateThrottle]
+	throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPRequestSerializer(data=request.data)
 		if serializer.is_valid():
@@ -110,6 +111,9 @@ class GetOTPView(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyOTPView(APIView):
+	authentication_classes = []  # Allow unauthenticated access
+	permission_classes = []
+	throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPVerifySerializer(data=request.data)
 		if serializer.is_valid():
@@ -146,7 +150,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 class AuthStatusView(APIView):
     permission_classes = [IsAuthenticated]  # Only authenticated users can access this endpoint
     def get(self, request):
-        return Response({'isAuthenticated': True})
+        return Response({'isAuthenticated': True}, status=200)
     
     
 class LogoutView(APIView):
@@ -155,5 +159,51 @@ class LogoutView(APIView):
         response.delete_cookie('refresh_token') #refresh token
         return response
 
-# class MyTokenObtinPairView(TokenObtainPairView):
-#     def post(*arg, **kwargs, ): #capturing any additional arguments that the parent post method might need
+class MyTokenObtainPairView(TokenObtainPairView):
+	def post(self, request, *args, **kwargs ): #capturing any additional arguments that the parent post method might need
+		response = super().post(request, *args, **kwargs)
+		if response.status_code == 200:
+			access_token = response.data.get('access')
+			refresh_token = response.data.get('refresh')
+
+			response.set_cookie(
+				'access_token',
+				access_token,
+				httponly=True,
+				secure=True,
+				samesite='Lax',
+				max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+			)
+   
+			response.set_cookie(
+				'refresh_token',
+				refresh_token,
+				httponly=True,
+				secure=True,
+				samesite='Lax',
+				max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+			)
+			#remove from response body
+			del response.data['access']
+			del response.data['refresh']
+		return response
+
+class MyTokenRefreshView(TokenRefreshView):
+	def post(self, request, *args, **kwargs):
+		# refresh_token = request.COOKIES.get('refresh_token')
+		response = super().post(request, *args, **kwargs)
+		if response.status_code == 200:
+			new_access_token = response.data.get('access')
+   
+			response .set_cookie(
+				'access_token',
+				new_access_token,
+				httponly=True,
+				samesite='Lex',
+				max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFTIME'].total_seconds(),
+			)
+			del response.data['refresh']
+		return response
+
+    
+ 

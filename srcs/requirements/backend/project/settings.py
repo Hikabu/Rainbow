@@ -169,7 +169,9 @@ CSRF_TRUSTED_ORIGINS = [
 REST_FRAMEWORK = {
     'STATIC_URL': STATIC_URL,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'project.apps.custom_auth.authentication.CookieJwtAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',

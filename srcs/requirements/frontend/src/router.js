@@ -9,6 +9,7 @@ import RegisterPage from '@/pages/RegisterPage/RegisterPage.vue';
 import MainPage from './pages/MainPage/MainPage.vue';
 import Profile from './pages/smallPages/Profile.vue';
 import Settings from './pages/smallPages/Settings.vue';
+import axios from 'axios';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -61,8 +62,10 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     try {
       //cookies
-      const token = await getToken();
-      if (!token || !isAuthenticated()) {
+      const token = await axios.get('api/auth-status/', {
+        withCredentials: true,
+      });
+      if (token.status != 200) {
         console.error("Access token not found, redirecting to login...");
         return next({ name: 'Login' });
       }
