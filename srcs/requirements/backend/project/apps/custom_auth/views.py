@@ -51,7 +51,7 @@ class UserCreateView(APIView):
 class UserVerify(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
-	throttle_classes = [AnonRateThrottle]
+	#throttle_classes = [AnonRateThrottle]
   
 	def post(self, request):
 		username = request.data.get('username')
@@ -94,7 +94,7 @@ def send_email(email, otp):
 class GetOTPView(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
-	throttle_classes = [AnonRateThrottle]
+	#throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPRequestSerializer(data=request.data)
 		if serializer.is_valid():
@@ -113,7 +113,7 @@ class GetOTPView(APIView):
 class VerifyOTPView(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
-	throttle_classes = [AnonRateThrottle]
+	#throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPVerifySerializer(data=request.data)
 		if serializer.is_valid():
@@ -199,8 +199,8 @@ class MyTokenRefreshView(TokenRefreshView):
 				'access_token',
 				new_access_token,
 				httponly=True,
-				samesite='Lex',
-				max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFTIME'].total_seconds(),
+				samesite='Lax',
+				max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
 			)
 			del response.data['refresh']
 		return response
