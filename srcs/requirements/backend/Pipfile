@@ -55,6 +55,7 @@ typing-extensions = "==4.12.2"
 urllib3 = "==2.3.0"
 whitenoise = "==6.9.0"
 zope = {interface = "==7.2"}
+django-ratelimit = "*"
 
 [dev-packages]
 black = "==25.1.0"
