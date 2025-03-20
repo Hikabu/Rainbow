@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import { getToken, isAuthenticated } from '@/components/tokenUtils';
 import Game from '@/features/Game/Game.vue';
 import LoginPage from '@/pages/LoginPage/LoginPage.vue';
 import NotFound from '@/pages/NotFound.vue';
