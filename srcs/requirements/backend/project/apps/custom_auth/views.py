@@ -21,7 +21,8 @@ from rest_framework.permissions import AllowAny# unrestricted access to a view/e
 from django.contrib.auth import authenticate #if its exists
 from rest_framework.throttling import AnonRateThrottle # no brutforce
 from django.conf import settings #taking jwt configs
-
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 import logging
 logger = logging.getLogger(__name__)
 
@@ -153,11 +154,31 @@ class AuthStatusView(APIView):
         return Response({'isAuthenticated': True}, status=200)
     
     
-class LogoutView(APIView):
-    def post(self, request):
-        response = Response({'message': 'logged out'})
-        response.delete_cookie('refresh_token') #refresh token
-        return response
+class UserLogOutView(APIView):
+	def post(self, request):
+		try:
+			refresh_token = request.COOKIES.get('refresh_token')
+			if refresh_token :
+				token =RefreshToken(refresh_token)
+				token.blacklist()
+		except TokenError as e:
+			#token invalid or expired so just pass
+			pass
+		#delete cookies to set then to expire right now
+		response = Response(
+			{"detail:" "Succesfully logout"},
+			status=status.HTTP_200_OK
+		)
+
+		response.delete_cookie(
+			'access_token',
+			path='/'
+		)
+		response.delete_cookie(
+			'refresh_token',
+			path='/',
+		)
+		return response
 
 class MyTokenObtainPairView(TokenObtainPairView):
 	def post(self, request, *args, **kwargs ): #capturing any additional arguments that the parent post method might need
