@@ -2,7 +2,6 @@ import axios from 'axios'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { setToken, unsetToken } from '@/components/tokenUtils';
 
 
 export function useAuth() {
@@ -74,7 +73,7 @@ export function useAuth() {
             console.log('the status of token is: ', tokenResponse.status)
           if (tokenResponse.status >= 200 && tokenResponse.status < 300 ){
             console.log('JWT is set');
-            router.push('/game')
+            router.push('/mainpage')
           } 
         } 
       }
@@ -93,33 +92,12 @@ export function useAuth() {
       window.location.href = authUrl;
   };
   
-const checkAccessToken = () => {
-  const accessToken = document.cookie.split('; ').find(row => row.startsWith('access_token='));
-  if (accessToken) {
-      console.log("Access token found, navigating to main page...");
-      router.push('/game'); // Navigate to the main page
-  } else {
-      console.error("Access token not found, redirecting to login...");
-      router.push('/'); // Redirect to login page
-  }
-};
 
-  
-  const logout = async () => {
-    try {
-      unsetToken();
-      router.push('/login');
-    } catch (error) {
-      handleError(error);
-    }
-  };
   return {
     loading,
     errors,
     sendOTP,
     checkOTP,
     handleOAuthLogin,
-    checkAccessToken,
-    logout
   }
 }

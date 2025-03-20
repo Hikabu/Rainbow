@@ -30,10 +30,10 @@
             <span class="Logo"><Icon icon="guidance:24-hours"/> </span>
             <span class="text">Settings</span>
           </router-link>
-          <router-link class="button" to="/login">
+          <button class="button" @click="handleLogOut">
             <span class="Logo"><Icon icon="guidance:pull"/></span>
             <span class="text">LogOut</span>
-          </router-link>
+          </button>
         </div>
     </aside>
 </template>
@@ -41,8 +41,23 @@
 <script setup >
 import { Icon } from "@iconify/vue";
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'
 
 import logo from '../assets/logo.png';
+import axios from 'axios'
+
+const router = useRouter()
+const handleLogOut = async() => {
+  try {
+    await axios.post('api/logout/', {}, {
+      withCredentials: true
+    });
+    router.push('/');
+  }
+  catch (error){
+    console.error('logout failed:', error)
+  }
+}
 
 const isExpanded = ref(localStorage.getItem("isExpanded") === "true")
 
