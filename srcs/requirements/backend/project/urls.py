@@ -10,7 +10,7 @@ from rest_framework.decorators import permission_classes
 # tokens
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 # MyTokenObtainPairView, MyTokenRefreshView,
-from project.apps.custom_auth.views import UserCreateView, GetOTPView, VerifyOTPView, AuthStatusView, ProfileViewSet, UserVerify, MyTokenObtainPairView, MyTokenRefreshView
+from project.apps.custom_auth.views import UserCreateView, GetOTPView, VerifyOTPView, AuthStatusView, ProfileViewSet, UserVerify, MyTokenObtainPairView, MyTokenRefreshView, UserLogOutView
 from project.apps.intrauth.views import home, intra_login, intra_login_redirect, get_authenticated_user
 
 from rest_framework.routers import DefaultRouter
@@ -35,6 +35,7 @@ urlpatterns = [
     
      # Custom auth endpoints
     path('api/signup/', UserCreateView.as_view(), name='signup'),
+    path('api/logout/', UserLogOutView.as_view(), name='signup'),
     path('api/isuser/', UserVerify.as_view(), name='isuser'),
     path('api/auth-status/', AuthStatusView.as_view(), name='auth-status'),
     # path('api/token/', permission_classes([AllowAny])(TokenObtainPairView.as_view()), name='token_obtain_pair'),

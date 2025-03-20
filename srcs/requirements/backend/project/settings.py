@@ -43,9 +43,10 @@ INSTALLED_APPS = [
     # Third-Party Apps
     "corsheaders",
     "channels",
-    'rest_framework',
-    'rest_framework_simplejwt',
+    "rest_framework",
+    "rest_framework_simplejwt",
     "django.contrib.postgres",
+    "rest_framework_simplejwt.token_blacklist",
     # Custom Project Apps
     "project.apps.pong",
     "project.apps.custom_auth",
@@ -201,8 +202,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     
     #ti strict security set ti true was in dock 
-    'ROTATE_REFRESH_TOKENS': False,#a new refresh token is issued every time an access token is refreshed.
-    'BLACKLIST_AFTER_ROTATION': False,#old refresh tokens are blacklisted after rotation to prevent reuse.
+    'ROTATE_REFRESH_TOKENS': True,#a new refresh token is issued every time an access token is refreshed.
+    'BLACKLIST_AFTER_ROTATION': True,#old refresh tokens are blacklisted after rotation to prevent reuse.
     
     #tracking user activity not useful 
     'UPDATE_LAST_LOGIN': True,
