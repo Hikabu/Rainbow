@@ -18,6 +18,7 @@ from project.apps.intrauth.models import Profile #additional userelated informat
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import AllowAny# unrestricted access to a view/endpoint
 
+from rest_framework.decorators import action
 from django.contrib.auth import authenticate #if its exists
 from rest_framework.throttling import AnonRateThrottle # no brutforce
 from django.conf import settings #taking jwt configs
@@ -26,7 +27,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import logging
 logger = logging.getLogger(__name__)
 
-    
+
+# User = settings.AUTH_USER_MODEL
 
 
 User = get_user_model()
@@ -138,9 +140,18 @@ class ProfileViewSet(viewsets.ModelViewSet):
     #view list automatica;;y provides list create retrieve update destroy actions
     #list will return a collection if user objects
     #retrieve requests a pecific user endpoint=details of a single user
-	permission_classes = [AllowAny] #remove after postman 
+	permission_classes = [IsAuthenticated] #remove after postman 
 	queryset = Profile.objects.all()
 	serializer_class = ProfileSerializer
+ 
+	@action(detail=False, methods=['get'])
+	def me(self, request): #without drf will return whole list and front to stipid to understand what to take
+		checkprofile = self.get_queryset().first()
+		if not checkprofile:
+			return Response({"detail:", "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+		serializer = self.get_serializer(checkprofile)
+		return Response(serializer.data)
+
 	def get_queryset(self):
 		return Profile.objects.filter(user=self.request.user)
 	def perform_update(self, serializer):

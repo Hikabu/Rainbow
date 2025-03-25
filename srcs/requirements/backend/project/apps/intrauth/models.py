@@ -3,7 +3,13 @@ from .managers import IntraUserManager
 from django.apps import apps
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-    
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
+# from django.contrib.auth import get_user_model
+# User = get_user_model()
+from django.conf import settings
+User = settings.AUTH_USER_MODEL
 """
 each model class corresponds to a single database table.  
 
@@ -28,11 +34,16 @@ class Profile(models.Model):
     display_name = models.CharField(max_length=100, null=True, blank=True)
     is_online = models.BooleanField(default=False)
     
+    # def __str__(self):
+    #     return self.username or self.email  #string representation of class(like print but print will show mem.address)
+    @property
+    def email(self):
+        return self.user.email
     def __str__(self):
         # Use display_name if set, fallback to user's username/email
         if self.display_name:
             return self.display_name
-        return f"Profile for {self.user.username}"  # Ensure this path returns a string
+        return f"Profile for {self.user.username}"  # Ensure this path returns a strin
 
 class CustomUser(AbstractUser):
     # Traditional
@@ -52,7 +63,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = [] 
     
     def __str__(self):
-        return self.username or self.email  # Must be indented under the class!
+        return self.username or self.email  #string representation of class(like print but print will show mem.address)
 
 def is_authenticated(self, request):
     return True
