@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Game from '@/features/Game/Game.vue';
@@ -8,7 +9,6 @@ import RegisterPage from '@/pages/RegisterPage/RegisterPage.vue';
 import MainPage from './pages/MainPage/MainPage.vue';
 import Profile from './pages/smallPages/Profile.vue';
 import Settings from './pages/smallPages/Settings.vue';
-import axios from 'axios';
 
 const router = createRouter({
   history: createWebHistory(),
