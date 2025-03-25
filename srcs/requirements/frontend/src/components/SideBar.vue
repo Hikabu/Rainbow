@@ -40,11 +40,11 @@
 
 <script setup >
 import { Icon } from "@iconify/vue";
+import axios from 'axios'
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 
 import logo from '../assets/logo.png';
-import axios from 'axios'
 
 const router = useRouter()
 const handleLogOut = async() => {
