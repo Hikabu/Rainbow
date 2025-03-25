@@ -1,0 +1,19 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth import get_user_model
+User = get_user_model()
+from .models import Profile
+# from django.conf import settings //send like a string
+# User = settings.AUTH_USER_MODEL
+
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        try:
+            Profile.objects.create(user=instance)
+        except Exception as e:
+            print(f"Error creating profile: {e}")
+        
+@receiver(post_save, sender=User)
+def save_profile(sender, instance, **kwargs):
+    instance.profile.save()   
