@@ -72,7 +72,7 @@ const ToggleMenu = () => {
 <style lang="scss" scoped>
 
 aside {
-  position: fixed;
+  // position: fixed;
   display: flex;
   flex-direction: column;
   width: calc(2rem + 32px);

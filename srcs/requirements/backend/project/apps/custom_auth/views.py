@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 # User = settings.AUTH_USER_MODEL
 
-
+from django.conf import settings
 User = get_user_model()
      
 ###registration
@@ -54,7 +54,7 @@ class UserCreateView(APIView):
 class UserVerify(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
-	#throttle_classes = [AnonRateThrottle]
+	throttle_classes = [AnonRateThrottle]
   
 	def post(self, request):
 		username = request.data.get('username')
@@ -97,7 +97,7 @@ def send_email(email, otp):
 class GetOTPView(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
-	#throttle_classes = [AnonRateThrottle]
+	throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPRequestSerializer(data=request.data)
 		if serializer.is_valid():
@@ -116,7 +116,7 @@ class GetOTPView(APIView):
 class VerifyOTPView(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
-	#throttle_classes = [AnonRateThrottle]
+	throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		serializer = OTPVerifySerializer(data=request.data)
 		if serializer.is_valid():
@@ -202,8 +202,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 				'access_token',
 				access_token,
 				httponly=True,
-				secure=True,
-				samesite='Lax',
+				secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+				samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
 				max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
 			)
    
@@ -211,8 +211,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 				'refresh_token',
 				refresh_token,
 				httponly=True,
-				secure=True,
-				samesite='Lax',
+				secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+				samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
 				max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
 			)
 			#remove from response body
@@ -222,18 +222,48 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 class MyTokenRefreshView(TokenRefreshView):
 	def post(self, request, *args, **kwargs):
-		# refresh_token = request.COOKIES.get('refresh_token')
-		response = super().post(request, *args, **kwargs)
-		if response.status_code == 200:
-			new_access_token = response.data.get('access')
+		#self should call exacly token refresh serializer so create new one
+		#recive from ccokies for validation
+		print("Incoming Cookies:", request.COOKIES)  # Debugging
+		refresh_token = request.COOKIES.get('refresh_token') #structure wit the cookies 
+		if not refresh_token:
+			return Response({'error': 'Refresh token is missing'}, status=401)
+		print ("Refresh token:", refresh_token)
+		#get new refrech token too because of rotation security
+		data = {'refresh': refresh_token}
+		print ("data is:", data)
+		serializer = self.get_serializer(data=data) #serializer data will take the parametr 
+		try: 
+			serializer.is_valid(raise_exception=True) # expired or blacklisted 
+		except TokenError as e:
+			return Response ({'error': str(e)}, status=401)
    
-			response .set_cookie(
-				'access_token',
-				new_access_token,
-				httponly=True,
-				samesite='Lax',
-				max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
-			)
+		new_access_token = serializer.validated_data['access'] #shure that access token exists
+		new_refresh_token = serializer.validated_data.get('refresh') # if not can return none
+   
+		response = Response({'message': 'Tokens refreshed'})
+  
+		response.set_cookie(
+			'access_token',
+			new_access_token,
+			httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+			secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+			samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
+			max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+		)
+
+		if 'refresh' in serializer.validated_data:
+			response.set_cookie(
+			'refresh_token',
+			new_refresh_token,
+			httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+			secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+			samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
+			max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+		)
+		if 'access' in response.data:
+			del response.data['access']
+		if 'refresh' in response.data:
 			del response.data['refresh']
 		return response
 
