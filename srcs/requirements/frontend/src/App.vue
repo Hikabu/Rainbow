@@ -7,6 +7,7 @@
 </template>
 
 <script setup>
+import 'bootstrap/dist/css/bootstrap.css';
 
 </script>
 
