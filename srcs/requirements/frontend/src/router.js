@@ -102,14 +102,16 @@ if (error.response && error.response.status === 401) {
       return axios(originalRequest);
       }
     } catch (err) {
-      router.push('/login')
+      console.error("a problem", err);
+      router.push('/')
       return Promise.reject(err)
       
     }finally {
       isRefreshing = false;
     }
   }
-
+  console.error("you are not authorised");
+  router.push('/')
   //add the original request to queue 
   return new Promise((resolve, reject) => {
     refreshRetryQueue.push({ config: originalRequest, resolve, reject});
@@ -118,10 +120,6 @@ if (error.response && error.response.status === 401) {
 return Promise.reject(error);
   }
 );
-
-
-
-
 
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
