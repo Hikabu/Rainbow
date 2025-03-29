@@ -57,11 +57,77 @@ const router = createRouter({
   ]
 });
 
+
+//to know where ti send the requests -establish Axios Instance
+const api = axios.create({
+  baseURL: '/api/',
+  withCredentials: true
+})
+
+
+//flag to prevent multiple token refresh requsts
+let isRefreshing = false;
+//list to hold the request tokens
+const refreshRetryQueue = [];
+
+//Axios interceptors
+api.interceptors.response.use(
+  (response) => response, // without modification request
+  async (error) => {
+    const originalRequest = error.config;
+
+if (error.response && error.response.status === 401) {
+  if (!isRefreshing && !originalRequest._retry) {
+    isRefreshing = true;
+
+    try {
+      //refresh
+      const newAccessToken = await api.post('token/refresh/');
+
+      if (newAccessToken) {
+        originalRequest._retry = true;
+
+        // retry all requests in the queue with new token
+      refreshRetryQueue.forEach(({ config, resolve, reject }) => {
+        axios
+          .request(config)
+          .then((response) => resolve(response))
+          .catch((err) => reject(err));
+      });
+
+      //clear the queue
+      refreshRetryQueue.length = 0;
+
+      //retry the original request
+      return axios(originalRequest);
+      }
+    } catch (err) {
+      router.push('/login')
+      return Promise.reject(err)
+      
+    }finally {
+      isRefreshing = false;
+    }
+  }
+
+  //add the original request to queue 
+  return new Promise((resolve, reject) => {
+    refreshRetryQueue.push({ config: originalRequest, resolve, reject});
+  });
+}
+return Promise.reject(error);
+  }
+);
+
+
+
+
+
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     try {
       //cookies
-      const token = await axios.get('api/auth-status/', {
+      const token = await api.get('auth-status/', {
         withCredentials: true,
       });
       if (token.status != 200) {

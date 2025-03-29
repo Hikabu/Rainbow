@@ -146,6 +146,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+CORS_ALLOW_CREDENTIALS = True #?
 
 # Allow WebSocket connections
 CORS_ALLOWED_ORIGINS = [
@@ -184,7 +185,7 @@ REST_FRAMEWORK = {
 
 # Simple JWT settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10), #how long tokens are valid
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1), #how long tokens are valid
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     
     # JWT creation and validation.
@@ -202,7 +203,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     
     #ti strict security set ti true was in dock 
-    'ROTATE_REFRESH_TOKENS': True,#a new refresh token is issued every time an access token is refreshed.
+    'ROTATE_REFRESH_TOKENS': True,#a new refresh token is issued every time an access token is refreshed.!!!will change with the access token
     'BLACKLIST_AFTER_ROTATION': True,#old refresh tokens are blacklisted after rotation to prevent reuse.
     
     #tracking user activity not useful 
@@ -213,7 +214,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_REFRESH': 'refresh_token',
     'AUTH_COOKIE_HTTP_ONLY': True,# Prevents JavaScript from accessing the cookie
     'AUTH_COOKIE_SECURE': True,#Ensures the cookie is only sent over HTTPS.
-    'AUTH_COOKIE_SAMESITE': 'None',#Controls cross-site request behavior set to true but fronted
+    'AUTH_COOKIE_SAMESITE': 'Lax',#Controls cross-site request if the post request the cookies will be not sented(lax)
     
     #User Identification
     'USER_ID_FIELD': 'id', #tells the server which field in the database identifies the user
