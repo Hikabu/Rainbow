@@ -5,19 +5,15 @@ import './styles.css';
 import './assets/styles/global.css';
 import 'ant-design-vue/dist/reset.css';
 
-import CountryFlag from '@dzangolab/vue-country-flag-icon';
+// import CountryFlag from '@dzangolab/vue-country-flag-icon';
 import { createApp } from 'vue';
 
 import App from './App.vue';
 //routers
 import router from './router';
 
-
-
 const app = createApp(App);
-
-
-app.component('CountryFlag', CountryFlag);
+// app.component('CountryFlag', CountryFlag);
 
 //router
 app.use(router);
