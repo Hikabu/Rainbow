@@ -2,7 +2,29 @@
     <div class="profile container-fluid p-0">
         <div class="d-flex row-flex">
             <SideBar />
-            <div class="about col-md-10 p-5 flex-grow-1">
+            <div class="about col-md-10 p-5 flex-grow-1 position-relative">
+                <!-- avatars -->
+                <!-- Add click handler and file input -->
+                <div style="cursor: pointer;" @click="triggerFileInput" >
+                    <img 
+                        v-if="user?.avatar" 
+                        :src="user.avatar" 
+                        class="rounded-circle"
+                        style="width: 50px; height: 50px; object-fit: cover;"
+                    >
+                    <div 
+                        v-else 
+                        class="rounded-circle bg-secondary"
+                        style="width: 50px; height: 50px;"
+                    ></div>
+                </div>
+                <input 
+                    ref="fileInput"
+                    type="file"
+                    style="display: none;"
+                    accept="image/*"
+                    @change="handleFileUpload"
+                >
                 <h1 class="mb-4">My Details</h1>
                 
                 <div class="card">
@@ -71,9 +93,55 @@ import { onMounted,ref } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
 
+const fileInput = ref(null)
+
+const triggerFileInput = () => {
+    fileInput.value.click()
+}
+
 const user = ref(null)
 const isEditing = ref(false)
 const newDisplayName = ref('')
+axios.defaults.xsrfCookieName = 'csrftoken'; // Django's default CSRF cookie name
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'; // Header name for CSRF token
+
+const handleFileUpload = async (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file')
+        return
+    }
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        alert('File size should be less than 2MB')
+        return
+    }
+
+    const formData = new FormData()
+    formData.append('avatar', file)
+
+    try {
+        const response = await axios.patch('api/profiles/me/', formData, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
+
+        // Update avatar URL with timestamp to prevent caching
+        user.value.avatar = `${response.data.avatar}?${Date.now()}`
+        alert('Avatar updated successfully!')
+    } catch (error) {
+        console.error('Error uploading avatar:', error)
+        alert('Failed to update avatar')
+    } finally {
+        // Reset input to allow uploading same file again
+        event.target.value = ''
+    }
+}
+
 
 const profileData = async () => {
     try {
@@ -99,7 +167,7 @@ const saveDisplayName = async () => {
         const response = await axios.patch('api/profiles/me/', {
             username: newDisplayName.value
         }, {
-            withCredentials: true
+            withCredentials: true,
         })
         console.log(response)
         user.value.username = newDisplayName.value
@@ -121,7 +189,7 @@ onMounted(() => {
     max-width: 600px;
     margin: 0 auto;
 }
-.form-label {
-    font-weight: bold;
+.about {
+    min-height: 100vh;
 }
 </style>
