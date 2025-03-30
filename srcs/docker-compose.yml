@@ -26,8 +26,15 @@ services:
     build:
       context: ./requirements/backend
       dockerfile: Dockerfile
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+      - media_volume:/usr/src/app/mediafiles
     environment:
       - DJANGO_SETTINGS_MODULE=project.settings
+      - USE_S3=TRUE
+      - AWS_ACCESS_KEY_ID=UPDATE_ME
+      - AWS_SECRET_ACCESS_KEY=UPDATE_ME
+      - AWS_STORAGE_BUCKET_NAME=UPDATE_ME
     networks:
       - ft_transcendence
     expose:
@@ -93,6 +100,8 @@ networks:
 
 volumes:
   frontend_build:
+  static_volume:
+  media_volume:
   database-postgres:
   postgres_data:
 

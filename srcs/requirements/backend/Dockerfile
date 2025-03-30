@@ -19,8 +19,10 @@ RUN pipenv install --deploy --ignore-pipfile
 # Copy the rest of the project files
 COPY . .
 
-# Create STATIC_ROOT directory
+# Create STATIC_ROOT directory and dirs for additionnal
+RUN mkdir -p /usr/src/app/static
 RUN mkdir -p /usr/src/app/staticfiles
+RUN mkdir -p /usr/src/app/mediafiles
 
 # Collect static files
 RUN pipenv run python manage.py collectstatic --noinput
