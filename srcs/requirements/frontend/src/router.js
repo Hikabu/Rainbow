@@ -69,76 +69,93 @@ const api = axios.create({
 let isRefreshing = false;
 //list to hold the request tokens
 const refreshRetryQueue = [];
-
+let refreshTimeOut = null;
+let time = import.meta.env.VITE_TIME_OUT;
 //Axios interceptors
 api.interceptors.response.use(
   (response) => response, // without modification request
   async (error) => {
     const originalRequest = error.config;
 
-if (error.response && error.response.status === 401) {
-  if (!isRefreshing && !originalRequest._retry) {
-    isRefreshing = true;
+    if (error.response && error.response.status === 401) {
+      if (!isRefreshing && !originalRequest._retry) {
+        isRefreshing = true;
 
-    try {
-      //refresh
-      const newAccessToken = await api.post('token/refresh/');
+        try {
+          //refresh
+          const newAccessToken = await api.post('token/refresh/');
+          if (newAccessToken) {
+            originalRequest._retry = true;
 
-      if (newAccessToken) {
-        originalRequest._retry = true;
+            // retry all requests in the queue with new token
+            refreshRetryQueue.forEach(({ config, resolve, reject }) => {
 
-        // retry all requests in the queue with new token
-      refreshRetryQueue.forEach(({ config, resolve, reject }) => {
-        axios
-          .request(config)
-          .then((response) => resolve(response))
-          .catch((err) => reject(err));
-      });
+                api.request(config)
+                .then((response) => resolve(response))
+                .catch((err) => reject(err));
+            });
 
-      //clear the queue
-      refreshRetryQueue.length = 0;
+            //clear the queue
+            refreshRetryQueue.length = 0;
 
-      //retry the original request
-      return axios(originalRequest);
+            //retry the original request
+            return api(originalRequest);
+          }
+        } catch (err) {
+            console.error("a problem", err);
+            router.push('/')
+            return Promise.reject(err)
+            
+        }finally {
+          isRefreshing = false;
+        }
       }
-    } catch (err) {
-      console.error("a problem", err);
-      router.push('/')
-      return Promise.reject(err)
-      
-    }finally {
-      isRefreshing = false;
-    }
+    console.error("you are not authorised");
+    router.push('/')
+    //add the original request to queue 
+    return new Promise((resolve, reject) => {
+      refreshRetryQueue.push({ config: originalRequest, resolve, reject});
+    });
   }
-  console.error("you are not authorised");
-  router.push('/')
-  //add the original request to queue 
-  return new Promise((resolve, reject) => {
-    refreshRetryQueue.push({ config: originalRequest, resolve, reject});
-  });
-}
-return Promise.reject(error);
-  }
-);
+  return Promise.reject(error);
+});
 
+//haahahahaahahah proactive
+function startRefrInterval() {
+  refreshTimeOut = setInterval(async () => {
+    try {
+      await api.post('token/refresh/');
+    } catch (error) {
+      clearInterval(refreshTimeOut);
+      console.log("this is it", error);
+      router.push('/')
+    }
+  }, time);
+}
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     try {
       //cookies
-      const token = await api.get('auth-status/', {
-        withCredentials: true,
-      });
+      const token = await api.get('auth-status/');
+      if (!refreshTimeOut && token.status === 200){
+        startRefrInterval();
+      }
+      next();
       if (token.status != 200) {
+        clearInterval(refreshTimeOut)
         console.error("Access token not found, redirecting to login...");
         return next({ name: 'Login' });
       }
-      return next();
     } catch (error) {
+      clearInterval(refreshTimeOut)
       console.error('Error during authentication check:', error);
       return next({ name: 'Login' });
-    }
+    } 
+  } else {
+    clearInterval(refreshTimeOut);
+    refreshTimeOut = null;
+    next()
   }
-  return next();
 });
 
 export default router;
