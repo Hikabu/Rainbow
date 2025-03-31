@@ -4,7 +4,6 @@
             <SideBar />
             <div class="about col-md-10 p-5 flex-grow-1 position-relative">
                 <!-- avatars -->
-                <!-- Add click handler and file input -->
                 <div style="cursor: pointer;" @click="triggerFileInput" >
                     <img 
                         v-if="user?.avatar" 
@@ -39,6 +38,7 @@
                                     class="form-control"
                                 >
                                 <div v-else class="form-control-plaintext">
+                                    <!-- <label> kaka</label> -->
                                     {{ user?.username }}
                                 </div>
                                 <button 
@@ -61,7 +61,8 @@
                         <div class="mb-4">
                             <label class="form-label">Email</label>
                             <div class="form-control-plaintext">
-                                {{ user?.email }}
+                                <label> kaka@gmail.com</label>
+                                <!-- {{ user?.email }} -->
                             </div>
                         </div>
 
@@ -70,13 +71,15 @@
                             <div class="col-md-6 mb-4">
                                 <label class="form-label">Wins</label>
                                 <div class="form-control-plaintext">
-                                    {{ user?.wins || 0 }}
+                                    <!-- {{ user?.wins || 0 }} -->
+                                    <label>5</label>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-4">
                                 <label class="form-label">Losses</label>
                                 <div class="form-control-plaintext">
-                                    {{ user?.losses || 0 }}
+                                    <!-- {{ user?.losses || 0 }} -->
+                                    <label> 8</label>
                                 </div>
                             </div>
                         </div>
@@ -102,8 +105,6 @@ const triggerFileInput = () => {
 const user = ref(null)
 const isEditing = ref(false)
 const newDisplayName = ref('')
-axios.defaults.xsrfCookieName = 'csrftoken'; // Django's default CSRF cookie name
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'; // Header name for CSRF token
 
 const handleFileUpload = async (event) => {
     const file = event.target.files[0]
@@ -165,10 +166,7 @@ const toggleEdit = () => {
 const saveDisplayName = async () => {
     try {
         const response = await axios.patch('api/profiles/me/', {
-            username: newDisplayName.value
-        }, {
-            withCredentials: true,
-        })
+            username: newDisplayName.value});
         console.log(response)
         user.value.username = newDisplayName.value
         isEditing.value = false
