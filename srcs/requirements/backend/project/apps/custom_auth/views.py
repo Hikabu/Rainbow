@@ -50,7 +50,6 @@ class UserCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    
 class UserVerify(APIView):
 	authentication_classes = []  # Allow unauthenticated access
 	permission_classes = []
@@ -144,14 +143,19 @@ class ProfileViewSet(viewsets.ModelViewSet):
 	queryset = Profile.objects.all()
 	serializer_class = ProfileSerializer
  
-	@action(detail=False, methods=['get'])
+	@action(detail=False, methods=['get' ,'patch'])
 	def me(self, request): #without drf will return whole list and front to stipid to understand what to take
 		checkprofile = self.get_queryset().first()
 		if not checkprofile:
 			return Response({"detail:", "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
-		serializer = self.get_serializer(checkprofile)
-		return Response(serializer.data)
-
+		if request.method == 'GET':
+			serializer = self.get_serializer(checkprofile)
+			return Response(serializer.data)
+		elif request.method == 'PATCH':
+			serializer = self.get_serializer(checkprofile, data=request.data, partial=True)
+			serializer.is_valid(raise_exception=True)
+			self.perform_update(serializer)
+			return Response(serializer.data)
 	def get_queryset(self):
 		return Profile.objects.filter(user=self.request.user)
 	def perform_update(self, serializer):
