@@ -9,12 +9,12 @@
                         v-if="user?.avatar" 
                         :src="user.avatar" 
                         class="rounded-circle"
-                        style="width: 50px; height: 50px; object-fit: cover;"
+                        style="width: 110px; height: 110px; object-fit: cover;"
                     >
                     <div 
                         v-else 
-                        class="rounded-circle bg-secondary"
-                        style="width: 50px; height: 50px;"
+                        class="rounded-circle bg-secondary position-absolute top-1 end-0"
+                        style="width: 110px; height: 110px;"
                     ></div>
                 </div>
                 <input 
@@ -24,14 +24,14 @@
                     accept="image/*"
                     @change="handleFileUpload"
                 >
-                <h1 class="mb-4">My Details</h1>
+                <h1 class="text-white mb-5">My Details</h1>
                 
-                <div class="card">
-                    <div class="card-body">
+                <div class="card ">
+                    <div class="card-body ">
                         <!-- Display Name Section -->
                         <div class="mb-4">
-                            <label class="form-label">Display Name</label>
-                            <div class="input-group">
+                            <label class="form-label ">Display Name</label>
+                            <div class="input-group ">
                                 <input 
                                     v-if="isEditing"
                                     v-model="newDisplayName" 
@@ -60,7 +60,7 @@
                         <!-- Email -->
                         <div class="mb-4">
                             <label class="form-label">Email</label>
-                            <div class="form-control-plaintext">
+                            <div class="form-control-plaintext text-white">
                                 <label> kaka@gmail.com</label>
                                 <!-- {{ user?.email }} -->
                             </div>
@@ -68,16 +68,16 @@
 
                         <!-- Wins and Losses -->
                         <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label">Wins</label>
-                                <div class="form-control-plaintext">
+                            <div class="col-md-6 mb-4 ">
+                                <label class="form-label ">Wins</label>
+                                <div class="form-control-plaintext text-white">
                                     <!-- {{ user?.wins || 0 }} -->
                                     <label>5</label>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-4">
                                 <label class="form-label">Losses</label>
-                                <div class="form-control-plaintext">
+                                <div class="form-control-plaintext text-white ">
                                     <!-- {{ user?.losses || 0 }} -->
                                     <label> 8</label>
                                 </div>
@@ -119,7 +119,6 @@ const handleFileUpload = async (event) => {
         alert('File size should be less than 2MB')
         return
     }
-
     const formData = new FormData()
     formData.append('avatar', file)
 
@@ -146,11 +145,11 @@ const handleFileUpload = async (event) => {
 
 const profileData = async () => {
     try {
-        const response = await axios.get('api/profiles/me/', {
-            withCredentials: true
-        })
+        const response = await axios.get('api/profiles/me/')
         user.value = response.data
-        newDisplayName.value = user.value.username
+        if (!user.value.displayName)
+            newDisplayName.value = user.value.username
+        newDisplayName.value = user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)
     }
@@ -166,9 +165,10 @@ const toggleEdit = () => {
 const saveDisplayName = async () => {
     try {
         const response = await axios.patch('api/profiles/me/', {
-            username: newDisplayName.value});
+            displayName: newDisplayName.value});
         console.log(response)
-        user.value.username = newDisplayName.value
+        // user.value.displayName = newDisplayName.value
+        user.value = response.data
         isEditing.value = false
         alert('Display name updated successfully!')
     } catch (error) {
@@ -184,10 +184,20 @@ onMounted(() => {
 
 <style scoped>
 .card {
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 700px;
+    background-color: hsla(0, 0%, 100%, .01);
+    border: 2px solid hsla(0, 0%, 100%, .7);
+    padding: var(--big-space) var(--regular-space);
+    color: var(--light); 
+    border-radius: var(--regular-space);
+    backdrop-filter: blur(70px);
+    padding-block: var(--regular-space);
+
 }
 .about {
     min-height: 100vh;
+    background: rgb(10,42,54);
+    background: linear-gradient(90deg, rgba(10,42,54,1) 0%, rgba(150,0,0,1) 60%, rgba(120,71,0,1) 94%);
+
 }
 </style>
