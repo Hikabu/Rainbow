@@ -172,14 +172,12 @@ MEDIA_URL = '/mediafiles/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 
-
-
-
-
-
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOW_CREDENTIALS = True #?
+CSRF_COOKIES_HTTPONLY = False # Allows JS to read the CSRF cookie
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False 
+
 
 # Allow WebSocket connections
 CORS_ALLOWED_ORIGINS = [
@@ -191,6 +189,7 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
     "https://localhost",
+    "http://localhost:5173",
 ]
 
 
@@ -218,7 +217,7 @@ REST_FRAMEWORK = {
 
 # Simple JWT settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1), #how long tokens are valid
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=11), #how long tokens are valid
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     
     # JWT creation and validation.
@@ -248,7 +247,6 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_HTTP_ONLY': True,# Prevents JavaScript from accessing the cookie
     'AUTH_COOKIE_SECURE': True,#Ensures the cookie is only sent over HTTPS.
     'AUTH_COOKIE_SAMESITE': 'Lax',#Controls cross-site request if the post request the cookies will be not sented(lax)
-    
     #User Identification
     'USER_ID_FIELD': 'id', #tells the server which field in the database identifies the user
     'USER_ID_CLAIM': 'user_id',#where to find the user"s id in the jwt blabla
@@ -259,6 +257,7 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
 
 LOGGING = {
     "version": 1,
