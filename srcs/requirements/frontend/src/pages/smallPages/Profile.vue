@@ -38,8 +38,8 @@
                                     class="form-control"
                                 >
                                 <div v-else class="form-control-plaintext">
-                                    <!-- <label> kaka</label> -->
-                                    {{ user?.username }}
+                                    {{ user?.displayName }}
+                                    <!-- <label> name</label> -->
                                 </div>
                                 <button 
                                     class="btn btn-outline-primary"
@@ -61,8 +61,7 @@
                         <div class="mb-4">
                             <label class="form-label">Email</label>
                             <div class="form-control-plaintext text-white">
-                                <label> kaka@gmail.com</label>
-                                <!-- {{ user?.email }} -->
+                                {{ user?.email }}
                             </div>
                         </div>
 
@@ -71,15 +70,14 @@
                             <div class="col-md-6 mb-4 ">
                                 <label class="form-label ">Wins</label>
                                 <div class="form-control-plaintext text-white">
-                                    <!-- {{ user?.wins || 0 }} -->
-                                    <label>5</label>
+                                    {{ user?.wins || 0 }}
                                 </div>
                             </div>
                             <div class="col-md-6 mb-4">
                                 <label class="form-label">Losses</label>
                                 <div class="form-control-plaintext text-white ">
-                                    <!-- {{ user?.losses || 0 }} -->
-                                    <label> 8</label>
+                                    {{ user?.losses || 0 }}
+                                    <!-- <label> 8</label> -->
                                 </div>
                             </div>
                         </div>
@@ -142,14 +140,17 @@ const handleFileUpload = async (event) => {
     }
 }
 
-
 const profileData = async () => {
     try {
         const response = await axios.get('api/profiles/me/')
         user.value = response.data
-        if (!user.value.displayName)
-            newDisplayName.value = user.value.username
-        newDisplayName.value = user.value.displayName
+        if (!user.value.displayName){
+            if ((user.value.displayName = user.value.username) == null)
+                user.value.displayName = user.value.intra_login
+            user.value.displayName = user.value.username
+        }
+        else
+            return user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)
     }
