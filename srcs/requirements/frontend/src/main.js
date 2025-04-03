@@ -5,12 +5,17 @@ import './styles.css';
 import './assets/styles/global.css';
 import 'ant-design-vue/dist/reset.css';
 
+import axios from 'axios';
 // import CountryFlag from '@dzangolab/vue-country-flag-icon';
 import { createApp } from 'vue';
 
 import App from './App.vue';
 //routers
 import router from './router';
+
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.withCredentials = true;
 
 const app = createApp(App);
 // app.component('CountryFlag', CountryFlag);

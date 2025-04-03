@@ -23,13 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
-    display_name = serializers.CharField()
-    is_online = serializers.BooleanField()
+    displayName = serializers.CharField(source='display_name') #for frintend camel 
+    isOnline = serializers.BooleanField(source='is_online')
 
     class Meta:
         model = Profile
         fields = [
-            'id', 'username', 'email', 'display_name', 'is_online',
+            'id', 'username', 'email', 'displayName', 'isOnline',
             'avatar', 'wins', 'losses', 'friends'
         ]
         read_only_fields = ['id', 'username', 'email']
