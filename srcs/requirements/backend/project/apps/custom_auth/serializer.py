@@ -23,21 +23,21 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
-    display_name = serializers.CharField(source='displayName') #for frintend camel 
-    is_online = serializers.BooleanField()
+    displayName = serializers.CharField(source='display_name') #for frintend camel 
+    isOnline = serializers.BooleanField(source='is_online')
 
     class Meta:
         model = Profile
         fields = [
-            'id', 'username', 'email', 'display_name', 'is_online',
+            'id', 'username', 'email', 'displayName', 'isOnline',
             'avatar', 'wins', 'losses', 'friends'
         ]
         read_only_fields = ['id', 'username', 'email']
 
     def update(self, instance, validated_data):
         # Update display_name and is_online directly in Profile
-        instance.display_name = validated_data.get('display_name', instance.displayName)
-        instance.is_online = validated_data.get('is_online', instance.isOnline)
+        instance.display_name = validated_data.get('display_name', instance.display_name)
+        instance.is_online = validated_data.get('is_online', instance.is_online)
         instance.save()
         return instance
     
