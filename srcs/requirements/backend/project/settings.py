@@ -16,9 +16,9 @@ load_dotenv()
 SECRET_KEY = "django-insecure-k1!svx5pna71t3&y#w!9iie&5p2)7)0acb9%@k788a@2y=9r54"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 #Does this backend recognize this user and their credentials?
 #modelbackend - checks the database for a user with the provided username and password.
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'storages',
     # Third-Party Apps
     "corsheaders",
     "channels",
@@ -52,18 +51,19 @@ INSTALLED_APPS = [
     "project.apps.pong",
     "project.apps.custom_auth",
     "project.apps.intrauth",
+    "storages",
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',#compresses and caches static files, reducing load times.
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',#compresses and caches static files, reducing load times.
 
 ]
 
@@ -136,40 +136,41 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+#AWS configs
+AWS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID'
+AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
+AWS_STORAGE_BUCKET_NAME = 'AWS_STORAGE_BUCKET_NAME'
 
-# STATIC_URL = "/staticfiles/"
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_SIGNATURE_NAME = 's3v4'
 
-# # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# STATICFILES_STORAGE = "storages.backends.s3.S3Storage"
-# # Default primary key field type
-# # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERIFY = True
 
-USE_S3 = os.getenv('USE_S3') == 'TRUE'
+#main part: this pushes static files to S3
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#this one is for media files, you can keep it if you're using media
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-if USE_S3:
-    # aws settings
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-    # s3 static settings
-    AWS_LOCATION = 'static'
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-else:
-    STATIC_URL = '/staticfiles/'
+#now this URL will serve static files from S3
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),) #list of folders where django search for additional static files for deployment
+STATICFILES_LOCATION = "static"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/"
 
-MEDIA_URL = '/mediafiles/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+MEDIAFILES_LOCATION = "media"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/"
+
+STORAGES = {
+    "default": {"BACKEND": "project.storage.MediaStorage"},
+    "staticfiles": {"BACKEND": "project.storage.StaticStorage"},
+}
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=2592000",
+}
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -184,12 +185,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost",
     "https://localhost",
     "http://localhost:5173",  # dev
+    "http://django-transendence.s3-website-us-east-1.amazonaws.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
     "https://localhost",
     "http://localhost:5173",
+    "http://django-transendence.s3-website-us-east-1.amazonaws.com",
 ]
 
 
@@ -204,8 +207,6 @@ REST_FRAMEWORK = {
     'STATIC_URL': STATIC_URL,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'project.apps.custom_auth.authentication.CookieJwtAuthentication',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-        
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',

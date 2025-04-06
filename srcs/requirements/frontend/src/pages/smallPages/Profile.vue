@@ -113,8 +113,8 @@ const handleFileUpload = async (event) => {
         alert('Please upload an image file')
         return
     }
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit
-        alert('File size should be less than 2MB')
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert('File size should be less than 5MB')
         return
     }
     const formData = new FormData()

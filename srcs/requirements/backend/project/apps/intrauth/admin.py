@@ -4,7 +4,7 @@ from .models import CustomUser, Profile
 
 admin.site.register(CustomUser)
 
-@admin.register(Profile)
+@admin.register(Profile)#editable by admin
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('display_name','email', 'wins', 'losses', 'email')
     
