@@ -5,7 +5,9 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-
+from storages.backends.s3 import S3File
+from storages.backends.s3boto3 import S3Boto3Storage
+from uuid import uuid4
 # from django.contrib.auth import get_user_model
 # User = get_user_model()
 from django.conf import settings
@@ -20,14 +22,31 @@ CustomUser :  provides default fields for user authentication
     name wil be "appname_customuser"-> intrauth_customuser
 
 Profile Table : store profile-related data, including fields like 
+
+
+uuid for aws for not rewroteogn files with same names 
+avoid special character issues in filenames and 
+make URLs harder to guess (basic security)
 """    
+
+class MediaStorage(S3Boto3Storage):
+    location = 'media'
+    file_overwrite = False
+    
+def get_avatar_s3_path(instance: "Profile", filename: str):
+    return f"{uuid4().hex}.{filename.split(".")[-1]}"
+
 class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,  # Links to the CustomUser model(can be changed- so direct link to the model)
         on_delete=models.CASCADE,  #profile deleted link delets too
         related_name='profile'     #accrss profile like user.profile
         )
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    avatar = models.ImageField(
+        storage=MediaStorage(),
+        upload_to='avatars/',
+        blank=True, 
+        null=True)
     wins = models.PositiveIntegerField(default=0)
     losses = models.PositiveIntegerField(default=0)
     friends = models.ManyToManyField('self', blank=True)
@@ -44,6 +63,9 @@ class Profile(models.Model):
         if self.display_name:
             return self.display_name
         return f"Profile for {self.user.username}"  # Ensure this path returns a strin
+    def open(self) ->S3File:
+        storage = MediaStorage()
+        return storage.open(self.file.name, mode="rb")
 
 class CustomUser(AbstractUser):
     # Traditional
