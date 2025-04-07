@@ -137,9 +137,10 @@ USE_I18N = True
 USE_TZ = True
 
 #AWS configs
-AWS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID'
-AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
-AWS_STORAGE_BUCKET_NAME = 'AWS_STORAGE_BUCKET_NAME'
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+
 
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_REGION_NAME = 'us-east-1'
@@ -155,8 +156,8 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 #this one is for media files, you can keep it if you're using media
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-#now this URL will serve static files from S3
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# #now this URL will serve static files from S3
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
 
 STATICFILES_LOCATION = "static"
 STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/"
