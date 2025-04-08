@@ -25,6 +25,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
     displayName = serializers.CharField(source='display_name') #for frintend camel 
     isOnline = serializers.BooleanField(source='is_online')
+    avatar = serializers.ImageField(use_url = True)
 
     class Meta:
         model = Profile
@@ -38,6 +39,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         # Update display_name and is_online directly in Profile
         instance.display_name = validated_data.get('display_name', instance.display_name)
         instance.is_online = validated_data.get('is_online', instance.is_online)
+        instance.avatar = validated_data.get('avatar', instance.avatar)
         instance.save()
         return instance
     
