@@ -127,7 +127,7 @@ const handleFileUpload = async (event) => {
                 'Content-Type': 'multipart/form-data',
             }
         })
-
+        console.log("Upload response is:", response.data)
         // Update avatar URL with timestamp to prevent caching
         user.value.avatar = `${response.data.avatar}?${Date.now()}`
         alert('Avatar updated successfully!')
