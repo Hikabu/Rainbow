@@ -4,11 +4,13 @@ from rest_framework.permissions import IsAuthenticated #permissiom classes
 from rest_framework.response import Response #return data from api
 from rest_framework import status #result of requests
 from rest_framework import viewsets#for rrouting make views in single calss
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 #for env
 import os
 from django.contrib.auth import get_user_model #currently active user model in project
 #custom serializers 
-from .serializer import UserSerializer,  OTPRequestSerializer, OTPVerifySerializer, ProfileSerializer
+from .serializer import UserSerializer,  OTPRequestSerializer, OTPVerifySerializer, ProfileSerializer, FriendSerializer
 #otp verification
 import pyotp
 import resend #sed emails
@@ -134,6 +136,34 @@ class VerifyOTPView(APIView):
  It automatically provides CRUD operations
   (Create, Retrieve, Update, Delete) for the Profile model.
 """
+
+
+#frineds autofill search 
+'''
+usr types in Vue input field
+ue watches searchQuery and calls the debounced function
+vue makes a GET request to /api/profiles/search/?query=...
+django view receives it, runs ORM query on Profile model
+results are serialized and sent back to Vue
+vue updates the UI with results
+'''
+class FriendsViewSet(viewsets.ModelViewSet):
+	permission_classes = [IsAuthenticated] 
+	queryset = Profile.objects.all()
+	serializer_class = ProfileSerializer
+	@action(detail=False, methods=['get'], url_path='search')
+	def search(self, request):
+		query = request.query_params.get('query', '').strip() #strip for overfetching
+		if not query:
+			return Response([])
+		#databSE filtering
+		profiles = Profile.objects.filter(
+			user__username__icontains=query
+		).exclude(user=request.user)[:10]#limit queryset
+
+		serializer = FriendSerializer(profiles, many=True)
+		return Response(serializer.data)
+
 class ProfileViewSet(viewsets.ModelViewSet):
     #this api read write
     #view list automatica;;y provides list create retrieve update destroy actions
@@ -142,7 +172,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 	permission_classes = [IsAuthenticated] #remove after postman 
 	queryset = Profile.objects.all()
 	serializer_class = ProfileSerializer
- 
+     
 	@action(detail=False, methods=['get' ,'patch'])
 	def me(self, request): #without drf will return whole list and front to stipid to understand what to take
 		checkprofile = self.get_queryset().first()
@@ -271,5 +301,8 @@ class MyTokenRefreshView(TokenRefreshView):
 			del response.data['refresh']
 		return response
 
+    
+
+    
     
  

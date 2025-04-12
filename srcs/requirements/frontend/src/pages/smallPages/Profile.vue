@@ -9,12 +9,12 @@
                         v-if="user?.avatar" 
                         :src="user.avatar" 
                         class="rounded-circle"
-                        style="width: 110px; height: 110px; object-fit: cover;"
+                        style="width: 210px; height: 210px; object-fit: cover;"
                     >
                     <div 
                         v-else 
                         class="rounded-circle bg-secondary position-absolute top-1 end-0"
-                        style="width: 110px; height: 110px;"
+                        style="width: 210px; height: 210px;"
                     ></div>
                 </div>
                 <input 
@@ -29,17 +29,16 @@
                 <div class="card ">
                     <div class="card-body ">
                         <!-- Display Name Section -->
-                        <div class="mb-4">
-                            <label class="form-label ">Display Name</label>
-                            <div class="input-group ">
+                        <div class="mb-4 d-flex row-flex justify-content-between">
+                            <!-- DISPLAY-ROW -->
+                         <label >Display Name</label>
                                 <input 
                                     v-if="isEditing"
                                     v-model="newDisplayName" 
-                                    class="form-control"
                                 >
-                                <div v-else class="form-control-plaintext">
-                                    {{ user?.displayName }}
-                                    <!-- <label> name</label> -->
+                                <div v-else class=" text-white">
+                                    <!-- {{ user?.displayName }} -->
+                                    <p>Name jhjh</p>
                                 </div>
                                 <button 
                                     class="btn btn-outline-primary"
@@ -54,15 +53,28 @@
                                 >
                                     Save
                                 </button>
-                            </div>
                         </div>
 
                         <!-- Email -->
-                        <div class="mb-4">
-                            <label class="form-label">Email</label>
-                            <div class="form-control-plaintext text-white">
-                                {{ user?.email }}
+                        <div class="mb-4 d-flex row-flex justify-content-between">
+                            <!-- DISPLAY-ROW -->                            <label >Email</label>
+                            <div class="text-white">
+                                <!-- {{ user?.email }} -->
+                                  <p>skdsk@skdokd</p>
                             </div>
+                        </div>
+                        <!-- Friends -->
+                        <div class="mb-4 d-flex row-flex justify-content-between">
+                            <!-- DISPLAY-ROW -->
+                            <label class="form-label">Friends</label>
+                            <ul v-if ="user?.friends.length" class="list-disc list-inside text-white">
+                                <li v-for="friend in user.friends" :key="friend.id">
+                                    {{ friend.username }} 
+                                    <span v-if="friend.isOnline">(Online)</span>
+                                    <span v-else>(Ofline)</span>
+                                </li>
+                            </ul>
+                            <p v-else class="text-white">No friends yet.</p>
                         </div>
 
                         <!-- Wins and Losses -->
@@ -201,4 +213,5 @@ onMounted(() => {
     background: linear-gradient(90deg, rgba(10,42,54,1) 0%, rgba(150,0,0,1) 60%, rgba(120,71,0,1) 94%);
 
 }
+
 </style>
