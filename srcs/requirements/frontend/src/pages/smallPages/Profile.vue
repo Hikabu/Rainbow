@@ -37,8 +37,7 @@
                                     v-model="newDisplayName" 
                                 >
                                 <div v-else class=" text-white">
-                                    <!-- {{ user?.displayName }} -->
-                                    <p>Name jhjh</p>
+                                    {{ user?.displayName }}
                                 </div>
                                 <button 
                                     class="btn btn-outline-primary"
@@ -59,8 +58,7 @@
                         <div class="mb-4 d-flex row-flex justify-content-between">
                             <!-- DISPLAY-ROW -->                            <label >Email</label>
                             <div class="text-white">
-                                <!-- {{ user?.email }} -->
-                                  <p>skdsk@skdokd</p>
+                                {{ user?.email }}
                             </div>
                         </div>
                         <!-- Friends -->
@@ -89,7 +87,6 @@
                                 <label class="form-label">Losses</label>
                                 <div class="form-control-plaintext text-white ">
                                     {{ user?.losses || 0 }}
-                                    <!-- <label> 8</label> -->
                                 </div>
                             </div>
                         </div>
@@ -156,13 +153,16 @@ const profileData = async () => {
     try {
         const response = await axios.get('api/profiles/me/')
         user.value = response.data
-        if (!user.value.displayName){
-            if ((user.value.displayName = user.value.username) == null)
-                user.value.displayName = user.value.intra_login
-            user.value.displayName = user.value.username
-        }
-        else
-            return user.value.displayName
+        user.value.displayName ||= user.value.username ?? user.value.intra_login
+
+        return user.value.displayName
+        // if (!user.value.displayName){
+        //     if ((user.value.displayName = user.value.username) == null)
+        //         user.value.displayName = user.value.intra_login
+        //     user.value.displayName = user.value.username
+        // }
+        // else
+        //     return user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)
     }
