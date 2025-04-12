@@ -21,15 +21,15 @@
             <span class="Logo"><Icon icon="guidance:bowling"/> </span>
             <span class="text">Turnament</span>
           </router-link>
+          <router-link class="button" to="/settings">
+            <span class="Logo"><Icon icon="guidance:fishing-area-1"/> </span>
+            <span class="text">Friends</span>
+          </router-link>
         </div>
 
         <div class="flex"></div>
 
         <div class="menu">
-          <router-link class="button" to="/settings">
-            <span class="Logo"><Icon icon="guidance:24-hours"/> </span>
-            <span class="text">Settings</span>
-          </router-link>
           <button class="button" @click="handleLogOut">
             <span class="Logo"><Icon icon="guidance:pull"/></span>
             <span class="text">LogOut</span>
