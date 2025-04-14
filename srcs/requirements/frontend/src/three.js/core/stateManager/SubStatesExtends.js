@@ -8,6 +8,8 @@ class CssSubState extends SubState {
 	constructor(name, object, partIndex = 0, surfaceIndex = 0, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate){
 		super(name,  object.self.children[partIndex].children[surfaceIndex].userData.instance, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate);
 		// const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
+
+		this.engine =  new MainEngine();;
 		this.div = element;
 
 		this.divObject = new CSS3DObject(this.div);
@@ -38,13 +40,15 @@ class CssSubState extends SubState {
 		const bottomRight = new THREE.Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.max.z);
 		const toScreenPosition = (pos, camera) => {
 			const vector = pos.clone().project(camera);
-			return {
-				x: (vector.x * 0.5 + 0.5) * window.innerWidth,
-				y: (1 - (vector.y * 0.5 + 0.5)) * window.innerHeight
+			return {//ARE YOU SURE ? THINK!
+				// x: (vector.x * 0.5 + 0.5) * window.innerWidth,
+				// y: (1 - (vector.y * 0.5 + 0.5)) * window.innerHeight
+				x: (vector.x * 0.5 + 0.5) * this.engine.container.clientWidth,
+				y: (1 - (vector.y * 0.5 + 0.5)) * this.engine.container.clientHeight,
 			};
 		};
-		const screenTopLeft = toScreenPosition(topLeft, new MainEngine().camera);
-		const screenBottomRight = toScreenPosition(bottomRight, new MainEngine().camera);
+		const screenTopLeft = toScreenPosition(topLeft, this.engine.camera);
+		const screenBottomRight = toScreenPosition(bottomRight, this.engine.camera);
 		const pixelWidth = Math.abs(screenBottomRight.x - screenTopLeft.x);
 		const pixelHeight = Math.abs(screenBottomRight.y - screenTopLeft.y);
 		const scaleX = pixelWidth / worldSize.x;
@@ -56,7 +60,7 @@ class CssSubState extends SubState {
 		super.resize();
 	}
 	animate(){
-		new MainEngine().css3DRenderer.render(new MainEngine().scene, new MainEngine().camera);
+		this.engine.css3DRenderer.render(this.engine.scene, this.engine.camera);
 		super.animate();
 	}
 }

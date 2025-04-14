@@ -36,6 +36,7 @@ function animate() {
 		dir *= -1;
   }
 
+  //TO BE CHANGED DEPENDS ON SCREEN NOT WINDOW ...THINK
   function	resize(e) {
 	engine.camera.aspect = window.innerWidth / window.innerHeight;
 	engine.camera.updateProjectionMatrix();
