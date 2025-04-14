@@ -6,8 +6,8 @@
                 <!-- avatars -->
                 <div style="cursor: pointer;" @click="triggerFileInput" >
                     <img 
-                        v-if="user?.avatar" 
-                        :src="user.avatar" 
+                        v-if="user?.avatar || user?.intra_avatar" 
+                        :src="user.avatar || user?.intra_avatar" 
                         class="rounded-circle"
                         style="width: 210px; height: 210px; object-fit: cover;"
                     >
