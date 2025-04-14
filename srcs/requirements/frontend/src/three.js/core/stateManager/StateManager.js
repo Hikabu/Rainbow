@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { MainEngine } from '../../mainScene/utils/MainEngine';
-import { EventBus } from '../../mainScene/utils/EventBus';
 
 class StateManager {
     constructor(states = []) {
@@ -10,35 +9,8 @@ class StateManager {
 		if (this.states.length > 0) this.changeState(0);
 		this.forcedRedirect = false;
         new MainEngine().container.addEventListener('keydown', (event) => this.handleKeyPress(event));
-		window.addEventListener('popstate', (event) => {
-			if (event.state)
-				this.changeState(event.state.num, false);
-		  });
 		StateManager.instance = this;
-		EventBus.on('tour.update.display', (data) => this.updateTourSubState(data));
-    	EventBus.on('tour.update.registration', (data) => this.updateTourRegistration(data));
-    	EventBus.on('tour.notification', (data) => this.notification(data));
 	}
-	updateTourSubState(data) {
-		if (data.update_display == "pay") {
-		  this.currentState.changeSubstate();
-		  this.currentState.currentSubstate.data["tour_id"] = data["tour_id"];
-		}
-		// More cases...
-	  }
-	
-	  updateTourRegistration(data) {
-		if (data.update_tour_registration == "create") {
-		  this.states[3].update_start_index(2, update_tour_registration_conditions);
-		}
-		// More cases...
-	  }
-	
-	  notification(data) {
-		if (data["notification"] == "start") {
-		  create_redirection_alert(data["length"] * 1000);
-		}
-	  }
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true) {
         if (this.currentStateIndex == index || index < 0)
 			return;

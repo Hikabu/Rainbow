@@ -1,5 +1,5 @@
 import {TextExtension, SizedExtension} from './Extensions'
-import { MainEngine } from '../../mainScene/utils/MainEngine';
+
 class BaseDivElement{
 	constructor(id, children){
 		this.element = document.createElement('div');

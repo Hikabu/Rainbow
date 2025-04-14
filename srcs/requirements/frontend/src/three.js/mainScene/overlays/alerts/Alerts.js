@@ -1,4 +1,5 @@
 import { MainEngine } from "../../utils/MainEngine";
+
 class AlertManager{
 	constructor(){
 		if (AlertManager.instance)
