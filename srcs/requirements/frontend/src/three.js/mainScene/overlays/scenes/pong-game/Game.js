@@ -15,6 +15,7 @@ import { Socket } from '../../../utils/Socket';
 //STATES: waiting, playing, error, completed
 
 	let state = "0";
+	//shoudl send the wndow to engine really ? THINK
 	let engine = new Engine(window);
 	let middleBars = new MiddleBars(false, engine);
 	let ball = new Ball(false, engine);
@@ -155,9 +156,10 @@ function	clean(){
 
 function	resize(e) {
 	content_body.initPositions(engine);
+	//MAYBE HSOULD BE SCREEN ? THINK!
 	engine.camera.aspect = window.innerWidth / window.innerHeight;
 	engine.camera.updateProjectionMatrix();
-	engine.setRendererSize(window);
+	engine.setRendererSize(window); //THINK
 	ball.initPositions(engine);
 	paddles.initPositions(engine);
 	header.initPositions(engine);
