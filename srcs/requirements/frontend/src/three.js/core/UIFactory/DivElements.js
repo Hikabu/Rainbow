@@ -1,5 +1,6 @@
-import {BaseDivElement} from './Base'
 import { MainEngine } from '../../mainScene/utils/MainEngine';
+import {BaseDivElement} from './Base'
+
 class Overlay extends BaseDivElement{
 	constructor(children = [], color, padding='6%', resizeFactor = 0.07, id = "overlay"){
 		super(id, [new FlexBox({

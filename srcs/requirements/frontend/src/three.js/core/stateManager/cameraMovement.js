@@ -12,7 +12,7 @@ let scrollDelta = 0;
 const scrollThreshold = 400;
 let isAnimating = false;
 
-window.addEventListener("wheel", (event) => {
+export function wheel_scroll_animations(event){
 	const stateManager = new StateManager();
 	if (isAnimating || event.deltaY * 100 * stateManager.allowedDirection < 0)
 		return ;
@@ -24,8 +24,7 @@ window.addEventListener("wheel", (event) => {
 		scrollDelta = 0;
 		stateManager.changeState(new StateManager().currentStateIndex + direction);
 	}
-});
-
+}
 
 function moveCamera(data, onComplete) {
 	gsap.killTweensOf(engine.camera);

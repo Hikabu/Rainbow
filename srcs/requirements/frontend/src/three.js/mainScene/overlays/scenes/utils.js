@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { MainEngine } from '../../utils/MainEngine';
+const engine = new MainEngine();
 function createRenderTarget(){
 	const renderTarget = new THREE.WebGLRenderTarget(2048, 2048, {
 		minFilter: THREE.LinearFilter,
@@ -9,7 +10,7 @@ function createRenderTarget(){
 		samples: 8,
 	  });
 	
-	// renderTarget.texture.anisotropy = new MainEngine().renderer.capabilities.getMaxAnisotropy();
+	renderTarget.texture.anisotropy = engine.renderer.capabilities.getMaxAnisotropy();
 	renderTarget.texture.generateMipmaps = true;
 	renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
 	renderTarget.depthTexture = new THREE.DepthTexture();

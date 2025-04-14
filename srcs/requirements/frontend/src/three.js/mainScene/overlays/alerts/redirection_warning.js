@@ -3,6 +3,7 @@ import { State } from '../../../core/stateManager/States';
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button } from '../../../core/UIFactory/Elements';
 import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
+import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
 
