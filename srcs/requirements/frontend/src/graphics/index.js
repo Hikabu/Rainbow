@@ -16,9 +16,11 @@ import { Socket } from './mainScene/utils/Socket';
 export async function init(app_container) {
     new MainEngine().add_container(app_container);
 }
-
-	const socket = new Socket();
+(async () => {
+    const socket = new Socket();
 	await socket.init();
+
+}) ();
 
 	const engine = new MainEngine();
 	engine.add(backBox, false);

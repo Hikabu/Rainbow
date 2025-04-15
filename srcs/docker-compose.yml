@@ -76,7 +76,7 @@ services:
     ports:
       # - "80:80"
       - "8080:8080"
-      - "443:443"
+      - "4443:443"
     volumes:
       - frontend_build:/usr/share/nginx/html
     networks:
@@ -94,6 +94,21 @@ services:
       timeout: 30s
       retries: 5
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    networks:
+      - ft_transcendence
+    container_name: portainer
+    restart: on-failure
+    ports:
+      - "1313:9000"  # Portainer UI
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    # environment:
+    #   TZ: "Your/Timezone"  # Optional: Replace with your timezone (e.g., "Etc/UTC" or "America/New_York")
+
+
 networks:
   ft_transcendence:
     driver: bridge
@@ -104,6 +119,7 @@ volumes:
   media_volume:
   database-postgres:
   postgres_data:
+  portainer_data:
 
 secrets:
   ssl_certificate:

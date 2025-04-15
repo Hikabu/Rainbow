@@ -182,6 +182,7 @@ CSRF_COOKIE_SECURE = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
     "https://localhost",
+    "https://localhost:4443",
     "http://localhost:5173",  # dev
     "http://django-transendence.s3-website-us-east-1.amazonaws.com",
 ]
@@ -190,6 +191,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
     "https://localhost",
     "http://localhost:5173",
+    "https://localhost:4443",
     "http://django-transendence.s3-website-us-east-1.amazonaws.com",
 ]
 
