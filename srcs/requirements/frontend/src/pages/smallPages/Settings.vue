@@ -6,8 +6,8 @@
                 <!-- avatars -->
                 <div style="cursor: pointer;" @click="triggerFileInput" >
                     <img 
-                        v-if="user?.avatar" 
-                        :src="user.avatar" 
+                        v-if="user?.avatar || user?.intra_avatar" 
+                        :src="user.avatar || user?.intra_avatar" 
                         class="rounded-circle"
                         style="width: 210px; height: 210px; object-fit: cover;"
                     >
@@ -54,7 +54,7 @@
                                     class="list-gr-item list-gr-item-action d-flex justify-content-between align-items-center"
                                     @click="addFriend(result.id)"
                                 >
-                                    {{ result.username }}
+                                    {{ result.username || result.intra_login }}
                                     <span class="badge bg-primary rounded-pill">Add</span>
                                 </button>
                             </div>

@@ -26,7 +26,9 @@ from rest_framework.throttling import AnonRateThrottle # no brutforce
 from django.conf import settings #taking jwt configs
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db.models import Q
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -158,7 +160,9 @@ class FriendsViewSet(viewsets.ModelViewSet):
 			return Response([])
 		#databSE filtering
 		profiles = Profile.objects.filter(
-			user__username__icontains=query
+			Q(user__username__icontains=query) |
+			Q(user__intra_login__icontains=query)# kind if contaner for or 
+
 		).exclude(user=request.user)[:10]#limit queryset
 
 		serializer = FriendSerializer(profiles, many=True)
