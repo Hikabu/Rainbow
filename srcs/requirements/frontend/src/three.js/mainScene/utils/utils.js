@@ -125,7 +125,7 @@ function mapToCenter(pointsLeft, pointsRight)
 
 async function getUserID() {
 	try {
-		let response = await fetch('http://localhost:8004/get-userID/', {
+		let response = await fetch('http://localhost:8000/get-userID/', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 		});

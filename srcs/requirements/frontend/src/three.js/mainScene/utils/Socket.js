@@ -13,7 +13,7 @@ export class Socket {
 		this.userID = await getUserID();
 		this.msgQueue = [];
 		try {
-			this.socket = new WebSocket(`ws://localhost:8004/ws/${this.userID}/`);
+			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
 			this.socket.onerror = this.myError.bind(this);
 			this.socket.onopen = this.myOpen.bind(this);
 			this.socket.onclose = this.myClose.bind(this);

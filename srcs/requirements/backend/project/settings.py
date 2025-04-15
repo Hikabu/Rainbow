@@ -33,7 +33,7 @@ AUTH_USER_MODEL = 'intrauth.CustomUser'
 # Application definition
 
 INSTALLED_APPS = [
-	"daphne",
+	# "daphne",
     # Built-in Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
