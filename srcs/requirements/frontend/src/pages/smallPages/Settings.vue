@@ -54,7 +54,7 @@
                                     class="list-gr-item list-gr-item-action d-flex justify-content-between align-items-center"
                                     @click="addFriend(result.id)"
                                 >
-                                    {{ result.username }}
+                                    {{ result.username || result.intra_login }}
                                     <span class="badge bg-primary rounded-pill">Add</span>
                                 </button>
                             </div>
