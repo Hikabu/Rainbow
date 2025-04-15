@@ -33,6 +33,7 @@ AUTH_USER_MODEL = 'intrauth.CustomUser'
 # Application definition
 
 INSTALLED_APPS = [
+	"daphne",
     # Built-in Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -48,9 +49,9 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "rest_framework_simplejwt.token_blacklist",
     # Custom Project Apps
-    "project.apps.pong",
     "project.apps.custom_auth",
     "project.apps.intrauth",
+	"project.apps.game",
     "storages",
 ]
 
@@ -101,11 +102,20 @@ DATABASES = {
 }
 
 # Channels
+
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('localhost', 6379)],  # Make sure Redis is running on your machine
+        },
     },
 }
+
+REDIS_HOST = 'redis'
+REDIS_PORT = 6379
+ROOT_URLCONF = 'transcendence.urls'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

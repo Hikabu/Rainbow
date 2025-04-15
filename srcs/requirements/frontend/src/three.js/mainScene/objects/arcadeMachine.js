@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
+// import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
 
 const arcadeMachine = new THREE.Group();
 
