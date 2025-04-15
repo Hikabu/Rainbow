@@ -132,22 +132,15 @@ class TournamentChannel():
 
 	async def start_remote_game(self, player1, player2):
 		from .playLog import new_game
-		print("START TORUNAMENT MATCH")
-		print("remianining players: ", len(self.remaining_players))
-		print(player1.user_id)
-		print(player2.user_id)
-
-		response = new_game(APIRequestFactory().post("/api/new_game/", {
+		data = new_game({
 			"type": "remote", 
 			"userID1": player1.user_id,
 			"userID2": player2.user_id,
 			"alias1": player1.alias,
 			"alias2": player2.alias,
 			"tour_id":self.tour_id,
-			}, format='json'))
-		print("the response: ", response)
-		print("the data: ", response.data)
-		data = response.data
+			}, format='json')
+	
 		await player1.send_self({
 			"type" : "tour.updates",
 			"update_display" : "start game",
