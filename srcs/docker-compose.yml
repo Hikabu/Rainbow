@@ -21,6 +21,13 @@ services:
       retries: 3
     restart: always
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - ft_transcendence
+    restart: always
+
   backend:
     container_name: backend
     build:
@@ -35,6 +42,7 @@ services:
       - AWS_ACCESS_KEY_ID=UPDATE_ME
       - AWS_SECRET_ACCESS_KEY=UPDATE_ME
       - AWS_STORAGE_BUCKET_NAME=UPDATE_ME
+      - REDIS_URL=redis://redis:6379
     networks:
       - ft_transcendence
     expose:
@@ -45,6 +53,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 1m
