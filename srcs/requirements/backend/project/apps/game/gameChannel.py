@@ -126,6 +126,7 @@ class GameChannel():
 		if "boundaries" in data:
 			self.dimensions = data["boundaries"]
 		if "request" in data:
+			print(data)
 			if data["request"] == "start game":
 				await self.start_game(consumer, data["game_id"])
 			if data["request"] == "update paddles":

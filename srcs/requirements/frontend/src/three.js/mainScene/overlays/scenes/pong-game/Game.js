@@ -11,7 +11,7 @@ import { StateManager } from '../../../../core/stateManager/StateManager';
 import { createRenderTarget, createScreenMaterial } from '../utils';
 import * as THREE from 'three';
 import { Socket } from '../../../utils/Socket';
-
+import axios from 'axios';
 //STATES: waiting, playing, error, completed
 
 	let state = "0";
@@ -27,26 +27,13 @@ import { Socket } from '../../../utils/Socket';
 	let end = false;
 	let gameID, mode, num;
 
-export	function startPongGame(type = "local"){
+export function logPongGame(type = "local"){
 		const brutdata = {type: type, userID1: socket.socket.userID, userID2: socket.socket.userID, alias1: "player one", alias2: "player two"};
-			fetch('http://localhost:8000/new-game/', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(brutdata)
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data["error"])
-				{
-					alert(data["error"]);
-					return;
-				}
-			new_round(data["gameID"], data["userID"], "local");
-			})
-			.catch(error => {
-				console.error('Error creating game:', error);
-			});
-		}
+		new Socket().send({
+			"channel" : "game",
+			"request" : "log",
+		})
+	}
 	function	new_round(gameID_input, userID, player_mode)
 	{
 		console.log("new round");
