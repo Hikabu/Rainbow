@@ -1,0 +1,1 @@
+{"buildTargets":["Stopbackend","all","backend-dev","clean","dev","list","prune","rebuild","restart","run","setup","stop","stopbackend","stopfront","volume"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
