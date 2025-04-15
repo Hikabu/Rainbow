@@ -53,7 +53,7 @@ const gameScreen = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
-	()=>{startPongGame("AI")},
+	()=>{ startPongGame("AI")},
 	()=>{
 		new AlertManager().remove_latest_alert("exit_alert");
 	},

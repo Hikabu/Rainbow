@@ -10,7 +10,8 @@ export class Socket {
 		Socket.instance = this;
 	}
 	async init(){
-		this.userID = await getUserID();
+		let response = await axios.get('api/profiles/me/')
+		this.userID = response.data.id 
 		this.msgQueue = [];
 		try {
 			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
