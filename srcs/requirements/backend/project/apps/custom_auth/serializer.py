@@ -5,7 +5,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta: #change the behavior of model 
         model = User
-        fields = ['id', 'username', 'email', 'password']
+        fields = ['id', 'username', 'email', 'password', 'intra_login', 'intra_avatar']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -27,6 +27,8 @@ class FriendSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+    intra_login = serializers.CharField(source='user.intra_login')
+    intra_avatar = serializers.URLField(source='user.intra_avatar')
     displayName = serializers.CharField(source='display_name') #for frintend camel 
     isOnline = serializers.BooleanField(source='is_online')
     avatar = serializers.ImageField(use_url = True)
@@ -41,7 +43,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'id', 'username', 'email', 'displayName', 'isOnline',
+            'id', 'username', 'email', 'displayName', 'isOnline', 'intra_login', 'intra_avatar',
             'avatar', 'wins', 'losses', 'friends', 'friendsQueryset'
         ]
         read_only_fields = ['id', 'username', 'email']
