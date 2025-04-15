@@ -107,14 +107,14 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('localhost', 6379)],  # Make sure Redis is running on your machine
+            "hosts": [os.environ.get("REDIS_URL", "redis://localhost:6379")],
         },
     },
 }
 
 REDIS_HOST = 'redis'
 REDIS_PORT = 6379
-ROOT_URLCONF = 'transcendence.urls'
+ROOT_URLCONF = 'project.urls'
 
 
 # Password validation
