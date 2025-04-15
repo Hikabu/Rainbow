@@ -29,7 +29,7 @@ import { Socket } from '../../../utils/Socket';
 
 export	function startPongGame(type = "local"){
 		const brutdata = {type: type, userID1: socket.socket.userID, userID2: socket.socket.userID, alias1: "player one", alias2: "player two"};
-			fetch('http://localhost:8004/new-game/', {
+			fetch('http://localhost:8000/new-game/', {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(brutdata)

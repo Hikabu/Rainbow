@@ -2,7 +2,6 @@ import json, asyncio, time, math, random
 from channels.layers import get_channel_layer
 from rest_framework.test import APIRequestFactory
 from uuid import uuid4, uuid1
-from .channels import send_message
 from django.utils import timezone
 
 
