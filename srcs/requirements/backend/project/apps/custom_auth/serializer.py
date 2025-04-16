@@ -20,15 +20,16 @@ class UserSerializer(serializers.ModelSerializer):
 class FriendSerializer(serializers.ModelSerializer):
     isOnline = serializers.BooleanField(source ='is_online')
     username = serializers.CharField(source='user.username')
+    intraLogin = serializers.CharField(source='user.intra_login')
     id = serializers.IntegerField()
     class Meta:
         model = Profile
-        fields = ['id', 'isOnline', 'username']
+        fields = ['id', 'isOnline', 'username', 'intraLogin']
 class ProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='user.id', read_only=True) #for id 
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
-    intra_login = serializers.CharField(source='user.intra_login')
+    intraLogin = serializers.CharField(source='user.intra_login')
     intra_avatar = serializers.URLField(source='user.intra_avatar')
     displayName = serializers.CharField(source='display_name') #for frintend camel 
     isOnline = serializers.BooleanField(source='is_online')
@@ -45,7 +46,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'id', 'username', 'email', 'displayName', 'isOnline', 'intra_login', 'intra_avatar',
+            'id', 'username', 'email', 'displayName', 'isOnline', 'intraLogin', 'intra_avatar',
             'avatar', 'wins', 'losses', 'friends', 'friendsQueryset'
         ]
         read_only_fields = ['id', 'username', 'email']
