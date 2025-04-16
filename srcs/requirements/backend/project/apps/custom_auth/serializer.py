@@ -25,6 +25,7 @@ class FriendSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['id', 'isOnline', 'username']
 class ProfileSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='user.id', read_only=True) #for id 
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
     intra_login = serializers.CharField(source='user.intra_login')
@@ -39,6 +40,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         many=True,
         write_only=True
     )
+    
 
     class Meta:
         model = Profile
