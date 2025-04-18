@@ -26,11 +26,18 @@ const container = new Overlay([
 							new Text({
 								id: "title",
 								fontSize : 1,
+								marginBot: "8%"
+							}),
+							new Text({
+								id : "error",
+								fontSize: 0.55,
 							}),
 							new FlexBox({
 							dir: "column",
 							mainAxis: "space-between",
 							id: "prize-announcement",
+							marginBottom: "12%",
+							marginTop: "8%",
 							children: [
 								new Text({
 									id: "subtitle",
@@ -86,8 +93,16 @@ function dynamic_content(data){
 		container.getElementById("button").element.textContent = "EXIT";
 		new AlertManager().remove_latest_alert("exit_alert");
 	}
-	else if (data.button == "wait") container.getElementById("button").element.textContent = "loading next round...";
+	else if (data.button == "wait")
+	{
+		container.getElementById("button").element.textContent = "loading next round...";
+		setTimeout(() => {
+			if (new StateManager().currentState.currentSubstateIndex == 10)
+				new StateManager().currentState.changeSubstate(11);
+		  }, 5000);
+	}
 	container.getElementById("title").element.textContent = data["title"];
+	container.getElementById("error").element.textContent = data["error"];
 	if ("prize" in data)
 	{
 		container.getElementById("prize-announcement").element.style.display = "";
@@ -141,9 +156,15 @@ function hide_div(){
 }
 
 function can_exit(){
+	console.log("can_exit ft");
 	if (new StateManager().currentState.currentSubstateIndex == 10 &&
 	container.getElementById("button").element.textContent == "EXIT")
+	{
+		console.log("curr state", new StateManager().currentState.currentSubstateIndex);
+		console.log("cutton: ", container.getElementById("button").element.textContent);
 		return true;
+	}
+	console.log("should create alert")
 	return false;
 }
 
@@ -155,7 +176,7 @@ const end = {
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
 	"dynamic-content" : dynamic_content,
-	"cant-exit" : can_exit,
+	"can-exit" : can_exit,
 }
 
 export {end}

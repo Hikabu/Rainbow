@@ -1,23 +1,24 @@
 
+import { mx_bilerp_0 } from "three/src/nodes/materialx/lib/mx_noise.js";
 import { arcadeMachine } from "../../mainScene/objects/arcadeMachine";
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 import { StateManager } from "./StateManager";
 import * as THREE from 'three';
 
-
-
-const engine = new MainEngine();
+// const engine = ;
 
 let scrollDelta = 0;
 const scrollThreshold = 400;
 let isAnimating = false;
-
+export function get_camera_animation(){
+	return isAnimating;
+}
 export function wheel_scroll_animations(event){
 	const stateManager = new StateManager();
 	if (isAnimating || event.deltaY * 100 * stateManager.allowedDirection < 0)
 		return ;
 	scrollDelta += event.deltaY;
-	engine.camera.position.z += event.deltaY * 0.00001;
+	new MainEngine().camera.position.z += event.deltaY * 0.00001;
 	if (Math.abs(scrollDelta) > scrollThreshold) {
 		isAnimating = true;
 		let direction = scrollDelta > 0 ? 1 : -1;
@@ -26,25 +27,21 @@ export function wheel_scroll_animations(event){
 	}
 }
 
-function moveCamera(data, onComplete) {
-	gsap.killTweensOf(engine.camera);
-	gsap.killTweensOf(engine.camera.position);
-	gsap.killTweensOf(engine.camera.rotation);
+function moveCamera(data, targetObject, targetNormal, targetPadding, onComplete) {
 	isAnimating = true;
 	const tl = gsap.timeline({ 
 		defaults: { duration: data.duration || 2, ease: data.ease || "power2.out" } 
 	});
-	if (data.pos) {
+	const newPosition = fitCameraToObject(targetObject, targetNormal, targetPadding);
+	const engine = new MainEngine()
+	console.log("enw positons: ", newPosition);
+	if ("pos" in data) {
 		tl.to(engine.camera.position, { 
-			x: data.pos[0], 
-			y: data.pos[1], 
-			z: data.pos[2],
+			x: newPosition.x, 
+			y: newPosition.y, 
+			z: newPosition.z,
 			onUpdate: () =>{ new StateManager().resize()
-				// engine.camera.position.x += (Math.random() - 0.5) * 0.2;
-				// engine.camera.position.y += (Math.random() - 0.5) * 0.2;
-				// engine.camera.position.z += (Math.random() - 0.5) * 0.2;
 			},
-
 			overwrite: "auto",
 		}, 0);
 	}
@@ -56,7 +53,7 @@ function moveCamera(data, onComplete) {
 		}, 0);
 	}
 	if (data.fov !== undefined) {
-		tl.to(engine.camera, { 
+		tl.to(new engine.camera, { 
 			fov: data.fov,
 			onUpdate: () => engine.camera.updateProjectionMatrix() 
 		}, 0);
@@ -70,9 +67,11 @@ function moveCamera(data, onComplete) {
 		isAnimating = false;
 		new StateManager().resize();
 		onComplete();
-		engine.camera.position.x = data.pos[0];
-		engine.camera.position.y = data.pos[1];
-		engine.camera.position.z = data.pos[2];
+		console.log("new position: ", newPosition)
+		engine.camera.position.x = newPosition.x;
+		engine.camera.position.y = newPosition.y;
+		engine.camera.position.z = newPosition.z;
+		//fitCameraToObject()
 	});
 }
 function shakeCamera(camera, intensity = 0, duration = 2000) {
@@ -116,28 +115,47 @@ function shakeCameraWithRotation(camera, intensity = 0.1, duration = 5000, rotat
     update();
 }
 
-function fitCameraToObject(object, camera) {
-	const box = new THREE.Box3();  // Initialize an empty bounding box
-    object.children.forEach(child => {
-        child.updateMatrixWorld(true); // Ensure world matrices are updated
-        box.expandByObject(child);    // Expand the box to include the child’s bounding box
-    });
-
+export function fitCameraToObject(targetObject, targetNormal = new THREE.Vector3(0, 0, -1), offset = 1.25) {
+	let engine = new MainEngine();
+	let container = engine.container;
+	let camera = engine.camera;
+	const box = new THREE.Box3().setFromObject(targetObject);
     const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const aspect = window.innerWidth / window.innerHeight;
-    
-    let fov = THREE.MathUtils.degToRad(camera.fov); 
-    let distance;
+    const center = box.getCenter(new THREE.Vector3());
 
-    if (aspect >= 1) {
-        distance = (size.x / 2) / Math.tan(fov / 2);
-    } else {
-        distance = (size.y / 2) / Math.tan(fov / 2);
-    }
-    camera.position.set(0, 0, distance + maxDim);
-    camera.lookAt(box.getCenter(new THREE.Vector3()));
+	let aspect;
+	if (container.clientWidth != 0 && container.clientHeight != 0)
+		aspect = container.clientWidth / container.clientHeight;
+	else
+	{
+		console.log("CONTIANER NO VALID CLIENTWIDTH! CLENTHEITGHT!")
+		aspect = window.innerWidth / window.innerHeight;
+	}
+    const fov = THREE.MathUtils.degToRad(camera.fov);
+
+    const height = size.y;
+    const width = size.x;
+    const depth = size.z;
+
+    const fitHeightDistance = height / (2 * Math.tan(fov / 2));
+    const fitWidthDistance = width / (2 * Math.tan(fov / 2)) / aspect;
+    const distance = offset * Math.max(fitHeightDistance, fitWidthDistance, depth);
+
+	console.log("center, ", center)
+    // const direction = new THREE.Vector3()
+    //     .subVectors(camera.position, center)
+    //     .normalize()
+    //     .multiplyScalar(distance);
+	// const  // or whatever normal you want
+	const direction = targetNormal.clone().normalize().multiplyScalar(-distance); // move opposite of normal
+
+	console.log("direction, ", direction);
+    return new THREE.Vector3().copy(center).add(direction);
+	// camera.position.copy(center).add(direction);
+    // camera.lookAt(center);
+    // camera.updateProjectionMatrix();
 }
+
 
 
 export {moveCamera}

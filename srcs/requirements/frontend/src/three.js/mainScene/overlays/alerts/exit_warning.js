@@ -33,7 +33,7 @@ const children = [
 						fontSize: 0.85,
 						content: "STAY",
 						onClick: ()=>{
-							new AlertManager().remove_latest_alert("exit_alert");
+							new AlertManager().remove_latest_alert();
 						},
 					}),
 					new Button({
@@ -41,7 +41,7 @@ const children = [
 						fontSize: 0.85,
 						content: "EXIT",
 						onClick: ()=>{
-							new AlertManager().remove_latest_alert("exit_alert");
+							new AlertManager().remove_latest_alert();
 							can_exit = true;
 							new StateManager().changeState(new StateManager().scheduledStateIndex)
 						},
@@ -65,9 +65,9 @@ function create_exit_alert(){
 		return ("cancelled")
 }
 
-function enter(){
+function enter(self){
 	setTimeout(() => {
-			new AlertManager().remove_latest_alert("exit_alert");
+			new AlertManager().remove_latest_alert(self);
 		}, 4000);//60s
 }
 function exit(){
