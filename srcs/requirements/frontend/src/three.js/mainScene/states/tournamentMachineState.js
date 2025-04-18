@@ -3,7 +3,7 @@ import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/tournamentMachineObj';
+import { screenSurface, center, object, partIndex, surfaceIndex, tourMachineObj } from '../objects/machines/tournamentMachineObj';
 
 import { start } from '../overlays/divs/tour_start';
 import { create } from '../overlays/divs/tour_create';
@@ -17,6 +17,7 @@ import { waiting } from '../overlays/scenes/waiting';
 import { StateManager } from '../../core/stateManager/StateManager';
 import { Socket } from '../utils/Socket';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
+import * as THREE from 'three';
 
 const divStart = start;
 const restScreen = new CssSubState(
@@ -261,10 +262,11 @@ const screenWaiting = new MeshSubState(
 const tourMachineState = new State(
 	"tour game screen", 
 	{
-		pos: [center.x,center.y,center.z],
+		pos: true,
 		duration: 2,
 		ease: "power2.inOut"
-	}, 
+	},
+	null,
 	[
 		restScreen, 
 		startScreen,//1
@@ -282,11 +284,22 @@ const tourMachineState = new State(
 	null,
 	()=>{
 		let curr_sub = new StateManager().currentState.currentSubstateIndex;
-		if (curr_sub >= "8" && divEnd["can-exit"] == false)
+		if (curr_sub >= "8")
 		{
-			if (create_exit_alert() == "cancelled")
-				return ("cancelled")
+			console.log("exit warning maybe...", curr_sub)
+			if (divEnd["can-exit"]() == false)
+			{
+				console.log("should warn", curr_sub);
+				if (create_exit_alert() == "cancelled")
+					return ("cancelled")
+				new Socket().send({
+					"channel" : "tournament",
+					"action" : "exit live"
+				})
+			}
 		}
+		else
+			console.log("no exit waring curr usb: ", curr_sub)
 		new Socket().send({
 			"channel" : "tournament",
 			"action" : "finish",
@@ -297,6 +310,10 @@ const tourMachineState = new State(
 		pongGame.renderMaterial,
 		waiting.renderMaterial,
 	],
+	// null,
+	tourMachineObj.self,
+	new THREE.Vector3(0, 0, -1),
+	1.5
 )
 
 tourMachineState.blockedIndex = 6

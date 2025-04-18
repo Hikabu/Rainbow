@@ -11,7 +11,7 @@ import { StateManager } from '../../../../core/stateManager/StateManager';
 import { createRenderTarget, createScreenMaterial } from '../utils';
 import * as THREE from 'three';
 import { Socket } from '../../../utils/Socket';
-import axios from 'axios';
+
 //STATES: waiting, playing, error, completed
 
 	let state = "0";
@@ -25,20 +25,22 @@ import axios from 'axios';
 	let header = new Header(false, engine);
 	let content_body = new Font(false, engine);
 	let end = false;
-	let gameID, mode, num;
+	let gameID, mode, num, demo_type;
 
-export function logPongGame(type = "local"){
-		const brutdata = {type: type, userID1: socket.socket.userID, userID2: socket.socket.userID, alias1: "player one", alias2: "player two"};
-		new Socket().send({
-			"channel" : "game",
-			"request" : "log",
-		})
-	}
-	function	new_round(gameID_input, userID, player_mode)
+export	function startPongGame(type = "local"){
+	console.log("new png game... ");
+	new Socket().send({
+		"channel" : "log",
+		"type" : type,
+		"userID1" : socket.socket.userID,
+	})
+}
+
+	function	new_round(gameID_input, player_mode)
 	{
 		console.log("new round");
-		window.addEventListener("keydown", key.handleKeyDown);
-		window.addEventListener("keyup", key.handleKeyUp);
+		document.addEventListener("keydown", key.handleKeyDown);
+		document.addEventListener("keyup", key.handleKeyUp);
 		gameID = gameID_input;
 		mode = player_mode;
 		// socket.new(gameID, userID, (event)=>{updatesFromBackend(event);});
@@ -56,6 +58,15 @@ export function logPongGame(type = "local"){
 			// waiting();
 	}
 	
+export function	startDemoGame(type){
+	mode = "demo";
+	demo_type = type;	
+}
+
+function demoAnimate(){
+
+}
+
 function	updatesFromBackend(data){
 	if (data.updates.state == "countdown")
 	{
@@ -68,7 +79,7 @@ function	updatesFromBackend(data){
 		else
 			content_body.new(num, "thin", 0, 0, 0, 1.5, 1, engine);
 	}
-	if (data.updates.state == "playing")
+	else if (data.updates.state == "playing")
 	{
 		if (state != "playing")
 			playing();
@@ -78,18 +89,21 @@ function	updatesFromBackend(data){
 		ball.object.position.y = data.updates.ball.y;
 		header.updateScores(data.updates.score1, data.updates.score2, engine);
 	}
-	if (data.updates.state == "game end")
+	else if (data.updates.state == "game end")
 	{
 		if (state != "completed")
 			completed();
 	}
-	if (data.updates.state == "error")
+	else if (data.updates.state == "error")
 	{
 		if (state != "error")
 			completed(data.updates.info);
 	}
-	if (data.updates.state == "player names")
+	else if (data.updates.state == "player names")
+	{
+		console.log("player_names: ", data)
 		header.new("hide", data.updates.name1, data.updates.name2, engine);
+	}
 }
 
 function	countdown(){
@@ -121,6 +135,7 @@ function completed(msg){
 		content_body.new("game over", "thick", 0, 0, 0, 15, 1.5, engine);
 	}
 	clean();
+	console.log("fame end ... mode", mode)
 	if (mode == "local" || mode == "AI")
 		new StateManager().currentState.changeSubstate();
 }
@@ -128,8 +143,8 @@ function completed(msg){
 
 function	clean(){
 		console.log("clean");
-		window.removeEventListener("keydown", key.handleKeyDown);
-		window.removeEventListener("keyup", key.handleKeyUp);
+		document.removeEventListener("keydown", key.handleKeyDown);
+		document.removeEventListener("keyup", key.handleKeyUp);
 		ball.hide();
 		paddles.hide();
 		middleBars.hide();
@@ -150,13 +165,14 @@ function	resize(e) {
 	ball.initPositions(engine);
 	paddles.initPositions(engine);
 	header.initPositions(engine);
-	socket.socket.send({
-		"channel": "game",
-		"boundaries" : {
-			"x" : paddles.collisionPos(ball),
-			"y" : engine.boundaryY,
-		},
-		})
+	if (mode != "demo")
+		socket.socket.send({
+			"channel": "game",
+			"boundaries" : {
+				"x" : paddles.collisionPos(ball),
+				"y" : engine.boundaryY,
+			},
+			})
 }
 
 
@@ -166,10 +182,11 @@ function exit(){
 		// if (userConfirmed)
 		console.log("exit")
 		clean();
-		new Socket().send({
-			"channel": "game",
-			"request": "end game",
-		})
+		if (mode != "demo")
+			new Socket().send({
+				"channel": "game",
+				"request": "end game",
+			})
 		// else
 		// 	return "forbidden";
 	//}
@@ -187,4 +204,14 @@ export	const pongGame = {
 		"exit": exit,
 		"receive" : (event)=>{updatesFromBackend(event);},
 		"new-round" : new_round 
+	}
+
+	export	const demoGame = {
+		"renderMaterial" : renderMaterial,
+		"renderTarget" : renderTarget,
+		"scene" : engine.scene,
+		"camera" : engine.camera,
+		"resize":resize,
+		"exit":clean,
+		"animate" : demoAnimate,
 	}

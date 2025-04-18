@@ -6,12 +6,12 @@ class StateManager {
 		if (StateManager.instance)
 			return StateManager.instance;
         this.states = states;
-		if (this.states.length > 0) this.changeState(0);
+		if (this.states.length > 0) this.changeState(0, true, true);
 		this.forcedRedirect = false;
         new MainEngine().container.addEventListener('keydown', (event) => this.handleKeyPress(event));
 		StateManager.instance = this;
 	}
-    changeState(index = this.currentStateIndex + 1, shouldPushHistory = true) {
+    changeState(index = this.currentStateIndex + 1, shouldPushHistory = true, slow = false) {
         if (this.currentStateIndex == index || index < 0)
 			return;
 		this.scheduledStateIndex = index;
@@ -24,7 +24,8 @@ class StateManager {
 		if (shouldPushHistory)
 			window.history.pushState({ num : this.currentStateIndex }, '', window.location.href);
 		this.setAllowedDirection();
-        this.currentState.enter();
+		console.log("slow ? ", slow);
+        this.currentState.enter(slow);
     }
 	setAllowedDirection(){
 		if (this.currentStateIndex === 0)

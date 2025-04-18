@@ -16,7 +16,7 @@ update_eng_bound();
 let content_body1 = new Font(false, engine);
 let content_body2 = new Font(false, engine);
 content_body1.new("Waiting for", "thick", 0, 0.3, 0, 15, 1.5, engine)
-content_body2.new("next match", "thick", 0, -0.3, 0, 15, 1.5, engine)
+content_body2.new("players", "thick", 0, -0.3, 0, 15, 1.5, engine)
 content_body1.show()
 content_body2.show()
 const geometry = new THREE.BoxGeometry(1);

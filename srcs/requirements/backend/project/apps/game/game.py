@@ -1,13 +1,7 @@
 
-import time
+import time, random, numpy as np
 from .ball import Ball
 from .paddle import Paddle
-import numpy as np
-import random
-import logging
-
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
 class Game:
 	duration = 15.0
@@ -63,16 +57,10 @@ class Game:
 		if (time.time() - self.start_time >= self.duration):
 			self.active = False
 			update["state"] = "game end"
-		# print(self.ball.pos["x"], self.ball.pos["y"])
 		update["x"] = [self.ball.pos["x"]]
 		update["y"] = [self.ball.pos["y"], self.paddles[-1].pos_y, self.paddles[1].pos_y]
-		if (self.ball.pos["x"] >= 1 or self.ball.pos["x"] == 0.9):
-			logger.info("ball x: " + str(self.ball.pos["x"]))
-			logger.info("ball y: " + str(self.ball.pos["y"]))
 		update["score1"] = self.paddles[-1].score
 		update["score2"] = self.paddles[1].score
-		# logger.info("score1: " + str(update["score1"]))
-		# logger.info("score2: " + str(update["score2"]))
 		return update
 
 	#TO DO BY MORAND:
@@ -103,8 +91,6 @@ class Game:
 			x += dx * speed
 			y += dy * speed
 	
-			logger.info("x: " + str(x))
-	
 			# Apply collision logic
 			if y > maxY:
 				y = maxY
@@ -118,7 +104,6 @@ class Game:
 				frac = (1 - prev_x) / (x - prev_x) # Fraction of the distance to the right edge
 				final_y = prev_y + frac * (y - prev_y) # Interpolate y at x == 1
 				self.last_valid_prediction = final_y # Store the prediction
-				logger.info("Final y: " + str(final_y)) 
 				return final_y
 	
 		return y
@@ -140,8 +125,6 @@ class Game:
 			predicted_y = self.predict_final_ball_position()
 			self.last_ai_update = current_time
 
-		logger.info("Predicted y: " + str(predicted_y))
-			
 		# Add randomized error based on distance
 		distance_to_ball = abs(paddle.pos_x - self.ball.pos["x"])
 		failure_chance = 0.10 * (1 - (distance_to_ball / paddle.pos_x))

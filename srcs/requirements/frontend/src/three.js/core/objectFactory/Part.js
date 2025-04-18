@@ -7,6 +7,7 @@ class Part {
 		this.width = 0;
 		this.shapes = [];
 		this.self = null;
+		//this.mesh = null;
 		this.joined_parts = [];
 		if (! Array.isArray(pointsRightXY))
 			this.init_symetrical(pointsLeftXY, pointsRightXY);
@@ -72,8 +73,13 @@ class Part {
 	}
 	init_group(){
 		this.self = new THREE.Group();
+		// this.mesh = new THREE.Group();
 		for (let i = 0; i < this.shapes.length; i++)
+		{
+			// this.mesh.add(this.shapes[i].self);
 			this.self.add(this.shapes[i].self);
+		}
+		// this.self = this.mesh.clone()
 		this.self.userData.instance = this;
 		//this.center_group();
 	}

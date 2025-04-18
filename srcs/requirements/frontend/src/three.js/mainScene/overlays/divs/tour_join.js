@@ -104,12 +104,13 @@ function dynamic_content(data){
 		offset = new Date() - new Date(data.now);
 		startTime = new Date(data.start);
 		updateTimer();
-		interval = setInterval(updateTimer, 100);
+		interval = setInterval(updateTimer, 500);
 	}
 }
 
 let lastShown = null;
 function updateTimer() {
+	// console.log("updateTimer");
 	const now = new Date();
 	const correctedNow = new Date(now - offset);
 	const remaining = Math.floor((startTime - correctedNow) / 1000);
@@ -118,7 +119,8 @@ function updateTimer() {
 
 		const minutes = Math.floor(remaining / 60);
 		const seconds = remaining % 60;
-		container.getElementById("timer").textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+		container.getElementById("timer").element.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+		// console.log("content;>",container.getElementById("timer").textContent)
 	}
 	if (remaining <= 0)
 		clearInterval(interval);
