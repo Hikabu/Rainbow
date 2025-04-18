@@ -1,9 +1,8 @@
-import json
-import asyncio
-import time
+import json, asyncio, time
 from channels.layers import get_channel_layer
 from .game import Game
 from .playLog import get_max_players, get_player_alias, store_game_results
+from django.core.cache import cache
 
 active_sessions = {}
 pending_sessions = {}
@@ -12,22 +11,20 @@ players = {}
 
 class GameManager():
 	def __init__(self):
-		self.channel_layer = get_channel_layer()
-		self.pending_timeout = 30
+		self.pending_timeout = 1
 		self.running_tasks = set()
 
 	async def broadcast_game_state(self):
 		while True:
 			try:
 				for gameID, game in active_sessions.items():
-					# print("state: ", game.state)
 					updates = game.update_state()
 					if updates:
-						print("updates: ", updates)
-						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
+						await get_channel_layer().group_send(f"game_{gameID}", {"type": "game.updates", "updates": updates})
 						if updates["state"] == "game end":
-							print("gm calls store ")
+							print("store game results///")
 							await store_game_results({"score1" : updates["score1"], "score2" : updates["score2"], "start_time" : game.start_time, "gameID" : gameID,})
+							print("end store")
 							active_sessions.pop(gameID, None)
 							pending_sessions.pop(gameID, None)
 							break
@@ -36,7 +33,7 @@ class GameManager():
 						pending_sessions.pop(gameID, None)
 						break
 					if time.time() - start_time > self.pending_timeout:
-						await self.channel_layer.group_send(f"game_{gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "oponent did not join the game", "score1":"", "score2":"", "start_time": start_time}})
+						await get_channel_layer().group_send(f"game_{gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected", "score1":"", "score2":"", "start_time": start_time}})
 						pending_sessions.pop(gameID, None)
 						break 
 
@@ -48,15 +45,11 @@ class GameManager():
 
 gameManager = GameManager()
 
-# class GameConsumer(AsyncWebsocketConsumer):
 class GameChannel():
 	def __init__(self):
 		self.status = "uninitialized"
 
 	async def start_game(self, consumer, gameID):
-		global gameManager
-
-		print("start game ", gameID)
 		self.status = "on"
 		self.consumer = consumer
 		self.gameID = gameID
@@ -65,18 +58,19 @@ class GameChannel():
 		await self.manage_user_multitab()
 		await self.consumer.join_channel(f"game_{self.gameID}")
 		await self.verify_user()
+		print("add player")
 		players[self.gameID]["ready"] += 1
+		print("players: ", players[self.gameID])
 		if self.reconnected == True:
 			active_sessions[self.gameID] = self.old_game
 			active_connections[self.user_id] = self
 			ready_connections[self.gameID] += 1
 		if players[self.gameID]["ready"] == self.max_players:
-			print('callling start...')
+			print("ready to start")
 			active_sessions[self.gameID] = Game(self.gameID)
 			names = get_player_alias(self.gameID)
 			await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "player names", "name1" : names[0], "name2" : names[1]}})
 		else:
-			print("pending...")
 			pending_sessions[self.gameID] = time.time()
 
 	async def verify_user(self):
@@ -84,10 +78,10 @@ class GameChannel():
 			players[self.gameID] = {"connected" : 0, "ready" : 0}
 		self.max_players = get_max_players(self.gameID)
 		print("max players: ", self.max_players)
-		print("game id: ", self.gameID)
+		print("players: ", players[self.gameID])
 		players[self.gameID]["connected"] += 1
+		print("players: ", players[self.gameID])
 		if players[self.gameID]["connected"] > self.max_players:
-			print("too many... finish.. ")
 			await self.finish()
 		
 	async def manage_user_multitab(self):
@@ -108,12 +102,12 @@ class GameChannel():
 		active_connections.pop(self.user_id, None)
 		if self.gameID in active_sessions:
 			if active_sessions[self.gameID].active == True:
-				await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected from game", "score1" : active_sessions[self.gameID].paddles[-1].score, "score2":active_sessions[self.gameID].paddles[1].score, "start_time":active_sessions[self.gameID].start_time}})
+				await self.consumer.send_channel(f"game_{self.gameID}", {"type": "game.updates", "updates": {"state" : "error", "info" : "player disconnected", "score1" : active_sessions[self.gameID].paddles[-1].score, "score2":active_sessions[self.gameID].paddles[1].score, "start_time":active_sessions[self.gameID].start_time}})
 			del active_sessions[self.gameID]
 			pending_sessions.pop(self.gameID, None)
 		elif self.gameID in pending_sessions:
 			print("gme calls store err1")
-			await store_game_results({"error":"player disconnected in waiting room", "looser": self.user_id, "gameID":self.gameID, "score1" : "", "score2" : "", "start_time": pending_sessions[self.gameID]})
+			await store_game_results({"error":"player disconnected", "looser": self.user_id, "gameID":self.gameID, "score1" : "", "score2" : "", "start_time": pending_sessions[self.gameID]})
 			del pending_sessions[self.gameID]
 		if players.get(self.gameID):
 			players[self.gameID]["connected"] -= 1
@@ -126,7 +120,6 @@ class GameChannel():
 		if "boundaries" in data:
 			self.dimensions = data["boundaries"]
 		if "request" in data:
-			print(data)
 			if data["request"] == "start game":
 				await self.start_game(consumer, data["game_id"])
 			if data["request"] == "update paddles":
@@ -139,7 +132,7 @@ class GameChannel():
 		updates = event["updates"]
 		if (updates["state"] == "error"):
 			await self.consumer.send_self(json.dumps({
-							"type": "game update",
+							"type": "live.game.updates",
 							"updates": {"state" : updates["state"], "info" : updates["info"]}
 						}))
 			print("gm calls store err 2")
@@ -147,7 +140,7 @@ class GameChannel():
 			await self.finish()
 		elif (updates["state"] == "playing" or updates["state"] == "game end"):
 			await self.consumer.send_self({
-							"type": "game update",
+							"type": "live.game.updates",
 							"updates": {
 								"ball" : {
 									"x" : updates["x"][0]  * self.dimensions["x"], 
@@ -164,6 +157,6 @@ class GameChannel():
 				await self.finish()
 		else:
 			await self.consumer.send_self({
-							"type": "game update",
+							"type": "live.game.updates",
 							"updates": updates,
 						})

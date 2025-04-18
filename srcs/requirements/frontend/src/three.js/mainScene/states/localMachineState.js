@@ -3,13 +3,14 @@
 import { State } from '../../core/stateManager/States';
 import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex } from '../objects/machines/localMachineObj';
+import { screenSurface, center, object, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
-	import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
+	import { pongGame, startPongGame, demoGame, startDemoGame } from '../overlays/scenes/pong-game/Game';		
 import { StateManager } from '../../core/stateManager/StateManager';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { AlertManager } from '../overlays/alerts/Alerts';
+import * as THREE from 'three';
 
 const divStart = new StartScreen('white', "START GAME");
 
@@ -48,8 +49,33 @@ const startScreen = new CssSubState(
 	()=>{divStart.animate()},
 )
 
+const divChoose = new End("white");
+const chooseScreen = new CssSubState(
+	"choose", 
+	object,
+	partIndex,
+	surfaceIndex,
+	divChoose.div,
+	0,
+	()=>{divChoose.enter()},
+	null,
+	()=>{divChoose.exit()},
+	()=>{divChoose.resize()},
+	null,
+	null
+)
+
+const demoScreen = new MeshSubState(
+	"demo", 
+	screenSurface,
+	demoGame,
+	1,
+	()=>{startDemoGame("local")},
+	null
+)
+
 const gameScreen = new MeshSubState(
-	"rest", 
+	"game", 
 	screenSurface,
 	pongGame,
 	1,
@@ -78,13 +104,16 @@ const endScreen = new CssSubState(
 const localMachineState = new State(
 	"local game screen", 
 	{
-		pos: [center.x,center.y,center.z],
+		pos: true,
 		duration: 2,
 		ease: "power2.inOut"
 	}, 
+	null,
 	[
 		restScreen,
-		startScreen, 
+		startScreen,
+		// chooseScreen,
+		// demoScreen,
 		gameScreen,
 		endScreen
 	],
@@ -100,6 +129,10 @@ const localMachineState = new State(
 		screenMaterial,
 		pongGame.renderMaterial,
 	],
+	// null,
+	localMachineObj.self,
+	new THREE.Vector3(0, 0, -1),
+	1.5
 )
 
 export {localMachineState}

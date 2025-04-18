@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
+import { InstanceNode } from 'three/webgpu';
+import { fitCameraToObject } from '../../core/stateManager/cameraMovement';
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
@@ -70,6 +72,20 @@ class MainEngine {
 		this.stateManager.animate();
 	}
 	add(newObject, clickable){
+		if (newObject instanceof THREE.Group) {
+			console.log("adding group: ", newObject)
+			this.scene.add(newObject)
+			if (clickable) {
+				newObject.children.forEach(child => {
+					console.log("child: ", child)
+					if (child instanceof THREE.Object3D)
+						this.clickableObjects.push(child);
+					else
+						this.clickableObjects.push(child.self);
+				});
+			}
+			return;
+		}
 		if (! (newObject instanceof THREE.Object3D))
 			newObject = newObject.self;
 		this.scene.add(newObject);
@@ -84,7 +100,15 @@ class MainEngine {
 		this.camera.updateProjectionMatrix();
 	
 		if (this.stateManager)
+		{
+			let state = this.stateManager.currentState;
+			// this.camera.position.set(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+			// let camera_pos =  
+			this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+			// console.log("pos ", camera_pos);)
 			this.stateManager.resize();
+		}
+
 	}
 	blockRaycast(){
 		this.blockRaycast = true;
@@ -108,7 +132,6 @@ class MainEngine {
 				this.clickableObjects[i].userData.instance.handle_click(this.raycaster);
 				return ;
 			}
-
 		}
 	}
 	mousemove(event){

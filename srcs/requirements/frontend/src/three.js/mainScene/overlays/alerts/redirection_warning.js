@@ -34,7 +34,7 @@ function create_redirection_alert(inputlength){
 	new AlertManager().add_alert(redirection_alert);
 }
 
-function enter(){
+function enter(self){
 	const icons = ["assets/icons/Empty.png", "assets/icons/a5.png"];
     let index = 0;
 	let prev_title = document.title;
@@ -47,7 +47,7 @@ function enter(){
 		favicon.href = icons[index];
 	  }, 500)
 	setTimeout(() => {
-			new AlertManager().remove_latest_alert("redirection_alert");
+			new AlertManager().remove_latest_alert(self);
 			clearInterval(interval);
 			document.title = prev_title;
 			favicon.href = prev_icon;

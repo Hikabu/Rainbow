@@ -7,18 +7,31 @@ import { join } from '../overlays/divs/tour_join';
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);
+	// console.log("data: ", data);
 	if (!data)
 		return ;
-	if (data.type == "game update")
+	if (data.type == "game.updates")
+	{
+		pongGame["new-round"](data["gameID"], data["game-type"]);
+		if (new StateManager().currentState.name == "tour game screen")
+		{
+			console.log("its tour game")
+			new StateManager().currentState.changeSubstate(9);
+		}
+		else
+			console.log("state name: ", new StateManager().currentState.name)
+	}
+	if (data.type == "live.game.updates")
 	{
 		pongGame["receive"](data);
 	}
-	else if (data.type == "tour.updates")
+	else if (data.type == "tour.updates" || data.type == "consumer.updates")
 	{
+		console.log("received: ", data)
 		for (const key of Object.keys(tourActions)) {
 			if (key in data)
 			{
-				action = tourActions[key](data, new StateManager().currentState);
+				let action = tourActions[key](data, new StateManager().currentState);
 				if (action)
 					action();
 				break;
@@ -39,39 +52,38 @@ const tourActions = {
 				matchmake["dynamic-content"](data);
 				state.changeSubstate(8);
 			},
-			"start game": () => {
-				pongGame["new-round"](data["gameID"], data["userID"], data["game-type"]);
-				state.changeSubstate(9);
-			},
 			"end game": () => {
 				end["dynamic-content"](data);
-				state.changeSubstate();
+				state.changeSubstate(10);
 			},
-			"waiting": () => state.changeSubstate(11)
+			"waiting": () => {
+				console.log("update waiting...")
+				state.changeSubstate(11)
+			}
 		};
-		return actions[data.update_display];
+		return actions[data.update_display] ?? null;
 	},
 
 	update_tour_registration: (data) => {
 		const registrationActions = {
-			create: () => {
+			"create": () => {
 				new StateManager().states[3].update_start_index(2, update_tour_registration_conditions);
 			},
-			join: () => {
+			"join": () => {
 				join["dynamic-content"](data);
 				if ("button" in data) {
 					new StateManager().states[3].update_start_index(4);
 				}
 			}
 		};
-		return registrationActions[data.update_tour_registration];
+		return registrationActions[data.update_tour_registration] ?? null;
 	},
 
 	notification: (data) => {
 		const notificationActions = {
-			start: () => create_redirection_alert(data["length"] * 1000)
+			"start": () => create_redirection_alert(data["length"] * 1000)
 		};
-		return notificationActions[data.notification];
+		return notificationActions[data.notification] ?? null;
 	}
 };
 
