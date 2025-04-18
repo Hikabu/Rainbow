@@ -2,44 +2,44 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from uuid import uuid4, uuid1
-import pprint
+from django.core.cache import cache
+from .tournamentChannel import TournamentManager
+from channels.layers import get_channel_layer
 
-active_game_logs = {}
+async def new_game(data):
+	print("new game log")
+	log = create_new_log()
+	log['type'] = data.get('type')
+	log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
+	log['players']['1'] = create_new_player(data, data.get('userID1'), 1)				
+	log['players']['2'] = create_new_player(data, data.get('userID2', 'userID1'), 2)
+	player_mode = log["type"]
+	if log["type"] == 'remote':
+		log["tour_id"] = data.get('tour_id')
 
-@api_view(['POST'])
-def	new_game(request):
-	global active_game_logs
-	if request.method == 'POST':
-		log = create_new_log()
-		log['type'] = request.data.get('type')
-		log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
-		log['players']['1'] = create_new_player(request.data, request.data.get('userID1'), 1)				
-		log['players']['2'] = create_new_player(request.data,request.data.get('userID2', 'userID1'), 2)
-		player_mode = log["type"]
-		if log["type"] == 'remote':
-			log["tour_id"] = request.data.get('tour_id')
-
-		active_game_logs[log['gameID']] = log
-		# print("in playlog got this... ", request.data)
-		# print("the log ... ", log)
-		return Response({
-			"userID" : log["players"]["1"]["id"],
-			"userID2" : log["players"]["2"]["id"],
-			"gameID" : log['gameID'],
-			"player_mode": player_mode,
-			"name1" : log["players"]["1"]["alias"],
-			"name2" : log["players"]["2"]["alias"],
-			}, status=201)
-
+	cache.set(f"game_log:{log['gameID']}", log)
+	print("first player...")
+	await get_channel_layer().group_send(f"{data.get('userID1')}", {
+		"type" : "game.updates",
+		"update_display" : "start game",
+		"gameID" : log["gameID"],
+		"userID" : data["userID1"],
+		"game-type" : log["type"] if log["type"] != "remote" else "player1",
+	})
+	if data.get('userID2'):
+		print("second playe")
+		await get_channel_layer().group_send(f"{data.get('userID2')}", {
+			"type" : "game.updates",
+			"update_display" : "start game",
+			"gameID" : log["gameID"],
+			"userID" : data["userID2"],
+			"game-type" : "player2",
+		})
 
 async def store_game_results(results):
-	from .tournamentChannel import ongoing_tournaments
-	global active_game_logs
-
-	print("store called")
-	if results["gameID"] not in active_game_logs:
+	log = cache.get(f"game_log:{results['gameID']}")
+	if log == None:
 		return
-	log = active_game_logs[results["gameID"]]
 
 	if "error" in results:
 		log["error"] = results["error"]
@@ -80,25 +80,22 @@ async def store_game_results(results):
 		elif (results["score1"] < results["score2"]):
 			log['players']['1']["result"] = "loose"
 			log['players']['2']["result"] = "win"
+		else:
+			log['players']['1']["result"] = "draw"
+			log['players']['2']["result"] = "draw"
 	# print("results: ", results)
 	# print("log: ", log)
 	if log["type"] == "remote":
-		print("ot: ", ongoing_tournaments[log["tour_id"]])
-		if log['players']['1']["result"] == "win" :
-			await ongoing_tournaments[log["tour_id"]].end_remote_game({
-				"winner" :  log['players']['1']['id'],
-				"looser" :  log['players']['2']['id'],
-			})
-		else:
-			await ongoing_tournaments[log["tour_id"]].end_remote_game({
-				"looser" :  log['players']['1']['id'],
-				"winner" :  log['players']['2']['id'],
+		tour = TournamentManager().get_tournament(log["tour_id"])
+		if tour :
+			await tour.end_remote_game({
+				"players" :  [log['players']['1'], log['players']['2']],
+				"error" : results.get("error", "")
 			})
 
-	# store log in data base ... 
+	# store log in data base ... TODO
+	cache.delete(f"game_log:{results['gameID']}")
 
-	# pprint.pprint(log)	# end storage
-	del active_game_logs[results["gameID"]]
 
 def create_new_log():
 	return {
@@ -124,23 +121,30 @@ def create_new_player(data, userID, n):
 	}
 	player["id"] = userID
 	player["username"] = data.get("username")
-	player["alias"] = data.get("alias{}".format(n)) or player["username"]
-	#add alias from display name if no tthis then player username
-	if data.get('type') == "AI":
+	if n == 2 and data.get('type') == "AI":
 		player["alias"] = "Computer"
+	elif n == 2 and data.get('type') == "local":
+		player["alias"] = "Oponent"
+	else:
+		#TODO! fetch actual alias
+		player["alias"] = "alias0"
 	return player
 
 def	get_max_players(gameID):
-	return active_game_logs[gameID]["players"]["max"]
+	log = cache.get(f"game_log:{gameID}")
+	return log["players"]["max"] if log else None
 
 def get_paddle_type(gameID, side):
-	if active_game_logs[gameID]["type"] == "AI" and side == 1:
-		return "AI"
-	if active_game_logs[gameID]["type"] == "remote" and side == -1:
-		return "player1"
-	if active_game_logs[gameID]["type"] == "remote" and side == 1:
-		return "player2"
+	log = cache.get(f"game_log:{gameID}")
+	if log:
+		if log["type"] == "AI" and side == 1:
+			return "AI"
+		if log["type"] == "remote" and side == -1:
+			return "player1"
+		if log["type"] == "remote" and side == 1:
+			return "player2"
 	return "local"
 
 def	get_player_alias(gameID):
-	return [active_game_logs[gameID]["players"]["1"]["alias"], active_game_logs[gameID]["players"]["2"]["alias"]]
+	log = cache.get(f"game_log:{gameID}")
+	return [log["players"]["1"]["alias"], log["players"]["2"]["alias"]] if log else None

@@ -23,9 +23,16 @@ class AlertManager{
 		this.currentAlert = alert;
 		this.currentAlert.show();
 	}
-	remove_latest_alert(alert_id){
-		if (this.currentAlert == null || this.currentAlert.id != alert_id)
+	remove_latest_alert(alert_to_remove){
+		if (this.currentAlert == null) //|| this.currentAlert != alert_to_remove)
 			return;
+		if (alert_to_remove && this.currentAlert != alert_to_remove)
+		{
+			console.log("alert already removed")
+			return ;
+
+		}
+		console.log("will reomve alert")
 		this.currentAlert.hide();
 		this.currentAlert = null;
 		if (this.queue.length > 0)
@@ -41,7 +48,7 @@ class Alert{
 		this.append_children(children);
 		this.type = type;//ALERT | WARNING | INFO
 		this.priority = priority;
-		this.enter = enter;
+		this.enter = ()=>{enter(this)};
 		this.exit = exit;
 		this.canQueue = canQueue;
 		this.hide(true);

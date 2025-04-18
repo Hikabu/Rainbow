@@ -53,6 +53,7 @@ class Button extends BaseNonDivElement{
 		this.onClick = onClick;
 		this.element.style.color = color;
 		this.color = color;
+		this.element.style.textAlign = "center";
 		this.element.style.marginTop = margin;
 		this.element.style.marginBottom = margin + marginBot;
 		this.element.addEventListener('mouseover', ()=>{this.activate()});

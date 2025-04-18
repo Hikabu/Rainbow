@@ -6,6 +6,8 @@ class Object {
 		this.basePart = part;
 		this.self = new THREE.Group();
 		this.self.add(this.basePart.self);
+		//this.mesh = new THREE.Group();
+		//this.mesh.add(this.basePart.mesh)
 		this.self.userData.instance = this;
 		this.onclick = null;
 		this.self.raycasting = true;

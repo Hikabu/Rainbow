@@ -1,5 +1,6 @@
 import {getUserID} from './utils'
 import { msgRouter } from './BackendMsg';
+import axios from 'axios';
 
 export class Socket {
 	constructor(){
@@ -10,11 +11,10 @@ export class Socket {
 		Socket.instance = this;
 	}
 	async init(){
-		let response = await axios.get('api/profiles/me/')
-		this.userID = response.data.id 
-		this.msgQueue = [];
+		const response = await axios.get('api/profiles/me/')
+		this.userID = response.data.id
 		try {
-			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
+			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);		
 			this.socket.onerror = this.myError.bind(this);
 			this.socket.onopen = this.myOpen.bind(this);
 			this.socket.onclose = this.myClose.bind(this);
@@ -51,10 +51,5 @@ export class Socket {
 		else
 			this.msgQueue.push(obj);
 	}
-	send(obj){
-		if (this.socket && this.socket.readyState == WebSocket.OPEN)
-				this.socket.send(JSON.stringify(obj));
-		else
-			this.msgQueue.push(obj);
-	}
 }
+

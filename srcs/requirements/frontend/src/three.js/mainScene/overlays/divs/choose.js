@@ -7,49 +7,46 @@ const container = new Overlay([
 			new FlexBox({
 				dir: "column",
 				mainAxis: "space-around",
-				crossAxis: "center",
 				flex: 1,
+				marginBottom : "20%",
+				marginTop: "20%",
 				children: [
-					new FlexBox({
-						// padding: '10%',
-						children: [
-							new Text({
-								content: "EPIC ONINE BATTLE",
-								fontsize: 4
-							}),
-						],
-					}),
-					new Text({
-						content: "PLAY TO EARN ETH!",
-						fontSize: 1
-					}),
 					new Button({
-						id: "button",
-						content: "CREATE NEW TOURNAMENT",
+						id: "button-game",
+						content: "START GAME ",
 						fontSize: 0.85,
 						onClick: ()=>{
-							new Socket().send({
-								"channel":"tournament",
-								"action":"create",
-							})
+							let state = new StateManager().currentState;
+							state.changeSubstate(state.currentIndex + 2)
 						}
-					})
-			 ]
-		})	
+					}),
+					new Button({
+						id: "button-demo",
+						content: "HOW TO PLAY",
+						fontSize: 0.85,
+						onClick: ()=>{
+							new StateManager().currentState.changeSubstate();
+						}
+					}),
+				],
+			}),
 		])
 
 
 
 function show_buttons(){
-	container.getElementById("button").element.style.visibility = "visible";
+	container.getElementById("button-game").element.style.visibility = "visible";
+	container.getElementById("button-demo").element.style.visibility = "visible";
 }
 
 function hide_buttons(){
-	container.getElementById("button").element.style.visibility = "hidden";
+	container.getElementById("button-game").element.style.visibility = "hidden";
+	container.getElementById("button-demo").element.style.visibility = "visible";
 }
 
 function show_div(){
 	container.element.style.visibility = "visible";
+	show_buttons();
 }
 
 function hide_div(){
@@ -57,15 +54,11 @@ function hide_div(){
 	hide_buttons();
 }
 
-
-
-const create = {
+const start = {
 	"div" : container.element,
-	"show-buttons" : show_buttons,
-	"hide-buttons" : hide_buttons,
 	"show-div" : show_div,
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
 }
 
-export {create}
+export {start}
