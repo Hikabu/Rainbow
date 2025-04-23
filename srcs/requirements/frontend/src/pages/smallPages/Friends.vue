@@ -51,21 +51,20 @@
                                 <button
                                     v-for="result in searchResult" 
                                     :key="result.id"
-                                    class="list-gr-item list-gr-item-action d-flex justify-content-between align-items-center"
+                                    class=" btn btn-outline-primary list-gr-item list-gr-item-action d-flex justify-content-between align-items-center"
                                     @click="addFriend(result.id)"
                                 >
-                                    {{ result.username || result.intra_login }}
-                                    <span class="badge bg-primary rounded-pill">Add</span>
+                                    {{ result.username || result.intraLogin }}
+                                    <!-- <span class="badge bg-primary rounded-pill">Add</span> -->
                                 </button>
                             </div>
                         </div>
                         <!-- Friends -->
                         <div class="mb-4 d-flex row-flex justify-content-between">
-                            <!-- DISPLAY-ROW -->
                             <h2 class="form-label">Friends</h2>
                             <ul v-if ="user?.friends.length" class="list-disc list-inside text-white">
                                 <li v-for="friend in user.friends" :key="friend.id">
-                                    {{ friend.username }} 
+                                    {{ friend.username || friend?.intraLogin }} 
                                     <span v-if="friend.isOnline">(Online)</span>
                                     <span v-else>(Ofline)</span>
                                 </li>
@@ -112,8 +111,7 @@ const addFriend = async (friendId) => {
         alert('Failed to add...')
     }
 }
-        
-    
+
 const searchFriends = async () => {
     if (!searchQuery.value.trim()) {
         searchResult.value = []
@@ -187,7 +185,7 @@ const profileData = async () => {
         user.value = response.data
         if (!user.value.displayName){
             if ((user.value.displayName = user.value.username) == null)
-                user.value.displayName = user.value.intra_login
+                user.value.displayName = user.value.intraLogin
             user.value.displayName = user.value.username
         }
         else
