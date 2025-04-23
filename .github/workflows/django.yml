@@ -26,6 +26,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Show directory structure
+      run: ls -R
 
     - name: Set up Python
       uses: actions/setup-python@v3
