@@ -7,8 +7,9 @@ import NotFound from '@/pages/NotFound.vue';
 import RegisterPage from '@/pages/RegisterPage/RegisterPage.vue';
 
 import MainPage from './pages/MainPage/MainPage.vue';
+import Friends from './pages/smallPages/Friends.vue';
+import Payment from './pages/smallPages/Payment.vue';
 import Profile from './pages/smallPages/Profile.vue';
-import Settings from './pages/smallPages/Settings.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,9 +39,15 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/settings',
-      name: 'Settings',
-      component: Settings,
+      path: '/friends',
+      name: 'Friends',
+      component: Friends,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/payment',
+      name: 'Payment',
+      component: Payment,
       meta: { requiresAuth: true }
     },
     {

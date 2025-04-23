@@ -64,7 +64,7 @@
                         <div class="mb-4 d-flex row-flex justify-content-between">
                             <label >Friends can find you by </label>
                             <div class="text-white">
-                                {{ user?.username }}
+                                {{ user?.username || user?.intraLogin }}
                             </div>
                         </div>
                         <!-- Friends -->

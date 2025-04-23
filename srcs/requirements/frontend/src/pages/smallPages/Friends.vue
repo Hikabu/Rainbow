@@ -51,11 +51,11 @@
                                 <button
                                     v-for="result in searchResult" 
                                     :key="result.id"
-                                    class="list-gr-item list-gr-item-action d-flex justify-content-between align-items-center"
+                                    class=" btn btn-outline-primary list-gr-item list-gr-item-action d-flex justify-content-between align-items-center"
                                     @click="addFriend(result.id)"
                                 >
                                     {{ result.username || result.intraLogin }}
-                                    <span class="badge bg-primary rounded-pill">Add</span>
+                                    <!-- <span class="badge bg-primary rounded-pill">Add</span> -->
                                 </button>
                             </div>
                         </div>

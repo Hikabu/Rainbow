@@ -16,6 +16,7 @@
   
   :root {
     /* colors */
+    --account-select-modal-font-family-normal:  Inter, sans-serif;
     --primary-color: #0A2A36;
     --background-color: #36a2eb;
     --background-color-opacity-50: rgba(54 162 235 / 0.5);
