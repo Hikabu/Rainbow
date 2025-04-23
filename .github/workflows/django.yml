@@ -50,6 +50,7 @@ jobs:
 
     - name: Run Tests
       env:
+        working-directory: ./backend
         DATABASE_URL: postgres://postgres:admin123@localhost:5432/postgres
       run: |
         python manage.py test
