@@ -21,9 +21,13 @@
             <span class="Logo"><Icon icon="guidance:bowling"/> </span>
             <span class="text">Turnament</span>
           </router-link>
-          <router-link class="button" to="/settings">
+          <router-link class="button" to="/friends">
             <span class="Logo"><Icon icon="guidance:fishing-area-1"/> </span>
             <span class="text">Friends</span>
+          </router-link>
+          <router-link class="button" to="/payment">
+            <span class="Logo"><Icon icon="arcticons:metamask"/> </span>
+            <span class="text">Payment</span>
           </router-link>
         </div>
 
