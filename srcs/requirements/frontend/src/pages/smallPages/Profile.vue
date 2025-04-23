@@ -30,7 +30,6 @@
                     <div class="card-body ">
                         <!-- Display Name Section -->
                         <div class="mb-4 d-flex row-flex justify-content-between">
-                            <!-- DISPLAY-ROW -->
                          <label >Display Name</label>
                                 <input 
                                     v-if="isEditing"
@@ -56,18 +55,24 @@
 
                         <!-- Email -->
                         <div class="mb-4 d-flex row-flex justify-content-between">
-                            <!-- DISPLAY-ROW -->                            <label >Email</label>
+                            <label >Email</label>
                             <div class="text-white">
                                 {{ user?.email }}
                             </div>
                         </div>
+                        <!-- Username -->
+                        <div class="mb-4 d-flex row-flex justify-content-between">
+                            <label >Friends can find you by </label>
+                            <div class="text-white">
+                                {{ user?.username || user?.intraLogin }}
+                            </div>
+                        </div>
                         <!-- Friends -->
                         <div class="mb-4 d-flex row-flex justify-content-between">
-                            <!-- DISPLAY-ROW -->
                             <label class="form-label">Friends</label>
                             <ul v-if ="user?.friends.length" class="list-disc list-inside text-white">
                                 <li v-for="friend in user.friends" :key="friend.id">
-                                    {{ friend.username }} 
+                                    {{ friend.username || friend?.intraLogin }} 
                                     <span v-if="friend.isOnline">(Online)</span>
                                     <span v-else>(Ofline)</span>
                                 </li>
@@ -153,16 +158,9 @@ const profileData = async () => {
     try {
         const response = await axios.get('api/profiles/me/')
         user.value = response.data
-        user.value.displayName ||= user.value.username ?? user.value.intra_login
+        user.value.displayName ||= user.value.username ?? user.value.intraLogin
 
         return user.value.displayName
-        // if (!user.value.displayName){
-        //     if ((user.value.displayName = user.value.username) == null)
-        //         user.value.displayName = user.value.intra_login
-        //     user.value.displayName = user.value.username
-        // }
-        // else
-        //     return user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)
     }
