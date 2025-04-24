@@ -34,14 +34,6 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Cache pip
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/*.py') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
     - name: Install system dependencies
       run: sudo apt-get update && sudo apt-get install -y libpq-dev
 
@@ -52,7 +44,7 @@ jobs:
 
     - name: Run Tests
       env:
-        working-directory: ./backend
+        working-directory: ./src/requirements/backend 
         DATABASE_URL: postgres://postgres:admin123@localhost:5432/postgres
       run: |
         python manage.py test
