@@ -11,11 +11,6 @@
                         class="rounded-circle"
                         style="width: 210px; height: 210px; object-fit: cover;"
                     >
-                    <div 
-                        v-else 
-                        class="rounded-circle bg-secondary position-absolute top-1 end-0"
-                        style="width: 210px; height: 210px;"
-                    ></div>
                 </div>
                 <input 
                     ref="fileInput"
