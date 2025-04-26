@@ -59,6 +59,8 @@ django-ratelimit = "*"
 django-s3-storage = "*"
 django-storages = "*"
 boto3 = "*"
+numpy = "*"
+channels-redis = "*"
 
 [dev-packages]
 black = "==25.1.0"

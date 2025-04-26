@@ -33,6 +33,7 @@ AUTH_USER_MODEL = 'intrauth.CustomUser'
 # Application definition
 
 INSTALLED_APPS = [
+	# "daphne",
     # Built-in Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -48,9 +49,9 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "rest_framework_simplejwt.token_blacklist",
     # Custom Project Apps
-    "project.apps.pong",
     "project.apps.custom_auth",
     "project.apps.intrauth",
+	"project.apps.game",
     "storages",
 ]
 
@@ -101,11 +102,20 @@ DATABASES = {
 }
 
 # Channels
+
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [os.environ.get("REDIS_URL", "redis://localhost:6379")],
+        },
     },
 }
+
+REDIS_HOST = 'redis'
+REDIS_PORT = 6379
+ROOT_URLCONF = 'project.urls'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -182,6 +192,7 @@ CSRF_COOKIE_SECURE = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
     "https://localhost",
+    "https://localhost:4443",
     "http://localhost:5173",  # dev
     "http://django-transendence.s3-website-us-east-1.amazonaws.com",
 ]
@@ -190,6 +201,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
     "https://localhost",
     "http://localhost:5173",
+    "https://localhost:4443",
     "http://django-transendence.s3-website-us-east-1.amazonaws.com",
 ]
 
