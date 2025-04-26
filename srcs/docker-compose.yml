@@ -21,6 +21,13 @@ services:
       retries: 3
     restart: always
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - ft_transcendence
+    restart: always
+
   backend:
     container_name: backend
     build:
@@ -35,6 +42,7 @@ services:
       - AWS_ACCESS_KEY_ID=UPDATE_ME
       - AWS_SECRET_ACCESS_KEY=UPDATE_ME
       - AWS_STORAGE_BUCKET_NAME=UPDATE_ME
+      - REDIS_URL=redis://redis:6379
     networks:
       - ft_transcendence
     expose:
@@ -45,6 +53,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 1m
@@ -76,7 +86,7 @@ services:
     ports:
       # - "80:80"
       - "8080:8080"
-      - "443:443"
+      - "4443:443"
     volumes:
       - frontend_build:/usr/share/nginx/html
     networks:
@@ -94,6 +104,21 @@ services:
       timeout: 30s
       retries: 5
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    networks:
+      - ft_transcendence
+    container_name: portainer
+    restart: on-failure
+    ports:
+      - "1313:9000"  # Portainer UI
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    # environment:
+    #   TZ: "Your/Timezone"  # Optional: Replace with your timezone (e.g., "Etc/UTC" or "America/New_York")
+
+
 networks:
   ft_transcendence:
     driver: bridge
@@ -104,6 +129,7 @@ volumes:
   media_volume:
   database-postgres:
   postgres_data:
+  portainer_data:
 
 secrets:
   ssl_certificate:
