@@ -35,7 +35,7 @@ def intra_login_redirect(request):
     code = request.GET.get("code")
     if not code:
         print("Code is missing in the request")
-        return redirect("https://localhost/")
+        return redirect("https://localhost:4443/")
     
     try:
         user_data = exhange_code(code)
@@ -49,7 +49,7 @@ def intra_login_redirect(request):
         refresh = RefreshToken.for_user(intra_user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
-        response = redirect("https://localhost/mainpage")
+        response = redirect("https://localhost:4443/mainpage")
         
         
         response.set_cookie('access_token', access_token, secure=True, max_age=60 * 15)
