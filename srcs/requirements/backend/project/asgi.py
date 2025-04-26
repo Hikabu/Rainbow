@@ -1,30 +1,14 @@
-"""
-ASGI config for project project.
+import os, django
 
-It exposes the ASGI callable as a module-level variable named ``application``.
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
+django.setup()
 
-For more information on this file, see
-https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
-"""
-
-import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from django.urls import path
-from project.apps.pong.consumers import PongConsumer
+from .urls import ws_urlpatterns
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
-
-application = ProtocolTypeRouter(
-    {
-        "http": get_asgi_application(),
-        "websocket": AuthMiddlewareStack(
-            URLRouter(
-                [
-                    path("ws/pong/", PongConsumer.as_asgi()),
-                ]
-            )
-        ),
-    }
-)
+application = ProtocolTypeRouter({
+    "http": get_asgi_application(),
+    "websocket": AuthMiddlewareStack(URLRouter(ws_urlpatterns)),
+})
