@@ -1,9 +1,7 @@
 <template>
-  <ConfigProvider :theme="ANTD_THEME_CONFIG">
     <main class="layout">
       <router-view />
     </main>
-  </ConfigProvider>
 </template>
 
 <script setup>
