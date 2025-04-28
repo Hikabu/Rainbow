@@ -1,9 +1,9 @@
 import { StateManager } from '../../core/stateManager/StateManager';
-import { pongGame} from '../overlays/scenes/pong-game/Game'
-import { end } from '../overlays/divs/tour_end';
-import { matchmake } from '../overlays/divs/tour_matchamake';
 import { create_redirection_alert } from '../overlays/alerts/redirection_warning';
+import { end } from '../overlays/divs/tour_end';
 import { join } from '../overlays/divs/tour_join';
+import { matchmake } from '../overlays/divs/tour_matchamake';
+import { pongGame} from '../overlays/scenes/pong-game/Game'
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);

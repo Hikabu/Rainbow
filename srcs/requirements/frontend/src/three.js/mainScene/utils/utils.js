@@ -141,4 +141,4 @@ async function getUserID() {
 	}
 }
 
-export { order_path, mapToCenter, update_min_max, dispose_object, getUserID};
+export { dispose_object, getUserID,mapToCenter, order_path, update_min_max};

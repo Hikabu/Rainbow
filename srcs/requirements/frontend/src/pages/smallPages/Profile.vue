@@ -4,94 +4,97 @@
             <SideBar />
             <div class="about col-md-10 p-5 flex-grow-1 position-relative">
                 <!-- avatars -->
-                <div style="cursor: pointer;" @click="triggerFileInput" >
-                    <img 
-                        v-if="user?.avatar || user?.intra_avatar" 
-                        :src="user.avatar || user?.intra_avatar" 
-                        class="rounded-circle"
-                        style="width: 210px; height: 210px; object-fit: cover;"
+                <!-- <div v-if="user"> -->
+                    <div style="cursor: pointer;" @click="triggerFileInput" >
+                        <img 
+                            v-if="user?.avatar || user?.intra_avatar" 
+                            :src="user.avatar || user?.intra_avatar" 
+                            class="rounded-circle"
+                            style="width: 210px; height: 210px; object-fit: cover;"
+                        >
+                    </div>
+                    <input 
+                        ref="fileInput"
+                        type="file"
+                        style="display: none;"
+                        accept="image/*"
+                        @change="handleFileUpload"
                     >
-                </div>
-                <input 
-                    ref="fileInput"
-                    type="file"
-                    style="display: none;"
-                    accept="image/*"
-                    @change="handleFileUpload"
-                >
-                <h1 class="text-white mb-5">My Details</h1>
-                
-                <div class="card ">
-                    <div class="card-body ">
-                        <!-- Display Name Section -->
-                        <div class="mb-4 d-flex row-flex justify-content-between">
-                         <label >Display Name</label>
-                                <input 
-                                    v-if="isEditing"
-                                    v-model="newDisplayName" 
-                                >
-                                <div v-else class=" text-white">
-                                    {{ user?.displayName }}
-                                </div>
-                                <button 
-                                    class="btn btn-outline-primary"
-                                    @click="toggleEdit"
-                                >
-                                    {{ isEditing ? 'Cancel' : 'Edit' }}
-                                </button>
-                                <button 
-                                    v-if="isEditing"
-                                    class="btn btn-primary"
-                                    @click="saveDisplayName"
-                                >
-                                    Save
-                                </button>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="mb-4 d-flex row-flex justify-content-between">
-                            <label >Email</label>
-                            <div class="text-white">
-                                {{ user?.email }}
+                    <h1 class="text-white mb-5">My Details</h1>
+                    
+                    <div class="card ">
+                        <div class="card-body ">
+                            <!-- Display Name Section -->
+                            <div class="mb-4 d-flex row-flex justify-content-between">
+                            <label >Display Name</label>
+                                    <input 
+                                        v-if="isEditing"
+                                        v-model="newDisplayName" 
+                                    >
+                                    <div v-else class=" text-white">
+                                        {{ user?.displayName }}
+                                    </div>
+                                    <button 
+                                        class="btn btn-outline-primary"
+                                        @click="toggleEdit"
+                                    >
+                                        {{ isEditing ? 'Cancel' : 'Edit' }}
+                                    </button>
+                                    <button 
+                                        v-if="isEditing"
+                                        class="btn btn-primary"
+                                        @click="saveDisplayName"
+                                    >
+                                        Save
+                                    </button>
                             </div>
-                        </div>
-                        <!-- Username -->
-                        <div class="mb-4 d-flex row-flex justify-content-between">
-                            <label >Friends can find you by </label>
-                            <div class="text-white">
-                                {{ user?.username || user?.intraLogin }}
-                            </div>
-                        </div>
-                        <!-- Friends -->
-                        <div class="mb-4 d-flex row-flex justify-content-between">
-                            <label class="form-label">Friends</label>
-                            <ul v-if ="user?.friends.length" class="list-disc list-inside text-white">
-                                <li v-for="friend in user.friends" :key="friend.id">
-                                    {{ friend.username || friend?.intraLogin }} 
-                                    <span v-if="friend.isOnline">(Online)</span>
-                                    <span v-else>(Ofline)</span>
-                                </li>
-                            </ul>
-                            <p v-else class="text-white">No friends yet.</p>
-                        </div>
 
-                        <!-- Wins and Losses -->
-                        <div class="row">
-                            <div class="col-md-6 mb-4 ">
-                                <label class="form-label ">Wins</label>
-                                <div class="form-control-plaintext text-white">
-                                    {{ user?.wins || 0 }}
+                            <!-- Email -->
+                            <div class="mb-4 d-flex row-flex justify-content-between">
+                                <label >Email</label>
+                                <div class="text-white">
+                                    {{ user?.email }}
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label">Losses</label>
-                                <div class="form-control-plaintext text-white ">
-                                    {{ user?.losses || 0 }}
+                            <!-- Username -->
+                            <div class="mb-4 d-flex row-flex justify-content-between">
+                                <label >Friends can find you by </label>
+                                <div class="text-white">
+                                    {{ user?.username || user?.intraLogin }}
+                                </div>
+                            </div>
+                            <!-- Friends -->
+                            <div class="mb-4 d-flex row-flex justify-content-between">
+                                <label class="form-label">Friends</label>
+                                <ul v-if ="user?.friends.length" class="list-disc list-inside text-white">
+                                    <li v-for="friend in user.friends" :key="friend.id">
+                                        {{ friend.username || friend?.intraLogin }} 
+                                        <span v-if="friend.isOnline">(Online)</span>
+                                        <span v-else>(Ofline)</span>
+                                    </li>
+                                </ul>
+                                <p v-else class="text-white">No friends yet.</p>
+                            </div>
+
+                            <!-- Wins and Losses -->
+                            <div class="row">
+                                <div class="col-md-6 mb-4 ">
+                                    <label class="form-label ">Wins</label>
+                                    <div class="form-control-plaintext text-white">
+                                        {{ user?.wins || 0 }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Losses</label>
+                                    <div class="form-control-plaintext text-white ">
+                                        {{ user?.losses || 0 }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                <!-- </div> -->
+                <!-- <div v-else> Loading...</div> -->
             </div>
         </div>
     </div>

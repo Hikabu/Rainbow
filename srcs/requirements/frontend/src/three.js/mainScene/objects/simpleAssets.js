@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+
 import { Part } from '../../core/objectFactory/Part'
 
 const materialsgroup = [//phong
@@ -117,10 +118,9 @@ const part_asym_ang = 2;
 
 
 
-export { materialsgroup, singleMaterial, lineBasicMaterial, 
+export { lineBasicMaterial, 
+materialsgroup, 	part_asym, part_asym_ang,
 	part_sym_2d, part_sym_3d, 
-	part_asym, part_asym_ang,
-	threeCube,
-
 	screenMaterial,
+singleMaterial, 	threeCube,
 }
