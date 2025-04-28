@@ -1,6 +1,6 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
-import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
-import { Text, Button } from '../../../core/UIFactory/Elements';
+import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { Button,Text } from '../../../core/UIFactory/Elements';
 
 class StartScreen{
 	constructor(color = "black", title = "START GAME", fontSize=1.8){

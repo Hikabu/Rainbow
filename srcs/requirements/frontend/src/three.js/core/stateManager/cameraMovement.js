@@ -1,9 +1,10 @@
 
+import * as THREE from 'three';
 import { mx_bilerp_0 } from "three/src/nodes/materialx/lib/mx_noise.js";
+
 import { arcadeMachine } from "../../mainScene/objects/arcadeMachine";
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 import { StateManager } from "./StateManager";
-import * as THREE from 'three';
 
 // const engine = ;
 

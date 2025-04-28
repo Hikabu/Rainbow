@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { InstanceNode } from 'three/webgpu';
+
 import { fitCameraToObject } from '../../core/stateManager/cameraMovement';
 class MainEngine {
 	constructor(){
