@@ -1,10 +1,13 @@
 import json, asyncio, numpy as np
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async # expect function not result
 from .gameChannel import GameChannel, gameManager
 from .tournamentChannel import TournamentChannel, TournamentManager
 from .playLog import new_game
 from django.utils import timezone
 from django.core.cache import cache
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 #LERA use online
 def isUserOnline(user_id):
@@ -12,6 +15,37 @@ def isUserOnline(user_id):
 	if active_users == None or user_id not in active_users:
 		return False
 	return True
+#user bla connects-axios bla's friends-for every frined-send live update that bla is onlien
+
+async def friends_status(self, event):
+    await self.send(text_data=json.dumps({
+		"type": "friend_status",
+		"friend_id": event["friend_id"],
+		"is_online": event["is_online"],
+	}))
+async def notify_friends(self, is_online):
+	try:
+		#take user with orm from db but on async so the loop will loop
+		#send to separate thread so it will not block the websocket perfomance
+		user = await database_sync_to_async(User.objects.get)(id=self.user_id)
+		#lambda to call the fuction not the result so when its safe to call the labbda will be executed
+		friends = await database_sync_to_async(lambda: list(user.friends.all().values_list('id', flat=True))) # only friends id[2,5,6]
+
+		for friend_id in friends:
+			await self.channel_layer.group_send(
+				str(friend_id),
+				{
+					"type": "friend_status",
+					"frined_id": self.user_id,
+					"is_online": is_online,
+				}
+			)
+      
+      
+	except Exception as e:
+		print(f"Error with friend connection: {e} ")
+     
+			
 
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -28,6 +62,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		cache.set('active_users', active_users)
 		#TODO cehck if self consumer was here before....
 		self.user_data = cache.get(f"consumer_{self.user_id}")
+		await self.notify_friends(is_online=True)
 		if self.user_data :
 			self.tournament = TournamentManager().get_tournament(self.user_data.tournament)
 			for room in self.user_data.rooms:

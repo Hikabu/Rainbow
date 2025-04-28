@@ -1,8 +1,9 @@
+import * as THREE from 'three';
+
 import { MainEngine } from '../../mainScene/utils/MainEngine';
 import { moveCamera } from './cameraMovement';
+import { fitCameraToObject,get_camera_animation } from './cameraMovement';
 import { StateManager } from './StateManager';
-import { get_camera_animation, fitCameraToObject } from './cameraMovement';
-import * as THREE from 'three';
 
 class State {
     constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials, targetObject, targetNormal, targetPadding = 1.25) {

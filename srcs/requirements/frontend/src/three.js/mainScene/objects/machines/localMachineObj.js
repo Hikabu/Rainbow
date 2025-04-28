@@ -1,10 +1,9 @@
 import { Object } from '../../../core/objectFactory/Object'
 import { StateManager } from '../../../core/stateManager/StateManager';
-import { materialsgroup, singleMaterial, 
+import { materialsgroup, 		part_asym, part_asym_ang,
 		part_sym_2d, part_sym_3d, 
-		part_asym, part_asym_ang,
+singleMaterial, 
 		threeCube} from '../simpleAssets';
-
 import { screenMaterial } from '../simpleAssets';
 
 const object = new Object(part_sym_3d);
@@ -22,4 +21,4 @@ screenSurface.add_material( screenMaterial);
 const center = object.self.position.clone();
 center.z += 2;
 
-export {localMachineObj, screenSurface, center, object, partIndex, surfaceIndex}
+export {center, localMachineObj, object, partIndex, screenSurface, surfaceIndex}

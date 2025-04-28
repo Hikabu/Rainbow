@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
-import { SubState } from "./SubStates";
+
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 import { StateManager } from './StateManager';
+import { SubState } from "./SubStates";
 
 class CssSubState extends SubState {
 	constructor(name, object, partIndex = 0, surfaceIndex = 0, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate){

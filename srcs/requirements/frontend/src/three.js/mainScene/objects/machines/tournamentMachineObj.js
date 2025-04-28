@@ -1,10 +1,10 @@
 import { Object } from '../../../core/objectFactory/Object'
-import { materialsgroup, singleMaterial, 
+import { StateManager } from '../../../core/stateManager/StateManager';
+import { materialsgroup, 		part_asym, part_asym_ang,
 		part_sym_2d, part_sym_3d, 
-		part_asym, part_asym_ang,
+singleMaterial, 
 		threeCube} from '../simpleAssets';
 import { screenMaterial } from '../simpleAssets';
-import { StateManager } from '../../../core/stateManager/StateManager';
 
 const object = new Object(part_asym);
 object.self.position.z = 3;
@@ -20,4 +20,4 @@ const screenSurface = object.self.children[partIndex].children[surfaceIndex].use
 screenSurface.add_material( screenMaterial);
 const center = object.self.position.clone();
 center.z += 2;
-export {tourMachineObj, screenSurface, center, object, partIndex, surfaceIndex}
+export {center, object, partIndex, screenSurface, surfaceIndex,tourMachineObj}
