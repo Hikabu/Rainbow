@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import { StateManager } from './StateManager';
-import { fitCameraToObject } from './cameraMovement';
+
 import { MainEngine } from '../../mainScene/utils/MainEngine';
+import { fitCameraToObject } from './cameraMovement';
+import { StateManager } from './StateManager';
 
 class SubState {
     constructor(name, surface = null, materialIndex, setup, postCamMoveSetUp, cleanup, updateSize, keyHandler, animation) {

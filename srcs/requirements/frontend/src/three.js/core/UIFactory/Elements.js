@@ -70,4 +70,4 @@ class Button extends BaseNonDivElement{
 	}
 }
 
-export {Text, Input, Button}
+export {Button,Input, Text}

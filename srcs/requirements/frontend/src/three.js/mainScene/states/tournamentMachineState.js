@@ -1,23 +1,22 @@
 
+import * as THREE from 'three';
+
+import { StateManager } from '../../core/stateManager/StateManager';
 import { State } from '../../core/stateManager/States';
-import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
-
+import { CssSubState,MeshSubState } from '../../core/stateManager/SubStatesExtends';
+import { center, object, partIndex, screenSurface, surfaceIndex, tourMachineObj } from '../objects/machines/tournamentMachineObj';
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex, tourMachineObj } from '../objects/machines/tournamentMachineObj';
-
-import { start } from '../overlays/divs/tour_start';
+import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { create } from '../overlays/divs/tour_create';
+import { end } from '../overlays/divs/tour_end';
 import { join } from '../overlays/divs/tour_join';
+import { matchmake } from '../overlays/divs/tour_matchamake';
 import { payment } from '../overlays/divs/tour_payment';
 import { refund } from '../overlays/divs/tour_refund';
+import { start } from '../overlays/divs/tour_start';
 import { pongGame } from '../overlays/scenes/pong-game/Game';
-import { end } from '../overlays/divs/tour_end';
-import { matchmake } from '../overlays/divs/tour_matchamake';
 import { waiting } from '../overlays/scenes/waiting';
-import { StateManager } from '../../core/stateManager/StateManager';
 import { Socket } from '../utils/Socket';
-import { create_exit_alert } from '../overlays/alerts/exit_warning';
-import * as THREE from 'three';
 
 const divStart = start;
 const restScreen = new CssSubState(
