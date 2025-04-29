@@ -1,25 +1,36 @@
 <template>
   <div class="mainpage container-fluid p-0">
-    <div class="d-flex row-flex">
+
+    <div v-if="!appVisible" id="loading-screen">
+      <!-- your loading content here -->
+    </div>
+
+    <div v-else class="d-flex row-flex">
       <SideBar />
       <div class="about col-md-10 p-0 flex-grow-1 position-relative">
-        <!-- 3D container mount point -->
         <div ref="threeContainer" class="three-container"></div>
       </div>
     </div>
+
   </div>
 </template>
+
 
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import SideBar from '../../components/SideBar.vue'
-import { enterScene, exitScene } from '../../three.js/index.js'
+import { preEnterScene, exitScene } from '../../three.js/index.js'
+import { OnLoad } from '../../three.js/mainScene/utils/OnLoad.js'
 
 const threeContainer = ref(null)
 
+const isLoading = ref(true);
+const appVisible = ref(false);
+
 onMounted(() => {
   if (threeContainer.value) {
-    enterScene(threeContainer.value)
+    preEnterScene(threeContainer.value)
+	new OnLoad().set_first_load(isLoading, appVisible)
   }
 })
 
@@ -37,4 +48,33 @@ onBeforeUnmount(() => {
   left: 0;
   z-index: 0;
 }
+#loading-screen {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background-color: rgba(0, 0, 0, 0.8);
+			border: 2px solid #00ffcc;
+			border-radius: 12px;
+			color: #00ffcc;
+			padding: 1.5rem 2.5rem;
+			font-size: 1rem;
+			text-align: center;
+			box-shadow: 0 0 12px #00ffcc;
+			z-index: 1000;
+			pointer-events: none;
+		}
+		#loading-dots::after {
+			content: '';
+			display: inline-block;
+			width: 1ch;
+			text-align: left;
+			animation: dots 1.5s steps(3, end) infinite;
+		}
+		@keyframes dots {
+			0% { content: ''; }
+			33% { content: '.'; }
+			66% { content: '..'; }
+			100% { content: '...'; }
+		}
 </style>

@@ -5,7 +5,7 @@ from django.urls import path, include
 # tokens
 from project.apps.custom_auth.views import UserCreateView, GetOTPView, VerifyOTPView, AuthStatusView, ProfileViewSet, UserVerify, MyTokenObtainPairView, MyTokenRefreshView, UserLogOutView, FriendsViewSet
 from project.apps.intrauth.views import home, intra_login, intra_login_redirect, get_authenticated_user
-from project.apps.game import consumers, playLog, utils
+from project.apps.game import consumers
 
 from rest_framework.routers import DefaultRouter
 
@@ -39,8 +39,6 @@ urlpatterns = [
     path('api/verify-otp/', VerifyOTPView.as_view(), name='verify_otp'),
 
 	#game
-	path('new-game/', playLog.new_game, name='new-game'),
-	path('get-userID/', utils.get_userID, name='get-userID'),
 ]
 
 ws_urlpatterns = [
