@@ -27,7 +27,7 @@ const mainSub = new SubState(
 	mainSceneObj
 )
 const mainState = new State(
-	"main view",
+	"lobby",
 	{
 		pos: true, 
 		duration: 2, 

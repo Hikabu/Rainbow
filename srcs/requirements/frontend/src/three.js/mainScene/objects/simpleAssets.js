@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Part } from '../../core/objectFactory/Part'
-
+import { OnLoad } from '../utils/OnLoad';
 const materialsgroup = [//phong
 	new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }),
 	new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide}),
@@ -12,19 +12,20 @@ const materialsgroup = [//phong
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onStart = () =>
 	{
-		console.log('loading started')
+		// console.log('loading started')
 	}
 	loadingManager.onLoad = () =>
 	{
-		console.log('loading finished')
+		// console.log('loading finished')
+		new OnLoad().set_texture_ready()
 	}
 	loadingManager.onProgress = () =>
 	{
-		console.log('loading progressing')
+		// console.log('loading progressing')
 	}
 	loadingManager.onError = () =>
 	{
-		console.log('loading error')
+		// console.log('loading error')
 	}
 const textureLoader = new THREE.TextureLoader(loadingManager);
 
@@ -84,11 +85,6 @@ const part_asym_ang = 2;
 //   });
 
   const screenMaterial = new THREE.MeshStandardMaterial({
-	// color: 0x000000,  // Black background (could be gray too)
-	// emissive: 0x000000,  // White emissive to simulate the glow of the screen
-	// emissiveIntensity: 0.5,  // Adjust emissive intensity to control glow
-	roughness: 0.8,  // Slight roughness to simulate an older screen
-	metalness: 0,  // Non-metallic
 	map: noiseTexture,  // Apply scanline texture
 	side: THREE.FrontSide,  // Can also be THREE.BackSide depending on how you want to view the screen
 	opacity: 1,

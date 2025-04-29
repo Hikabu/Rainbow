@@ -1,8 +1,12 @@
 import * as THREE from 'three';
+import { fitCameraToObject } from '../../../../../core/stateManager/cameraMovement';
 
 export class MiddleBars{
 	constructor(visibility, engine){
 		this.object = this.setUpMiddleBars(engine.scene);
+		// console.log("")
+		// console.log("CAMERA SCENE: Could be=> ", fitCameraToObject(this.object, new THREE.Vector3(0, 0, -1), 1.25, 2));
+		// console.log("CAMERA SCENE: IS => ", engine.camera.position)
 		this.object.visible = visibility;
 	}
 	setUpMiddleBars(scene){

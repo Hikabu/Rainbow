@@ -1,5 +1,7 @@
 import {getUserID} from './utils'
 import { msgRouter } from './BackendMsg';
+import { stateManager } from '../states/mainMenuState';
+import { StateManager } from '../../core/stateManager/StateManager';
 import axios from 'axios';
 
 export class Socket {
@@ -8,17 +10,19 @@ export class Socket {
 			return Socket.instance
 		this.msgQueue = [];
 		this.init();
+		this.userID = null;
 		Socket.instance = this;
 	}
 	async init(){
 		const response = await axios.get('api/profiles/me/')
 		this.userID = response.data.id
+
 		try {
-			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);		
+			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
 			this.socket.onerror = this.myError.bind(this);
 			this.socket.onopen = this.myOpen.bind(this);
 			this.socket.onclose = this.myClose.bind(this);
-			this.socket.onmessage = msgRouter; 
+			this.socket.onmessage = (event) => msgRouter(event);
 		}
 		catch(err){
 			this.myError(err)
@@ -26,7 +30,7 @@ export class Socket {
 	}
 	myError(err){
 		console.error("WebSocket error:", err);		
-		//this.myRetry();		
+		//this.myRetry();	//TODO: after testing uncomment	
 	}
 	myOpen(){
 		this.msgQueue.forEach(msg => {
@@ -52,4 +56,3 @@ export class Socket {
 			this.msgQueue.push(obj);
 	}
 }
-

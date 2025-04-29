@@ -36,7 +36,7 @@ class GameManager:
 		async with self._new_games_lock:
 			self._new_games.append(game_id)
 		if self._routine_start == False:
-			asyncio.create_task(self._routine())
+			await asyncio.create_task(self._routine())
 			self._routine_start = True
 
 	async def delete_game(self, game_id):
@@ -85,9 +85,8 @@ class GameManager:
 				break
 
 class GameChannel():
-	def __init__(self, game_id, game_mode):
+	def __init__(self, consumer, game_id):
 		print("CREATING NEW GAME CHANNEL")
-		self.game_mode = game_mode
 		self.game_id = game_id
 		self.room = f"game_{game_id}"
 		self.active_players = []
@@ -118,7 +117,6 @@ class GameChannel():
 			return True
 		print("adding new player")
 		await consumer.join_channel(self.room)
-		consumer.game = self
 		consumer.update_user_data({"action":"set", "key":"game", "value":self.game_id})
 		print(consumer.user_id, " joining channel ", self.room)
 		print(consumer.user_data)
@@ -153,7 +151,7 @@ class GameChannel():
 			"total_players" : len(self.expected_players_id),
 		})
 		self.logic = GameLogic(self.game_id)
-		self.status = "active"
+		self.status = "test"
 		#print("cehck?")
 
 	async def logic_updates(self):
@@ -189,12 +187,9 @@ class GameChannel():
 		if self.status == "finished":
 			return
 		self.active_players.remove(consumer.user_id)
+		await consumer.remove_channel(self.room)
 		self.disconnected_players.append(consumer.user_id)
 		await self.error_end("player disconnected")
-		#moved below before it was above error end
-		await consumer.remove_channel(self.room)
-		consumer.update_user_data({"action" : "set", "key" : "game", "value" : None})
-	
 
 	async def error_end(self, error):
 		if self.status == "finished":
@@ -219,16 +214,18 @@ class GameChannel():
 		await self.finish()
 
 
-async def join_game_channel(consumer, game_id):
-	print("consumer ", consumer.user_id, "joining game chaneel", game_id)
+async def get_or_create_game_channel(consumer, game_id):
 	game = GameManager().get_game(game_id)
 	if game:
+		print("joining game channel")
 		if await game.join(consumer):
-			return game
-	return None
-
-async def create_game_channel(game_id, game_mode):
-	new_game = GameChannel(game_id, game_mode)
+			return game 
+		else :
+			return None
+	new_game = GameChannel(consumer, game_id)
 	GameManager().add_game(new_game)
-	new_game.start_time = time.time()
-	await GameManager().add_routine_game(game_id)
+	if await new_game.join(consumer):
+		new_game.start_time = time.time()
+		await GameManager().add_routine_game(game_id)
+		return new_game
+	return None
