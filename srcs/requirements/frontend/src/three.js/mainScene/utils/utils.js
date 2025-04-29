@@ -124,21 +124,8 @@ function mapToCenter(pointsLeft, pointsRight)
 }
 
 async function getUserID() {
-	try {
-		let response = await fetch('http://localhost:8004/get-userID/', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-		});
-		let data = await response.json();
-		if (data["error"]) {
-			alert(data["error"]);
-			return null;
-		}
-		return data["result"];
-	} catch (error) {
-		console.error('Error getting user ID:', error);
-		return null;
-	}
+	//return Date.now()
+	return 1
 }
 
 export { order_path, mapToCenter, update_min_max, dispose_object, getUserID};
