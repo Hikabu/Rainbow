@@ -25,12 +25,9 @@ const container = new Overlay([
 	})
 	
 ])
-function getAlias(){
-	return "alias"
-}
 
 function organize_players_array(array){
-	console.log("all players length: ", array.length)
+	// console.log("all players length: ", array.length)
 	if (array.length % 2 == 1)
 		array.push("")
 	// const index_user = array.indexOf(getAlias());
@@ -46,7 +43,7 @@ function dynamic_content(data){
 	container.getElementById("title").element.textContent=`Round ${data["current round"]}`;
 	container.getElementById("subtitle").element.textContent=`${data["players"].length} players`;
 	new_matches = createTextGrid(organize_players_array(data["players"]));
-	container.getElementById("matches").element.replaceWith(new_matches.element);
+	container.getElementById("matches").replaceWith(new_matches);
 }
 
 function getStringMatch(i, players){

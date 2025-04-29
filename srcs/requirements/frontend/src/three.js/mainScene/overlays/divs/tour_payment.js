@@ -3,6 +3,8 @@ import { State } from "../../../core/stateManager/States";
 import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
 import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
+import { fadeout } from "../../../core/UIFactory/effects";
+import axios from 'axios';
 
 const container = new Overlay([
 			new FlexBox({
@@ -23,13 +25,13 @@ const container = new Overlay([
 				}),
 			new FlexBox({
 				dir: "row",
-				mainAxis: "space around",
+				mainAxis: "space-around",
 				children: [
 					new Button({
 						id: "button-test-1",
 						content: "(test)accept",
 						fontSize: 0.85,
-						onClick: ()=>{payment_successful()}
+						onClick: async()=>{await payment_successful()}
 					}),
 					new Button({
 						id: "button-test-2",
@@ -72,22 +74,22 @@ function hide_div(){
 	hide_buttons();
 }
 
-function fadeOut(){
-	//TODO 
-}
 
-function payment_successful(){
+async function payment_successful(){
+	const response = await axios.get('api/profiles/me/')
+	let alias = response.data.display_name
 	new Socket().send({
 		"channel" : "tournament",
 		"action": "succesfull payment",
 		"tour_id": 	new StateManager().currentState.currentSubstate.data["tour_id"],
+		"alias" : alias,
 	})
 	container.getElementById("pay-message").element.textContent = "Payment Successful";
 	let stateManager = new StateManager();
 	setTimeout(() => {
 		stateManager = new StateManager();
 		if (stateManager.currentState == 3 && stateManager.currentState.currentSubstate == 6)
-			fadeOut();
+			//fadeout();
 			stateManager.currentState.changeSubstate(5);
 	}, 2000);//10 second
 }

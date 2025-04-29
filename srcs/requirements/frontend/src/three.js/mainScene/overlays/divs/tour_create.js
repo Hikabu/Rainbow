@@ -66,6 +66,16 @@ const create = {
 	"show-div" : show_div,
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
+	"keyHandler" : (event)=>{
+		if (event.key === 'Enter') {
+				event.preventDefault();
+				new Socket().send({
+					"channel":"tournament",
+					"action":"create",
+				})
+		}
+		return undefined;
+	}
 }
 
 export {create}

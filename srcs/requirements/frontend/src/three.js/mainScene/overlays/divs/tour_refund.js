@@ -78,6 +78,13 @@ const refund = {
 	"enter" : enter,
 	"exit_return" : exit_return,
 	"resize": ()=>{container.resize()},
+	"keyHandler" : (event)=>{
+			if (event.key === 'Enter'){
+				go_back();
+			}
+			event.preventDefault();
+			return undefined;
+		}
 }
 
 export {refund}

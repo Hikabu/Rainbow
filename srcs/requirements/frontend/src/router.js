@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { createRouter, createWebHistory } from 'vue-router';
 
-import Game from '@/features/Game/Game.vue';
 import LoginPage from '@/pages/LoginPage/LoginPage.vue';
 import NotFound from '@/pages/NotFound.vue';
 import RegisterPage from '@/pages/RegisterPage/RegisterPage.vue';
@@ -41,12 +40,6 @@ const router = createRouter({
       path: '/settings',
       name: 'Settings',
       component: Settings,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/game',
-      name: 'Game',
-      component: Game,
       meta: { requiresAuth: true }
     },
     {
