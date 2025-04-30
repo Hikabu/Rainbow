@@ -77,7 +77,14 @@ function hide_div(){
 
 async function payment_successful(){
 	const response = await axios.get('api/profiles/me/')
-	let alias = response.data.display_name
+	console.log("response-> ", response.data)
+        if (!response.data.displayName){
+            if ((response.data.displayName = response.data.username) == null)
+                response.data.displayName = response.data.intra_login
+            response.data.displayName = response.data.username
+        }
+	let alias = response.data.displayName
+	console.log("alias: ", alias)
 	new Socket().send({
 		"channel" : "tournament",
 		"action": "succesfull payment",
