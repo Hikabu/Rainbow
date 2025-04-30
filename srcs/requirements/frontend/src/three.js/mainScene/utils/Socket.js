@@ -9,12 +9,16 @@ export class Socket {
 		if (Socket.instance)
 			return Socket.instance
 		this.msgQueue = [];
-		this.init();
+		//this.init();
 		this.userID = null;
 		Socket.instance = this;
 	}
 	async init(){
-		const response = await axios.get('api/profiles/me/')
+		// const response = await axios.get('api/profiles/me/')
+		const response = await axios.get('api/profiles/me/',{
+            withCredentials: true
+    	})
+		console.log("data:", response.data)
 		this.userID = response.data.id
 		console.log("user: ", this.userID);
 		try {
