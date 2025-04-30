@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import axios from 'axios';
 
 function dispose_object(object){
 	if (object instanceof THREE.Mesh) {
@@ -125,7 +126,18 @@ function mapToCenter(pointsLeft, pointsRight)
 
 async function getUserID() {
 	//return Date.now()
-	return 1
+	//return 1
+	const response = await axios.get('api/profiles/me/')
+	let userID = response.data.id
+	return userID
 }
 
-export { order_path, mapToCenter, update_min_max, dispose_object, getUserID};
+async function getUserAlias() {
+	// return "alias"
+	const response = await axios.get('api/profiles/me/')
+	let alias = response.data.displayName ? response.data.displayName : response.data.username ? response.data.username : response.data.intra_login ? response.data.intra_login : "player";
+	return alias;
+}
+
+
+export { order_path, mapToCenter, update_min_max, dispose_object, getUserID, getUserAlias};

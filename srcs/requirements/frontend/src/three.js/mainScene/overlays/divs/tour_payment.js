@@ -5,6 +5,7 @@ import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 import { fadeout } from "../../../core/UIFactory/effects";
 import axios from 'axios';
+import { getUserAlias } from "../../utils/utils";
 
 const container = new Overlay([
 			new FlexBox({
@@ -76,9 +77,7 @@ function hide_div(){
 
 
 async function payment_successful(){
-	const response = await axios.get('api/profiles/me/')
-	console.log("response-> ", response.data)
-	let alias = response.data.displayName ? response.data.displayName : response.data.username ? response.data.username : response.data.intra_login ? response.data.intra_login : "player";
+	let alias = await getUserAlias()
 	console.log("alias: ", alias)
 	new Socket().send({
 		"channel" : "tournament",
