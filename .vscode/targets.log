@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue Apr 29 07:16:44 2025
+# Make data base, printed on Wed Apr 30 19:43:29 2025
 
 # Variables
 
@@ -15,9 +15,9 @@ GDK_BACKEND = x11
 # environment
 LC_ALL = C
 # environment
-SSH_AGENT_LAUNCHER = gnome-keyring
-# environment
 GJS_DEBUG_OUTPUT = stderr
+# environment
+GNOME_KEYRING_CONTROL = /home/artclave/.cache/keyring-TOA952
 # environment
 LC_NAME = en_US.UTF-8
 # environment
@@ -55,7 +55,7 @@ OLDPWD = /home/artclave
 # automatic
 %F = $(notdir $%)
 # environment
-VSCODE_CODE_CACHE_PATH = /home/artclave/.config/Code/CachedData/912bb683695358a54ae0c670461738984cbb5b95
+VSCODE_CODE_CACHE_PATH = /home/artclave/.config/Code/CachedData/17baf841131aa23349f217ca7c570c76ee87b957
 # environment
 XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session0
 # environment
@@ -74,12 +74,14 @@ CURDIR := /home/artclave/transcendence/Rainbow
 COMPOSE_CMD := docker-compose
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# environment
+VSCODE_L10N_BUNDLE_LOCATION = 
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
 MFLAGS = -pqrR
 # environment
-SSH_AUTH_SOCK = /run/user/103610/keyring/ssh
+SSH_AUTH_SOCK = /home/artclave/.cache/keyring-TOA952/ssh
 # default
 .SHELLFLAGS := -c
 # environment
@@ -95,9 +97,9 @@ MAKEFILE_LIST := Makefile
 # environment
 ZSH = /home/artclave/.oh-my-zsh
 # environment
-VSCODE_PID = 165061
+VSCODE_PID = 654578
 # environment
-KRB5CCNAME = FILE:/tmp/krb5cc_103610_x2Vffk
+KRB5CCNAME = FILE:/tmp/krb5cc_103610_ffXu68
 # environment
 XDG_SESSION_TYPE = x11
 # makefile (from 'Makefile', line 8)
@@ -105,13 +107,13 @@ DATA_PATH := /home/artclave/data/
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/z3t2c1.42bangkok.com:@/tmp/.ICE-unix/162965,unix/z3t2c1.42bangkok.com:/tmp/.ICE-unix/162965
+SESSION_MANAGER = local/z3t2c1.42bangkok.com:@/tmp/.ICE-unix/651265,unix/z3t2c1.42bangkok.com:/tmp/.ICE-unix/651265
 # automatic
 *F = $(notdir $*)
 # environment
 CHROME_DESKTOP = code.desktop
 # environment
-DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/103610/bus
+DBUS_SESSION_BUS_ADDRESS = unix:abstract=/tmp/dbus-8nrYEN7XGK,guid=2823d8c6a634eb3ba28d907a68121ab0
 # automatic
 <D = $(patsubst %/,%,$(dir $<))
 # environment
@@ -123,6 +125,7 @@ GNOME_DESKTOP_SESSION_ID = this-is-deprecated
 # makefile
 SHELL = /bin/sh
 # default
+ 
 MAKECMDGOALS := all
 # environment
 XMODIFIERS = @im=ibus
@@ -148,8 +151,6 @@ LC_MONETARY = en_US.UTF-8
 ^F = $(notdir $^)
 # environment
 LC_TIME = en_US.UTF-8
-# environment
-INVOCATION_ID = 7076625e954049f89d6d1fac855db409
 # environment
 DOCKER_HOST = unix:///run/user/103610/docker.sock
 # environment
@@ -179,8 +180,6 @@ GIO_LAUNCHED_DESKTOP_FILE = /usr/share/applications/code.desktop
 # makefile
 .DEFAULT_GOAL := all
 # environment
-SYSTEMD_EXEC_PID = 162989
-# environment
 DISPLAY = :0
 # environment
 USER = artclave
@@ -191,13 +190,11 @@ MAKE_VERSION := 4.3
 # 'override' directive
 .SHELLSTATUS := 0
 # environment
-MANAGERPID = 162121
-# environment
 DEBUGINFOD_URLS = https://debuginfod.ubuntu.com 
 # environment
 LC_MEASUREMENT = en_US.UTF-8
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 165061
+GIO_LAUNCHED_DESKTOP_FILE_PID = 654578
 # environment
 PAGER = less
 # environment
@@ -205,11 +202,7 @@ _ = /usr/share/code/code
 # environment
 LC_PAPER = en_US.UTF-8
 # environment
-XDG_RUNTIME_DIR = /run/user/103610
-# environment
-GPG_AGENT_INFO = /run/user/103610/gnupg/S.gpg-agent:0:1
-# environment
-JOURNAL_STREAM = 8:911648
+GPG_AGENT_INFO = /home/artclave/.gnupg/S.gpg-agent:0:1
 # environment
 XDG_SESSION_CLASS = user
 # environment
@@ -219,11 +212,9 @@ QT_IM_MODULE = ibus
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-VSCODE_IPC_HOOK = /run/user/103610/vscode-e449c818-1.95-main.sock
+VSCODE_IPC_HOOK = /home/artclave/.config/Code/1.99-main.sock
 # environment
 FT_HOOK_PATHNAME = login-user.d
-# environment
-IM_CONFIG_PHASE = 1
 # makefile (from 'Makefile', line 10)
 ENV_PATH = ./srcs/.env
 # default
@@ -247,7 +238,7 @@ GDMSESSION = ubuntu
 # environment
 LC_IDENTIFICATION = en_US.UTF-8
 # variable set hash-table stats:
-# Load=118/1024=12%, Rehash=0, Collisions=5/155=3%
+# Load=113/1024=11%, Rehash=0, Collisions=6/150=4%
 
 # Pattern-specific Variable Values
 
@@ -278,7 +269,6 @@ setup:
 #  Implicit rule search has not been done.
 #  Implicit/static pattern stem: ''
 #  File does not exist.
- 
 #  File has been updated.
 #  Needs to be updated (-q is set).
 # automatic
@@ -416,6 +406,7 @@ volume:
 	@echo "List of volumes for ft_transcendence..."
 	@docker volume ls
 
+ 
 rebuild:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -457,6 +448,6 @@ list:
 # strcache performance: lookups = 63 / hit rate = 53%
 # hash-table stats:
 # Load=29/8192=0%, Rehash=0, Collisions=0/63=0%
-# Finished Make data base on Tue Apr 29 07:16:44 2025
+# Finished Make data base on Wed Apr 30 19:43:29 2025
 
  
