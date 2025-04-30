@@ -3,7 +3,15 @@ import json, asyncio, time
 from .logic_main import GameLogic
 from channels.layers import get_channel_layer
 import asyncio
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()]
+)
+
+logger = logging.getLogger(__name__)
 class GameManager:
 	_instance = None
 
@@ -94,43 +102,43 @@ class GameChannel():
 		self.disconnected_players = []
 		self.expected_players_id = get_expected_players(game_id, "id")
 		self.names = get_expected_players(game_id, "alias")
-		print(self.expected_players_id)
-		print(self.names)
+		logger.info(self.expected_players_id)
+		logger.info(self.names)
 		self.status = "pending"
 		self.start_time = None
 		self.logic = None
 
 	async def join(self, consumer):
-		print("wants to join")
+		logger.info("wants to join")
 		if self.status == "finished":
-			print("wrong status")
+			logger.info("wrong status")
 			return False
 		if int(consumer.user_id) not in [int(x) for x in self.expected_players_id]:
-			print("wrogn user id")			
+			logger.info("wrogn user id")			
 			return False
-		print("can join")
+		logger.info("can join")
 		if self.status != "pending":
-			print("error wrong status: ", self.status)
+			logger.info("error wrong status: ", self.status)
 			return False
 		#add player:
 		if consumer.user_id in self.active_players:
-			print("player reconnecting")
+			logger.info("player reconnecting")
 			return True
-		print("adding new player")
+		logger.info("adding new player")
 		await consumer.join_channel(self.room)
 		consumer.game = self
 		consumer.update_user_data({"action":"set", "key":"game", "value":self.game_id})
-		print(consumer.user_id, " joining channel ", self.room)
-		print(consumer.user_data)
+		logger.info(consumer.user_id, " joining channel ", self.room)
+		logger.info(consumer.user_data)
 		await get_channel_layer().group_send(self.room, {"type" : "test.hello", "connected" : consumer.user_id})
 		#check to start game
 		self.active_players.append(consumer.user_id)
 		if len(self.active_players) == len(self.expected_players_id):
 			await self.start_game()
 		else:
-			print("can not start game")
-			print("expcted players: ", len(self.expected_players_id))
-			print("current players: ", len(self.active_players))
+			logger.info("can not start game")
+			logger.info("expcted players: ", len(self.expected_players_id))
+			logger.info("current players: ", len(self.active_players))
 		return True
 	
 	async def check_pending(self):
@@ -176,7 +184,7 @@ class GameChannel():
 
 	async def finish(self):
 		if self.status == "finished":
-			print("already finished in finsih...")
+			logger.info("already finished in finsih...")
 			return
 		self.status = "finished"
 		await GameManager().delete_game(self.game_id)
@@ -198,7 +206,7 @@ class GameChannel():
 
 	async def error_end(self, error):
 		if self.status == "finished":
-			print("already finished in error")
+			logger.info("already finished in error")
 			return
 		if self.logic:
 			start_time = self.logic.start_time
@@ -220,7 +228,7 @@ class GameChannel():
 
 
 async def join_game_channel(consumer, game_id):
-	print("consumer ", consumer.user_id, "joining game chaneel", game_id)
+	logger.info("consumer ", consumer.user_id, "joining game chaneel", game_id)
 	game = GameManager().get_game(game_id)
 	if game:
 		if await game.join(consumer):
