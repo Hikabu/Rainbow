@@ -1,11 +1,12 @@
 <template>
-  <div class="mainpage container-fluid p-0">
+  <div class="background mainpage container-fluid p-0">
 
-    <div v-if="!appVisible" id="loading-screen">
-      <!-- your loading content here -->
+	<div v-if="isLoading" ></div>
+    <div v-if="isLoading" id="loading-screen" :style="{ opacity: loadingOpacity }">
+      <div>LOADING<span id="loading-dots"></span></div>
     </div>
 
-    <div v-else class="d-flex row-flex">
+    <div v-show="appVisible" class="d-flex row-flex" :style="{ opacity: appOpacity }">
       <SideBar />
       <div class="about col-md-10 p-0 flex-grow-1 position-relative">
         <div ref="threeContainer" class="three-container"></div>
@@ -14,6 +15,7 @@
 
   </div>
 </template>
+
 
 
 <script setup>
@@ -26,11 +28,15 @@ const threeContainer = ref(null)
 
 const isLoading = ref(true);
 const appVisible = ref(false);
+const loadingOpacity = ref(1);
+const appOpacity = ref(0);  
 
 onMounted(() => {
+  console.log("on mount")
   if (threeContainer.value) {
+	console.log("ok")
     preEnterScene(threeContainer.value)
-	new OnLoad().set_first_load(isLoading, appVisible)
+	new OnLoad().set_first_load(isLoading, appVisible, loadingOpacity, appOpacity)
   }
 })
 
@@ -47,7 +53,18 @@ onBeforeUnmount(() => {
   top: 0;
   left: 0;
   z-index: 0;
+  font-family: 'Press Start 2P', sans-serif;
 }
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  z-index: 0;
+}
+
 #loading-screen {
 			position: fixed;
 			top: 50%;

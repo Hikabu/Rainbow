@@ -25,11 +25,29 @@ const router = createRouter({
       meta: { requiresAuth: false }
     },
     {
-      path: '/mainpage',
-      name: 'MainPage',
+      path: '/lobby',
+      name: 'lobby',
       component: MainPage,
       meta: { requiresAuth: true }
     },
+	{
+		path: '/classic-game',
+		name: 'classic-game',
+		component: MainPage,
+		meta: { requiresAuth: true }
+	},
+	{
+		path: '/ai-duel',
+		name: 'ai-duel',
+		component: MainPage,
+		meta: { requiresAuth: true }
+	},
+	{
+		path: '/tournament',
+		name: 'tournament',
+		component: MainPage,
+		meta: { requiresAuth: true }
+	},
     {
       path: '/profile',
       name: 'Profile',
@@ -44,8 +62,7 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      name: 'NotFound',
-      component: NotFound
+      redirect: '/lobby',
     }
   ]
 });
