@@ -39,8 +39,8 @@ function moveCamera(data, targetPosition, onComplete) {
 	const engine = new MainEngine()
 	engine.isCamMoving = true;
 	engine.camera_target.copy(newPosition);
-	console.log("ne poiton: ", newPosition);
-	console.log("cam target: ", engine.camera_target)
+	//console.log("ne poiton: ", newPosition);
+	//console.log("cam target: ", engine.camera_target)
 	if (tl){
 		tl.kill()
 	}
@@ -58,7 +58,7 @@ function moveCamera(data, targetPosition, onComplete) {
 	// console.log("current position: ", engine.camera.position)
 	// console.log("data duration ", data.duration)
 	if ("pos" in data) {
-		console.log("requested camera move")
+		// console.log("requested camera move")
 		tl.to(tempPosition,{ 
 			x: engine.camera_target.x, 
 			y: engine.camera_target.y, 
@@ -93,7 +93,7 @@ function moveCamera(data, targetPosition, onComplete) {
 		}, 0);
 	}
 	tl.eventCallback("onComplete", () => {
-		console.log("on complete 0")
+		// console.log("on complete 0")
 		engine.isCamMoving= false;
 		onComplete();
 		tl = null;
@@ -138,7 +138,7 @@ export function onResizeCamMove(updatedTarget) {
 			engine.resize();
 		},
 		onComplete: () => {
-			console.log("oncompelte X")
+			// console.log("oncompelte X")
 			engine.isCamMoving = false; // or whatever you want when done
 			if (latest_onComplete)
 			{

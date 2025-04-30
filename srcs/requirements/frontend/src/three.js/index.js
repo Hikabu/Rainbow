@@ -18,7 +18,7 @@ const engine = new MainEngine();
 
 let isAnimating = false;
 
-console.log("TEST PART");
+// console.log("TEST PART");
 const points = [
     [0, 0],         // [w[0], h[0]]
     [0, 1],         // [w[0], h[6]]
@@ -72,42 +72,9 @@ document.addEventListener('keydown', (event) => {
 	}
 });
 
-//avatar
-// : 
-// null
-// displayName
-// : 
-// null
-// email
-// : 
-// "artclave@student.42bangkok.com"
-// friends
-// : 
-// []
-// id
-// : 
-// 1
-// intra_avatar
-// : 
-// "https://cdn.intra.42.fr/users/b1f079d912cd28477c98a5f2ff4cccb3/artclave.jpg"
-// intra_login
-// : 
-// "artclave"
-// isOnline
-// : 
-// false
-// losses
-// : 
-// 0
-// username
-// : 
-// null
-// wins
-// : 
-
 // enterScene is called in mounted() or onMounted().
 export async function preEnterScene(app_container){
-	//console.log("pre enter")
+	console.log("pre enter")
 	let socket = new Socket();
 	await socket.init();
 	init_scene_state();

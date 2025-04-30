@@ -5,7 +5,15 @@ from .tournamentChannel import TournamentChannel, TournamentManager
 from .registration import new_game, can_user_log_game
 from django.utils import timezone
 from django.core.cache import cache
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()]
+)
+
+logger = logging.getLogger(__name__)
 #LERA use online
 def isUserOnline(user_id):
 	active_users = cache.get('active_users')
@@ -18,7 +26,7 @@ max_reconnection_time = 10
 all_consumers = {}
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		print("websocket connected!")
+		logger.info("websocket connected!")
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		await self.accept()
 		active_users = cache.get('active_users')
@@ -94,14 +102,15 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		logger.info(data)
 		if self.game == None:
-			print("tehre is no self game ...")
+			logger.info("tehre is no self game ...")
 		if data["channel"] == "log":
-			print("check0")
+			logger.info("check0")
 			if "action" in data:
-				print('check1')
+				logger.info('check1')
 				if data["action"] == "can_user_log_game":
-					print("check2")
+					logger.info("check2")
 					await can_user_log_game(self, data)
 				if data["action"] == "new_game":
 					await new_game(data)
@@ -110,19 +119,19 @@ class MainConsumer(AsyncWebsocketConsumer):
 				self.dimensions = data["boundaries"]
 				self.update_user_data({"action":"set", "key":"dimensions", "value":self.dimensions})
 			if "request" in data and data["request"] == "start game":
-				print("request to start game")
+				logger.info("request to start game")
 				self.game = await join_game_channel(self, data["game_id"])
 			elif self.game and "request" in data and data["request"] == "update paddles":
-				print("updating paddles...")
+				logger.info("updating paddles...")
 				self.game.logic.update_paddles(data)
 			elif self.game and "request" in data and data["request"] == "game end":
-				print("request game end!!!")
+				logger.info("request game end!!!")
 				await self.game.disconnect(self)
 
 		elif data["channel"] == "tournament":
 			pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
 			if data["action"] == "exit live":
-				print("exit live")
+				logger.info("exit live")
 				await self.should_exit_live()
 
 			elif data["action"] == "create":
@@ -159,7 +168,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		state = None
 		substate = None
 		if self.tournament is not None:
-			print("in tournament")
+			logger.info("in tournament")
 			if self.user_id in self.tournament.now_waiting:
 				state = 3
 				substate = 10
@@ -172,13 +181,13 @@ class MainConsumer(AsyncWebsocketConsumer):
 			"name1" : self.game.names[0], 
 			"name2" : self.game.names[1],
 			})
-			print("in game")
+			logger.info("in game")
 			if self.game.logic.paddles[1].owner == "local":
-				print("in local game")
+				logger.info("in local game")
 				state = 1
 				substate = 3
 			elif self.game.logic.paddles[1].owner == "AI":
-				print("in ai game")
+				logger.info("in ai game")
 				state = 2
 				substate = 3
 		msg = { "type": "ready" }
@@ -193,9 +202,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 		pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
 		if self.tournament:
 			if pending_tournament == None or self.tournament.tour_id == pending_tournament.tour_id:
-				print("has self tournaemnt: ", self.tournament.status)
+				logger.info("has self tournaemnt: ", self.tournament.status)
 				if self.tournament.status == "open" or self.tournament.status == "locked":
-					print("subscribed?")
+					logger.info("subscribed?")
 					await self.send_self({
 						"type" : "tour.updates",
 						"update_tour_registration" : "join",
@@ -208,7 +217,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 						await self.send_self({"type" : "tour.updates",
 						"notification" : "start"})
 		if pending_tournament == None:
-			print("create too...")
+			logger.info("create too...")
 			await self.send_self({
 				"type" : "tour.updates",
 				"update_tour_registration" : "create",
@@ -257,13 +266,13 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 
 	async def join_channel(self, room, update = True):
-		print(self.user_id, " joins channel ", room)
+		logger.info(self.user_id, " joins channel ", room)
 		await self.channel_layer.group_add(room, self.channel_name)
 		if update:
 			self.update_user_data({"action":"append", "key":"rooms", "value":room})
 	
 	async def remove_channel(self, room):
-		print(self.user_id, " leaves channel ", room)
+		logger.info(self.user_id, " leaves channel ", room)
 		await self.channel_layer.group_discard(room, self.channel_name)
 		self.update_user_data({"action":"remove", "key":"rooms", "value": room})
 
@@ -323,8 +332,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps(event))
 	
 	async def test_hello(self, event):
-		print("this is a test, connecteed:", event["connected"])
-		print("test received by ", self.user_id)
+		logger.info("this is a test, connecteed:", event["connected"])
+		logger.info("test received by ", self.user_id)
 
 def nested_value_in(data, keys, value=None):
 	current = data

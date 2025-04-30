@@ -15,7 +15,7 @@ export class OnLoad {
 		this.appVisibleRef = null;
 		this.loadingOpacityRef = 1;
 		this.appOpacityRef = 0;
-
+		this.reconnecting = false;
 		OnLoad.instance = this;
 	}
 
