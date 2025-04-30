@@ -31,11 +31,11 @@ const appVisible = ref(false);
 const loadingOpacity = ref(1);
 const appOpacity = ref(0);  
 
-onMounted(() => {
+onMounted(async () => {
   console.log("on mount")
   if (threeContainer.value) {
 	console.log("ok")
-    preEnterScene(threeContainer.value)
+    await preEnterScene(threeContainer.value)
 	new OnLoad().set_first_load(isLoading, appVisible, loadingOpacity, appOpacity)
   }
 })
