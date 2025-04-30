@@ -16,7 +16,7 @@ export class Socket {
 	async init(){
 		const response = await axios.get('api/profiles/me/')
 		this.userID = response.data.id
-
+		console.log("user: ", this.userID);
 		try {
 			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
 			this.socket.onerror = this.myError.bind(this);
