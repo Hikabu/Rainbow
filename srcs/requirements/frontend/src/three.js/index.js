@@ -72,11 +72,44 @@ document.addEventListener('keydown', (event) => {
 	}
 });
 
+//avatar
+// : 
+// null
+// displayName
+// : 
+// null
+// email
+// : 
+// "artclave@student.42bangkok.com"
+// friends
+// : 
+// []
+// id
+// : 
+// 1
+// intra_avatar
+// : 
+// "https://cdn.intra.42.fr/users/b1f079d912cd28477c98a5f2ff4cccb3/artclave.jpg"
+// intra_login
+// : 
+// "artclave"
+// isOnline
+// : 
+// false
+// losses
+// : 
+// 0
+// username
+// : 
+// null
+// wins
+// : 
 
 // enterScene is called in mounted() or onMounted().
-export function preEnterScene(app_container){
+export async function preEnterScene(app_container){
 	//console.log("pre enter")
-	new Socket();
+	let socket = new Socket();
+	await socket.init();
 	init_scene_state();
 	if (!engine.sceneInitialized) {	
 	//	console.log("add to engine...")
