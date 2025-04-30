@@ -92,7 +92,8 @@ export function preEnterScene(app_container){
 }
 
 export function uponEnter(){
-	//console.log("upon enter")
+	window.dispatchEvent(new Event("resize"));
+	console.log("upon enter")
 	
 	window.addEventListener('popstate', popstate);
 	window.addEventListener("wheel", wheel_scroll_animations);

@@ -9,7 +9,7 @@
 
         <h3>Menu</h3>
         <div class="menu">
-          <router-link class="button" to="/mainpage">
+          <router-link class="button" to="/lobby">
             <span class="Logo"><Icon icon="guidance:yoga"/> </span>
             <span class="text">Home</span>
           </router-link>
