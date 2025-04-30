@@ -14,9 +14,9 @@ import { controls } from '../overlays/divs/controls';
 import * as THREE from 'three';
 
 const divStart = new StartScreen('white', "START GAME");
-console.log("")
-console.log("LOCAL MACHINE!!!")
-console.log("")
+// console.log("")
+// console.log("LOCAL MACHINE!!!")
+// console.log("")
 
 const restScreen = new CssSubState(
 	"rest",
@@ -75,7 +75,7 @@ const controlScreen = new CssSubState(
 	null
 )
 
-console.log("screen surface: ", screenSurface.vertex2d)
+// console.log("screen surface: ", screenSurface.vertex2d)
 let min_x = Math.min(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
 let max_x = Math.max(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
 let width = max_x - min_x;
@@ -88,7 +88,7 @@ let height = max_y - min_y;
 // const width = Math.max(...xs) - Math.min(...xs);
 // const height = Math.max(...ys) - Math.min(...ys);
 let aspect = width / height;
-console.log("aspect is : ", aspect)
+// console.log("aspect is : ", aspect)
 const gameScreen = new MeshSubState(
 	"game", 
 	screenSurface,
@@ -157,7 +157,7 @@ const localMachineState = new State(
 	1.5
 )
 
-console.log("")
-console.log("LOCAL MACHINE END!!!")
-console.log("")
+// console.log("")
+// console.log("LOCAL MACHINE END!!!")
+// console.log("")
 export {localMachineState}

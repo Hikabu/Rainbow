@@ -5,20 +5,28 @@ from uuid import uuid4, uuid1
 from django.core.cache import cache
 from .tournamentChannel import TournamentManager
 from channels.layers import get_channel_layer
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()]
+)
+
+logger = logging.getLogger(__name__)
 async def can_user_log_game(consumer, data):
-	print("can user log game?")
+	logger.info("can user log game?")
 	playing_users = cache.get(f"playing_users")
 	if playing_users == None:
 		playing_users = []
-	print(data)
+	logger.info(data)
 	if consumer.user_id in playing_users:
-		print("no..")
+		logger.info("no..")
 		await get_channel_layer().group_send(f"{consumer.user_id}" ,{"type" : "game.updates",
 		"update_display" : "already_in_game",
 		})
 	else:
-		print("yes!")
+		logger.info("yes!")
 		await get_channel_layer().group_send(f"{consumer.user_id}" ,{"type" : "game.updates",
 		"update_display" : "controls",
 		"state" : data["state"]
@@ -27,8 +35,8 @@ async def can_user_log_game(consumer, data):
 async def new_game(data):
 	from .gameChannel import create_game_channel
 
-	print("new game log")
-	print(data)
+	logger.info("new game log")
+	logger.info(data)
 	log = create_new_log()
 	log['type'] = data.get('type')
 	log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
@@ -60,7 +68,7 @@ async def new_game(data):
 		"game-type" : log["type"] if log["type"] != "remote" else "player1",
 	})
 	if data.get('userID2'):
-		print("second playe")
+		logger.info("second playe")
 		await get_channel_layer().group_send(f"{data.get('userID2')}", {
 			"type" : "game.updates",
 			"update_display" : "start game",
@@ -80,10 +88,10 @@ async def cancel_game(data):
 		await get_channel_layer().group_send(f"{data.get('userID2')}", message)
 
 async def store_game_results(results):
-	print("store game results ft registration")
+	logger.info("store game results ft registration")
 	log = cache.get(f"game_log:{results['gameID']}")
 	if log == None:
-		print("log not found")
+		logger.info("log not found")
 		return
 	playing_users = cache.get("playing_users")
 	if playing_users:
@@ -91,7 +99,7 @@ async def store_game_results(results):
 			playing_users.remove(log["players"]["1"]["id"])
 		cache.set("playing_users", playing_users)
 	if "error" in results and results["error"] != "":
-		print("error in results")
+		logger.info("error in results")
 		log["error"] = results["error"]
 		log["start_time"] = results["start_time"]
 		if "winner" in results:
@@ -121,7 +129,7 @@ async def store_game_results(results):
 			log["players"]["2"]["score"] = results["score2"]
 
 	else:	
-		print("no error results")
+		logger.info("no error results")
 		log['start_time'] = results["start_time"]
 		log['players']['1']['score'] = results["score1"]
 		log['players']['2']['score'] = results["score2"]
@@ -177,7 +185,7 @@ def create_new_player(data, userID, alias, n):
 def	get_expected_players(gameID, key):
 	log = cache.get(f"game_log:{gameID}")
 	if not log:
-		print("no log for ", gameID)
+		logger.info("no log for ", gameID)
 		return None
 	if key == "id" and log["players"]["max"] == 1:
 		return [log["players"]["1"]["id"]]
@@ -185,7 +193,7 @@ def	get_expected_players(gameID, key):
 		return [log["players"]["1"]["id"], log["players"]["2"]["id"]]
 	elif key == "alias":
 		return [log["players"]["1"]["alias"], log["players"]["2"]["alias"]] if log else None
-	print("no key")
+	logger.info("no key")
 	return None
 
 def get_paddle_type(gameID, side):

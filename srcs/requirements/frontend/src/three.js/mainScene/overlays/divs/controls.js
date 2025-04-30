@@ -227,6 +227,8 @@ function log_game(){
 			"alias2" : alias2,
 		})
 	}
+	else
+		console.log("new onload is reconnecting ?")
 }
 const controls = {
 	"div" : container.element,
