@@ -5,15 +5,15 @@ from .tournamentChannel import TournamentChannel, TournamentManager
 from .registration import new_game, can_user_log_game
 from django.utils import timezone
 from django.core.cache import cache
-import logging
+# import logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.StreamHandler()]
-)
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format="%(asctime)s [%(levelname)s] %(message)s",
+#     handlers=[logging.StreamHandler()]
+# )
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 #LERA use online
 def isUserOnline(user_id):
 	active_users = cache.get('active_users')
@@ -26,7 +26,6 @@ max_reconnection_time = 10
 all_consumers = {}
 class MainConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		logger.info("websocket connected!")
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		await self.accept()
 		active_users = cache.get('active_users')
@@ -54,14 +53,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.join_channel("all")
 		prev_consumer = None
 		await self.enter_scene()
-		# if self.user_id in all_consumers:
-		# 	print("switch tab!!!")
-		# 	prev_consumer = all_consumers[self.user_id]
-		# 	prev_consumer.close()
-		# 	await prev_consumer.send_self({"type" : "switch tabs"})
-		# all_consumers[self.user_id] = self
-			# await prev_consumer.exit_live()
-
 
 	async def should_exit_live(self):
 		global max_reconnection_time
@@ -102,15 +93,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		logger.info(data)
-		if self.game == None:
-			logger.info("tehre is no self game ...")
 		if data["channel"] == "log":
-			logger.info("check0")
 			if "action" in data:
-				logger.info('check1')
 				if data["action"] == "can_user_log_game":
-					logger.info("check2")
 					await can_user_log_game(self, data)
 				if data["action"] == "new_game":
 					await new_game(data)
@@ -119,19 +104,15 @@ class MainConsumer(AsyncWebsocketConsumer):
 				self.dimensions = data["boundaries"]
 				self.update_user_data({"action":"set", "key":"dimensions", "value":self.dimensions})
 			if "request" in data and data["request"] == "start game":
-				logger.info("request to start game")
 				self.game = await join_game_channel(self, data["game_id"])
 			elif self.game and "request" in data and data["request"] == "update paddles":
-				logger.info("updating paddles...")
 				self.game.logic.update_paddles(data)
 			elif self.game and "request" in data and data["request"] == "game end":
-				logger.info("request game end!!!")
 				await self.game.disconnect(self)
 
 		elif data["channel"] == "tournament":
 			pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
 			if data["action"] == "exit live":
-				logger.info("exit live")
 				await self.should_exit_live()
 
 			elif data["action"] == "create":
@@ -168,7 +149,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 		state = None
 		substate = None
 		if self.tournament is not None:
-			logger.info("in tournament")
 			if self.user_id in self.tournament.now_waiting:
 				state = 3
 				substate = 10
@@ -181,13 +161,10 @@ class MainConsumer(AsyncWebsocketConsumer):
 			"name1" : self.game.names[0], 
 			"name2" : self.game.names[1],
 			})
-			logger.info("in game")
 			if self.game.logic.paddles[1].owner == "local":
-				logger.info("in local game")
 				state = 1
 				substate = 3
 			elif self.game.logic.paddles[1].owner == "AI":
-				logger.info("in ai game")
 				state = 2
 				substate = 3
 		msg = { "type": "ready" }
@@ -202,9 +179,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
 		if self.tournament:
 			if pending_tournament == None or self.tournament.tour_id == pending_tournament.tour_id:
-				logger.info("has self tournaemnt: ", self.tournament.status)
 				if self.tournament.status == "open" or self.tournament.status == "locked":
-					logger.info("subscribed?")
 					await self.send_self({
 						"type" : "tour.updates",
 						"update_tour_registration" : "join",
@@ -217,7 +192,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 						await self.send_self({"type" : "tour.updates",
 						"notification" : "start"})
 		if pending_tournament == None:
-			logger.info("create too...")
 			await self.send_self({
 				"type" : "tour.updates",
 				"update_tour_registration" : "create",
@@ -247,8 +221,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 		user_data = cache.get(f"consumer_{self.user_id}")
 		if user_data == None:
 			user_data = {"tournament":None, "game":None, "rooms":[], "dimensions":None}
-		# print("current user data: ", user_data)
-		# print("have to add : ", data)
 		if data.get("action") == "set":
 			user_data[ data.get("key")] = data.get("value")
 
@@ -261,18 +233,15 @@ class MainConsumer(AsyncWebsocketConsumer):
 			if data.get("key") in user_data and data.get("value") in user_data[data.get("key")]:
 				user_data[data.get("key")].remove(data.get("value"))
 
-		# print("after user data: ", user_data)				
 		cache.set(f"consumer_{self.user_id}", user_data)
 
 
 	async def join_channel(self, room, update = True):
-		logger.info(self.user_id, " joins channel ", room)
 		await self.channel_layer.group_add(room, self.channel_name)
 		if update:
 			self.update_user_data({"action":"append", "key":"rooms", "value":room})
 	
 	async def remove_channel(self, room):
-		logger.info(self.user_id, " leaves channel ", room)
 		await self.channel_layer.group_discard(room, self.channel_name)
 		self.update_user_data({"action":"remove", "key":"rooms", "value": room})
 
@@ -286,31 +255,14 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps(event))
 
 	async def game_updates(self, event):
-		# print("sending ", event)
 		if "action" in event and event["action"] == "delete game" and self.game:
 			await self.remove_channel(self.game.room)
 			self.game = None
 			self.update_user_data({"action":"set", "key":"game", "value": None})
 		elif nested_value_in(event, ["updates", "state"], "playing"):
 			updates = {}
-			# updates = event["updates"]
-			# await self.send(text_data=json.dumps({
-			# 				"type": "game.updates",
-			# 				"updates": {
-			# 					"ball" : {
-			# 						"x" : updates["x"][0]  * self.dimensions["x"], 
-			# 						"y" : updates["y"][0] * self.dimensions["y"],
-			# 					},
-			# 					"paddle_left" : updates["y"][1] * self.dimensions["y"],
-			# 					"paddle_right" : updates["y"][2] * self.dimensions["y"],
-			# 					"score1" : updates["score1"],
-			# 					"score2" : updates["score2"],
-			# 					"state" : updates["state"],
-			# 				}
-			# 			}))
 			x = nested_value_in(event, ["updates", "x", 0])
 			y = nested_value_in(event, ["updates", "y", 0])
-			# print("x: ", x, "y", y)
 			if x is not None and y is not None:
 				updates["ball"] = {
 					"x": x * self.dimensions["x"],
@@ -326,15 +278,10 @@ class MainConsumer(AsyncWebsocketConsumer):
 				value = nested_value_in(event, ["updates", key])
 				if value is not None:
 					updates[key] = value
-			# print("updates: ", updates)
 			await self.send(text_data=json.dumps({"type": "game.updates", "updates":updates}))
 		else :
 			await self.send(text_data=json.dumps(event))
 	
-	async def test_hello(self, event):
-		logger.info("this is a test, connecteed:", event["connected"])
-		logger.info("test received by ", self.user_id)
-
 def nested_value_in(data, keys, value=None):
 	current = data
 	for key in keys:
