@@ -44,6 +44,7 @@ import axios from 'axios'
 import { onMounted,ref} from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
+// import { user } from '../../stores/users'
 //make same reactivity
 const user = ref(null)
 const { connectWallet, wallets, disconnectWallet } = useOnboard()
@@ -65,6 +66,9 @@ const profileData = async () => {
         user.value = response.data
         user.value.displayName ||= user.value.username ?? user.value.intraLogin
 
+        if (user.friends && Array.isArray(user.friends)){
+            user.friends = user.friends.map(f => ref(f) )
+        }
         return user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)
