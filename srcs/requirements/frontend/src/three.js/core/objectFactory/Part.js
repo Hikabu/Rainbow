@@ -1,6 +1,7 @@
 import * as THREE from 'three';
+
+import { mapToCenter,order_path } from '../../mainScene/utils/utils';
 import { Shape } from "./Shape";
-import { order_path, mapToCenter } from '../../mainScene/utils/utils';
 
 class Part {
 	constructor(pointsLeftXY, pointsRightXY, materials){
