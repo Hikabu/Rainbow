@@ -1,9 +1,9 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
-import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
-import { Text, Button } from '../../../core/UIFactory/Elements';
+import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { Button,Text } from '../../../core/UIFactory/Elements';
 import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
 import { MainEngine } from '../../utils/MainEngine';
-
+import { can_user_log_game } from './start';
 class End{
 	constructor(color="white"){
 		this.overlay = new Overlay([
@@ -23,13 +23,13 @@ class End{
 						color: color,
 						fontSize: 0.55,
 						content: "EXIT",
-						onClick : ()=> {new MainEngine().blockRaycast(); new StateManager().changeState(0); }
+						onClick : ()=> {new MainEngine().blockRaycast_to_true(); new StateManager().changeState(0); }
 					}),
 					new Button({
 						color: color,
 						fontSize: 0.55,
 						content: "RESTART",
-						onClick : ()=> {new StateManager().currentState.changeSubstate(2);}
+						onClick : ()=> {can_user_log_game()}
 					})
 				]
 			}),

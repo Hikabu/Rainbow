@@ -1,18 +1,20 @@
-
-
 import { State } from '../../core/stateManager/States';
-import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
+import { MeshSubState, CssSubState } from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
+import { screenSurface, object, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
-	import { pongGame, startPongGame, demoGame, startDemoGame } from '../overlays/scenes/pong-game/Game';		
+	import { pongGame } from '../overlays/scenes/pong-game/Game';		
 import { StateManager } from '../../core/stateManager/StateManager';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { AlertManager } from '../overlays/alerts/Alerts';
+import { controls } from '../overlays/divs/controls';
 import * as THREE from 'three';
 
 const divStart = new StartScreen('white', "START GAME");
+// console.log("")
+// console.log("LOCAL MACHINE!!!")
+// console.log("")
 
 const restScreen = new CssSubState(
 	"rest",
@@ -28,7 +30,7 @@ const restScreen = new CssSubState(
 	null,
 	null,
 	()=>{ divStart.resize();},
-	(event)=> { return divStart.keyHandler(event);},
+	null,
 	null,
 )
 
@@ -49,39 +51,54 @@ const startScreen = new CssSubState(
 	()=>{divStart.animate()},
 )
 
-const divChoose = new End("white");
-const chooseScreen = new CssSubState(
-	"choose", 
+const divControls = controls;
+const controlScreen = new CssSubState(
+	"controls", 
 	object,
 	partIndex,
 	surfaceIndex,
-	divChoose.div,
+	divControls.div,
 	0,
-	()=>{divChoose.enter()},
+	()=>{
+		divControls['show-buttons']();
+		divControls["enter"]("local");
+	},
 	null,
-	()=>{divChoose.exit()},
-	()=>{divChoose.resize()},
-	null,
+	()=>{
+		divControls['hide-buttons']();
+		divControls["exit"]()
+	},
+	()=>{divControls["resize"]()},
+	(event)=>{return divControls["keyHandler"](event)},
 	null
 )
 
-const demoScreen = new MeshSubState(
-	"demo", 
-	screenSurface,
-	demoGame,
-	1,
-	()=>{startDemoGame("local")},
-	null
-)
+// console.log("screen surface: ", screenSurface.vertex2d)
+let min_x = Math.min(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
+let max_x = Math.max(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
+let width = max_x - min_x;
+let min_y = Math.min(screenSurface.vertex2d[0].y, screenSurface.vertex2d[1].y, screenSurface.vertex2d[2].y, screenSurface.vertex2d[3].y)
+let max_y = Math.max(screenSurface.vertex2d[0].y, screenSurface.vertex2d[1].y, screenSurface.vertex2d[2].y, screenSurface.vertex2d[3].y)
+let height = max_y - min_y;
+// const xs = screenSurface.vertex2d.map(v => v.x);
+// const ys = screenSurface.vertex2d.map(v => v.y);
 
+// const width = Math.max(...xs) - Math.min(...xs);
+// const height = Math.max(...ys) - Math.min(...ys);
+let aspect = width / height;
+// console.log("aspect is : ", aspect)
 const gameScreen = new MeshSubState(
 	"game", 
 	screenSurface,
 	pongGame,
 	1,
-	()=>{startPongGame("local")},
 	()=>{
-		new AlertManager().remove_latest_alert("exit_alert");
+		pongGame["enter"](1)
+
+	},
+	()=>{
+		new AlertManager().remove_latest_alert("exit alert");
+		pongGame["exit"]()
 	}
 )
 
@@ -102,7 +119,7 @@ const endScreen = new CssSubState(
 )
 
 const localMachineState = new State(
-	"local game screen", 
+	"classic-game", 
 	{
 		pos: true,
 		duration: 2,
@@ -112,17 +129,20 @@ const localMachineState = new State(
 	[
 		restScreen,
 		startScreen,
-		// chooseScreen,
-		// demoScreen,
-		gameScreen,
+		controlScreen,
+		gameScreen,//3
 		endScreen
 	],
 	null,
 	()=>{
-		if (new StateManager().currentState.currentSubstateIndex == "2")
+		if (new StateManager().currentState.currentSubstate.name == "game")
 			{
+				// console.log("tryong to exit game ... ")
 				if (create_exit_alert() == "cancelled")
-					return ("cancelled")
+				{
+					// console.log("cancelled exit ....");
+					return ("cancelled");
+				}
 			}
 	},
 	[
@@ -130,9 +150,12 @@ const localMachineState = new State(
 		pongGame.renderMaterial,
 	],
 	// null,
-	localMachineObj.self,
+	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
 	1.5
 )
 
+// console.log("")
+// console.log("LOCAL MACHINE END!!!")
+// console.log("")
 export {localMachineState}

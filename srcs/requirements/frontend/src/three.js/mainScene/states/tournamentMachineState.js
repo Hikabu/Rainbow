@@ -1,27 +1,25 @@
-
+import { StateManager } from '../../core/stateManager/StateManager';
 import { State } from '../../core/stateManager/States';
-import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
-
+import { CssSubState,MeshSubState } from '../../core/stateManager/SubStatesExtends';
+import { center, object, partIndex, screenSurface, surfaceIndex, tourMachineObj } from '../objects/machines/tournamentMachineObj';
 import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex, tourMachineObj } from '../objects/machines/tournamentMachineObj';
-
-import { start } from '../overlays/divs/tour_start';
+import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { create } from '../overlays/divs/tour_create';
+import { end } from '../overlays/divs/tour_end';
 import { join } from '../overlays/divs/tour_join';
+import { matchmake } from '../overlays/divs/tour_matchamake';
 import { payment } from '../overlays/divs/tour_payment';
 import { refund } from '../overlays/divs/tour_refund';
+import { start } from '../overlays/divs/tour_start';
 import { pongGame } from '../overlays/scenes/pong-game/Game';
-import { end } from '../overlays/divs/tour_end';
-import { matchmake } from '../overlays/divs/tour_matchamake';
 import { waiting } from '../overlays/scenes/waiting';
-import { StateManager } from '../../core/stateManager/StateManager';
 import { Socket } from '../utils/Socket';
-import { create_exit_alert } from '../overlays/alerts/exit_warning';
+import { controls } from '../overlays/divs/controls';
 import * as THREE from 'three';
 
 const divStart = start;
 const restScreen = new CssSubState(
-	"rest create",
+	"rest no info",
 	object,
 	partIndex,
 	surfaceIndex,
@@ -41,7 +39,7 @@ const restScreen = new CssSubState(
 )
 
 const startScreen = new CssSubState(
-	"start create",
+	"start no info",
 	object,
 	partIndex,
 	surfaceIndex,
@@ -102,7 +100,7 @@ const startScreenCreate = new CssSubState(
 		divCreate['hide-div']();
 	},
 	()=>{divCreate["resize"]()},
-	null,
+	(event)=>{return divCreate["keyHandler"](event)},
 	null,
 )
 
@@ -145,7 +143,7 @@ const startScreenJoin = new CssSubState(
 		divJoin['hide-div']();
 	},
 	()=>{divJoin["resize"]()},
-	null,
+	(event)=>{return divJoin["keyHandler"](event)},
 	null,
 )
 
@@ -192,9 +190,32 @@ const screenRefund = new CssSubState(
 	()=>{
 		divRefund["resize"]();
 	},
-	null,
+	(event)=>{return divRefund["keyHandler"](event)},
 	null,
 )
+
+const divControls = controls;
+const screenControls = new CssSubState(
+	"controls", 
+	object,
+	partIndex,
+	surfaceIndex,
+	divControls.div,
+	0,
+	()=>{
+		divControls['hide-buttons']();
+		divControls["enter"]("remote");
+	},
+	null,
+	()=>{
+		divControls['hide-buttons']();
+		divControls["exit"]()
+	},
+	()=>{divControls["resize"]()},
+	(event)=>{return divControls["keyHandler"](event)},
+	null
+)
+
 
 const divMatchmake = matchmake;
 const screenMatchmake = new CssSubState(
@@ -224,8 +245,8 @@ const screenGame = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
-	null,
-	null,
+	()=>{pongGame["enter"](1)},
+	()=>{pongGame["exit"]()},
 )
 
 const divEnd = end;
@@ -237,17 +258,16 @@ const screenEnd = new CssSubState(
 	divEnd['div'],
 	0,
 	()=>{
-		divEnd['show-div']();
-		divEnd['show-buttons']();
+		divEnd['enter']();
 	},
 	null,
 	()=>{
-		divEnd['hide-div']();
+		divEnd['exit']();
 	},
 	()=>{
 		divEnd["resize"]();
 	},
-	null,
+	(event)=>{return divEnd["keyHandler"](event)},
 	null,
 )
 
@@ -260,7 +280,7 @@ const screenWaiting = new MeshSubState(
 )
 
 const tourMachineState = new State(
-	"tour game screen", 
+	"tournament", 
 	{
 		pos: true,
 		duration: 2,
@@ -270,26 +290,27 @@ const tourMachineState = new State(
 	[
 		restScreen, 
 		startScreen,//1
-		restScreenCreate,
+		restScreenCreate,//2
 		startScreenCreate,//3
-		restScreenJoin,
+		restScreenJoin,//4
 		startScreenJoin,//5
 		screenPay,//6
-		screenRefund,
-		screenMatchmake,//8
-		screenGame,
-		screenEnd,//10
-		screenWaiting, //11
+		screenRefund,//7
+		screenControls,//8
+		screenMatchmake,//9
+		screenWaiting, //10
+		screenGame, //11
+		screenEnd,//12
 	],
 	null,
 	()=>{
 		let curr_sub = new StateManager().currentState.currentSubstateIndex;
-		if (curr_sub >= "8")
+		if (curr_sub >= 9)
 		{
-			console.log("exit warning maybe...", curr_sub)
-			if (divEnd["can-exit"]() == false)
+			// console.log("exit warning maybe...", curr_sub)
+			if (curr_sub != 12 || divEnd["can-exit"]() == false)
 			{
-				console.log("should warn", curr_sub);
+				// console.log("should warn", curr_sub);
 				if (create_exit_alert() == "cancelled")
 					return ("cancelled")
 				new Socket().send({
@@ -298,12 +319,6 @@ const tourMachineState = new State(
 				})
 			}
 		}
-		else
-			console.log("no exit waring curr usb: ", curr_sub)
-		new Socket().send({
-			"channel" : "tournament",
-			"action" : "finish",
-		})
 	},
 	[
 		screenMaterial,
