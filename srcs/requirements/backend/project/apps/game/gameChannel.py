@@ -102,43 +102,25 @@ class GameChannel():
 		self.disconnected_players = []
 		self.expected_players_id = get_expected_players(game_id, "id")
 		self.names = get_expected_players(game_id, "alias")
-		logger.info(self.expected_players_id)
-		logger.info(self.names)
 		self.status = "pending"
 		self.start_time = None
 		self.logic = None
 
 	async def join(self, consumer):
-		logger.info("wants to join")
 		if self.status == "finished":
-			logger.info("wrong status")
 			return False
 		if int(consumer.user_id) not in [int(x) for x in self.expected_players_id]:
-			logger.info("wrogn user id")			
 			return False
-		logger.info("can join")
 		if self.status != "pending":
-			logger.info("error wrong status: ", self.status)
 			return False
-		#add player:
 		if consumer.user_id in self.active_players:
-			logger.info("player reconnecting")
 			return True
-		logger.info("adding new player")
 		await consumer.join_channel(self.room)
 		consumer.game = self
 		consumer.update_user_data({"action":"set", "key":"game", "value":self.game_id})
-		logger.info(consumer.user_id, " joining channel ", self.room)
-		logger.info(consumer.user_data)
-		await get_channel_layer().group_send(self.room, {"type" : "test.hello", "connected" : consumer.user_id})
-		#check to start game
 		self.active_players.append(consumer.user_id)
 		if len(self.active_players) == len(self.expected_players_id):
 			await self.start_game()
-		else:
-			logger.info("can not start game")
-			logger.info("expcted players: ", len(self.expected_players_id))
-			logger.info("current players: ", len(self.active_players))
 		return True
 	
 	async def check_pending(self):
@@ -152,7 +134,6 @@ class GameChannel():
 	
 	async def start_game(self):
 		self.status = "starting"
-		# print("start game....")
 		# await GameManager().add_active_game(self.game_id)
 		await get_channel_layer().group_send(self.room, {"type": "game.updates", 
 			"state" : "player names", 
@@ -162,12 +143,10 @@ class GameChannel():
 		})
 		self.logic = GameLogic(self.game_id)
 		self.status = "active"
-		#print("cehck?")
 
 	async def logic_updates(self):
 		updates = self.logic.update_state()
 		if updates:
-			# print("updates: ", updates)
 			await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 			"updates" : updates})
 			if updates["state"] == "game end":
@@ -184,7 +163,6 @@ class GameChannel():
 
 	async def finish(self):
 		if self.status == "finished":
-			logger.info("already finished in finsih...")
 			return
 		self.status = "finished"
 		await GameManager().delete_game(self.game_id)
@@ -206,7 +184,6 @@ class GameChannel():
 
 	async def error_end(self, error):
 		if self.status == "finished":
-			logger.info("already finished in error")
 			return
 		if self.logic:
 			start_time = self.logic.start_time
@@ -228,7 +205,6 @@ class GameChannel():
 
 
 async def join_game_channel(consumer, game_id):
-	logger.info("consumer ", consumer.user_id, "joining game chaneel", game_id)
 	game = GameManager().get_game(game_id)
 	if game:
 		if await game.join(consumer):

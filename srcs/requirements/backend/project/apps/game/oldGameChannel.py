@@ -120,7 +120,6 @@ class GameChannel():
 		consumer.update_user_data({"action":"set", "key":"game", "value":self.game_id})
 		print(consumer.user_id, " joining channel ", self.room)
 		print(consumer.user_data)
-		await get_channel_layer().group_send(self.room, {"type" : "test.hello", "connected" : consumer.user_id})
 		#check to start game
 		self.active_players.append(consumer.user_id)
 		if len(self.active_players) == len(self.expected_players_id):
