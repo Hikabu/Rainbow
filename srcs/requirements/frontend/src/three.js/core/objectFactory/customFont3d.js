@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+
 import { dispose_object } from "../../mainScene/utils/utils";
 
 const blueprint = [
@@ -183,6 +184,7 @@ function preRenderFonts(){
 function thickBar(len, material, x, y, rot_z){
 	let geo = new THREE.BoxGeometry(0.4, len, 0.9);
 	let bar = new THREE.Mesh(geo, material);
+	bar.receiveShadow = true
 	bar.position.y = y;
 	bar.position.x = x;
 	bar.position.z = 0;
@@ -193,6 +195,7 @@ function thickBar(len, material, x, y, rot_z){
 function thinBar(len, material, x, y, rot_z){
 	let geo = new THREE.BoxGeometry(0.2, len, 10);
 	let bar = new THREE.Mesh(geo, material);
+	bar.receiveShadow = true
 	bar.position.y = y;
 	bar.position.x = x;
 	bar.position.z = -10;

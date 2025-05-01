@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import axios from 'axios';
 
 function dispose_object(object){
 	if (object instanceof THREE.Mesh) {
@@ -124,21 +125,19 @@ function mapToCenter(pointsLeft, pointsRight)
 }
 
 async function getUserID() {
-	try {
-		let response = await fetch('http://localhost:8004/get-userID/', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-		});
-		let data = await response.json();
-		if (data["error"]) {
-			alert(data["error"]);
-			return null;
-		}
-		return data["result"];
-	} catch (error) {
-		console.error('Error getting user ID:', error);
-		return null;
-	}
+	//return Date.now()
+	//return 1
+	const response = await axios.get('api/profiles/me/')
+	let userID = response.data.id
+	return userID
 }
 
-export { order_path, mapToCenter, update_min_max, dispose_object, getUserID};
+async function getUserAlias() {
+	// return "alias"
+	const response = await axios.get('api/profiles/me/')
+	let alias = response.data.displayName ? response.data.displayName : response.data.username ? response.data.username : response.data.intra_login ? response.data.intra_login : "player";
+	return alias;
+}
+
+
+export { order_path, mapToCenter, update_min_max, dispose_object, getUserID, getUserAlias};

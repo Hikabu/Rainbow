@@ -1,29 +1,25 @@
 import * as THREE from 'three';
 import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
-import { SubState } from "./SubStates";
+
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 import { StateManager } from './StateManager';
+import { SubState } from "./SubStates";
 
 class CssSubState extends SubState {
-	constructor(name, object, partIndex = 0, surfaceIndex = 0, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate){
+	constructor(name, object, partIndex = 0, surfaceIndex = 0, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate) {
 		super(name,  object.self.children[partIndex].children[surfaceIndex].userData.instance, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate);
-		// const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
-
-		this.engine =  new MainEngine();;
+		this.engine =  new MainEngine();
 		this.div = element;
-
 		this.divObject = new CSS3DObject(this.div);
 		this.divObject.position.set(0, 0, 0);
-		object.add_part(0.5, 0.5, partIndex, surfaceIndex, this.divObject, [0, 0, 1]);
+		object.add_part(0.5, 0.5, partIndex, surfaceIndex, this.divObject, [0, 1, 0]);
 		this.screenSurface =  object.self.children[partIndex].children[surfaceIndex];
 	}
-
 	enter() 
 	{
 		super.enter();
 		this.resize();
 	}
-
     exit() 
 	{
 		if (super.exit() == "cancelled" && new StateManager().forcedRedirect == "false")
@@ -37,7 +33,7 @@ class CssSubState extends SubState {
 		const worldSize = new THREE.Vector3();
 		boundingBox.getSize(worldSize);
 		const topLeft = new THREE.Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.min.z);
-		const bottomRight = new THREE.Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.max.z);
+		const bottomRight = new THREE.Vector3(boundingBox.max.x , boundingBox.min.y, boundingBox.max.z);
 		const toScreenPosition = (pos, camera) => {
 			const vector = pos.clone().project(camera);
 			return {//ARE YOU SURE ? THINK!
@@ -54,8 +50,10 @@ class CssSubState extends SubState {
 		const scaleX = pixelWidth / worldSize.x;
 		const scaleY = pixelHeight / worldSize.y;
 		const scaleFactor = 1 / Math.min(scaleX, scaleY);
+		this.div.style.border = "2px solid red"; // or any color you like
 		this.div.style.width = `${pixelWidth}px`;
 		this.div.style.height = `${pixelHeight}px`;
+		// this.divObject.scale.set(scaleFactor * 0.9, scaleFactor * 0.9, scaleFactor);
 		this.divObject.scale.set(scaleFactor, scaleFactor, scaleFactor);
 		super.resize();
 	}
@@ -81,14 +79,15 @@ class MeshSubState extends SubState {
 		this.engine = new MainEngine();
 	}
 	exit(){
-		if (this.exitScene() == "cancelled" || super.exit() == "cancelled") return "cancelled";
+		if (this.exitScene() == "cancelled" || super.exit() == "cancelled")
+			return "cancelled";
 		this.animate();
 	}
 	animate(){
-		if (this.animateScene() == "stop") return; 
+		// if (this.animateScene() == "stop") return;
 		this.engine.renderer.setRenderTarget(this.secondaryScene.renderTarget);
 		this.engine.renderer.render(this.secondaryScene.scene, this.secondaryScene.camera);
-		this.engine.renderer.setRenderTarget(null); 
+		this.engine.renderer.setRenderTarget(null);
 	}
 }
 

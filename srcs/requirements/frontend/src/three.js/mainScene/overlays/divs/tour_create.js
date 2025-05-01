@@ -1,6 +1,6 @@
 import { StateManager } from "../../../core/stateManager/StateManager";
-import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
-import { Text, Button, Input } from '../../../core/UIFactory/Elements';
+import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 
 const container = new Overlay([
@@ -66,6 +66,16 @@ const create = {
 	"show-div" : show_div,
 	"hide-div" : hide_div,
 	"resize": ()=>{container.resize()},
+	"keyHandler" : (event)=>{
+		if (event.key === 'Enter') {
+				event.preventDefault();
+				new Socket().send({
+					"channel":"tournament",
+					"action":"create",
+				})
+		}
+		return undefined;
+	}
 }
 
 export {create}
