@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { InstanceNode } from 'three/webgpu';
-
-import { fitCameraToObject } from '../../core/stateManager/cameraMovement';
+import { fitCameraToObject, onResizeCamMove } from '../../core/stateManager/cameraMovement';
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
@@ -12,7 +11,10 @@ class MainEngine {
 		this.setUpScene();
 		this.setUpRenderer();
 		this.setUpLights();
+		this.blockRaycast = false;
 		this.stateManager = null;
+		this.isCamMoving = false;
+		this.camera_target = new THREE.Vector3();
 		MainEngine.instance = this;
 	}
 	addContainerWrapper(wrapper){
@@ -20,6 +22,7 @@ class MainEngine {
 		this.resizeObserver = new ResizeObserver(() => this.resize());
 		this.resizeObserver.observe(this.container);
 		this.resize();
+		// console.log("add container wrapper")
 	}
 	removeContainerWrapper(){
 		this.container?.remove();
@@ -45,6 +48,7 @@ class MainEngine {
 		this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
 		this.renderer.shadowMap.enabled = true;
 		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		this.renderer.outputEncoding = THREE.sRGBEncoding;
 		this.container.appendChild(this.renderer.domElement);
 
 		this.css3DRenderer = new CSS3DRenderer();
@@ -52,6 +56,7 @@ class MainEngine {
 		this.css3DRenderer.domElement.style.position = "absolute";
 		this.css3DRenderer.domElement.style.top = 0;
 		this.container.appendChild(this.css3DRenderer.domElement);
+		// console.log("engine initiliazed")
 	}
 	setUpLights(){
 		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -74,11 +79,11 @@ class MainEngine {
 	}
 	add(newObject, clickable){
 		if (newObject instanceof THREE.Group) {
-			console.log("adding group: ", newObject)
+			// console.log("adding group: ", newObject)
 			this.scene.add(newObject)
 			if (clickable) {
 				newObject.children.forEach(child => {
-					console.log("child: ", child)
+					// console.log("child: ", child)
 					if (child instanceof THREE.Object3D)
 						this.clickableObjects.push(child);
 					else
@@ -99,19 +104,28 @@ class MainEngine {
 	
 		this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
 		this.camera.updateProjectionMatrix();
-	
+		//console.log("RESIZE")
 		if (this.stateManager)
 		{
 			let state = this.stateManager.currentState;
 			// this.camera.position.set(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
 			// let camera_pos =  
-			this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
-			// console.log("pos ", camera_pos);)
-			this.stateManager.resize();
+			if (state)
+			{
+				if (this.isCamMoving)
+					onResizeCamMove(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+				else
+					this.camera.position.copy(fitCameraToObject(state.targetObject, state.targetNormal, state.targetPadding))
+				this.stateManager.resize();
+			}
+			// else console.log("NO STATE")
+				// console.log("pos ", camera_pos);)
 		}
+		// else 
+		// 	console.log("NO STATE MANAGER")
 
 	}
-	blockRaycast(){
+	blockRaycast_to_true(){
 		this.blockRaycast = true;
 	}
 	click(event){

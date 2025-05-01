@@ -73,7 +73,7 @@ export function useAuth() {
             console.log('the status of token is: ', tokenResponse.status)
           if (tokenResponse.status >= 200 && tokenResponse.status < 300 ){
             console.log('JWT is set');
-            router.push('/mainpage')
+            router.push('/lobby')
           } 
         } 
       }

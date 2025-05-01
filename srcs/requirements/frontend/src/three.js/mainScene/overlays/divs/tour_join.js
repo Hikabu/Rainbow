@@ -111,7 +111,6 @@ function dynamic_content(data){
 
 let lastShown = null;
 function updateTimer() {
-	// console.log("updateTimer");
 	const now = new Date();
 	const correctedNow = new Date(now - offset);
 	const remaining = Math.floor((startTime - correctedNow) / 1000);
@@ -121,12 +120,26 @@ function updateTimer() {
 		const minutes = Math.floor(remaining / 60);
 		const seconds = remaining % 60;
 		container.getElementById("timer").element.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-		// console.log("content;>",container.getElementById("timer").textContent)
 	}
-	if (remaining <= 0)
+	if (remaining == 0)
+	{
 		clearInterval(interval);
+		move_on()
+	}
+	else if (remaining < 0)
+	{
+		clearInterval(interval);
+		move_on()
+	}
 }
 
+function move_on(){
+	let state = new StateManager().states[3];
+	if (state.currentSubstate == 4 || state.currentSubstate == 5)
+	{
+		state.changeSubstate(state.startIndex)
+	}
+}
 const join = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,
@@ -136,6 +149,19 @@ const join = {
 	"resize": ()=>{container.resize()},
 	"dynamic-content" : dynamic_content,
 	"get-button-type" : get_button_type,
+	"keyHandler" : (event)=>{
+		if (event.key === 'Enter'){
+			if (get_button_type() == "JOIN")
+			{
+				new Socket().send({
+					"channel":"tournament",
+					"action":"join",
+				})
+			}
+		}
+		event.preventDefault();
+		return undefined;
+	}
 }
 
 export {join}

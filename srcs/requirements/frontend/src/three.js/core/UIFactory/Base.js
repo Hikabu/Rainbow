@@ -6,6 +6,10 @@ class BaseDivElement{
 		this.childElements = [];
 		this.element.id = id;
 		this.element.style.display = 'flex';
+this.element.style.flexDirection = 'column'; // or 'row', depending on layout
+this.element.style.justifyContent = 'center'; // vertical alignment in column layout
+this.element.style.alignItems = 'center'; // horizontal alignment
+
 		children.forEach(child => {this.add(child);});
 	}
 	add(element){
@@ -54,6 +58,11 @@ class BaseDivElement{
 				elements.push(child);
 		};
 		return elements;
+	}
+	replaceWith(new_base){
+		this.element.replaceWith(new_base.element)
+		this.element = new_base.element;
+		this.childElements = new_base.childElements;
 	}
 }
 
