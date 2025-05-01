@@ -77,25 +77,22 @@
                             <p v-else class="text-white">No friends yet.</p>
                         </div>
 
-                            <!-- Wins and Losses -->
-                            <div class="row">
-                                <div class="col-md-6 mb-4 ">
-                                    <label class="form-label ">Wins</label>
-                                    <div class="form-control-plaintext text-white">
-                                        {{ user?.wins || 0 }}
-                                    </div>
+                        <!-- Wins and Losses -->
+                        <div class="row">
+                            <div class="col-md-6 mb-4 ">
+                                <label class="form-label ">Wins</label>
+                                <div class="form-control-plaintext text-white">
+                                    {{ user?.wins || 0 }}
                                 </div>
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">Losses</label>
-                                    <div class="form-control-plaintext text-white ">
-                                        {{ user?.losses || 0 }}
-                                    </div>
-                                </div>
+                            </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Losses</label>
+                            <div class="form-control-plaintext text-white ">
+                                {{ user?.losses || 0 }}
                             </div>
                         </div>
                     </div>
-                <!-- </div> -->
-                <!-- <div v-else> Loading...</div> -->
+                </div>
             </div>
         </div>
     </div>
