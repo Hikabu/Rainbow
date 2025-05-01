@@ -1,3 +1,7 @@
+import {getUserID} from './utils'
+import { msgRouter } from './BackendMsg';
+import { stateManager } from '../states/mainMenuState';
+import { StateManager } from '../../core/stateManager/StateManager';
 import axios from 'axios';
 
 import { msgRouter } from './BackendMsg';
@@ -8,19 +12,21 @@ export class Socket {
 		if (Socket.instance)
 			return Socket.instance
 		this.msgQueue = [];
-		this.init();
+		console.log("first call socket");
+		//this.init();
+		this.userID = null;
 		Socket.instance = this;
 	}
 	async init(){
-		const response = await axios.get('api/profiles/me/')
-		
-		this.userID = response.data.id
+		console.log("init sokcet with user id")
+		this.userID = await getUserID()
+		console.log("user: ", this.userID);
 		try {
-			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);		
+			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
 			this.socket.onerror = this.myError.bind(this);
 			this.socket.onopen = this.myOpen.bind(this);
 			this.socket.onclose = this.myClose.bind(this);
-			this.socket.onmessage = msgRouter; 
+			this.socket.onmessage = (event) => msgRouter(event);
 		}
 		catch(err){
 			this.myError(err)
@@ -28,7 +34,7 @@ export class Socket {
 	}
 	myError(err){
 		console.error("WebSocket error:", err);		
-		//this.myRetry();		
+		//this.myRetry();	//TODO: after testing uncomment	
 	}
 	myOpen(){
 		this.msgQueue.forEach(msg => {
@@ -54,4 +60,3 @@ export class Socket {
 			this.msgQueue.push(obj);
 	}
 }
-

@@ -39,47 +39,53 @@ function clean_vector(v, decimals = 5) {
 }
 
 class Shape {
-	constructor(points, move_back = 0, geometry)
+	constructor(points, isAbstract = false)
 	{
-		this.z = move_back;
+		this.z = 0;
+		if (points[0].length == 3)
+		{
+
+			for (let i = 0; i < points.length; i++)
+			{
+				this.z += points[i][2];
+			}
+			if (this.z != 0)
+				this.z /= points.length
+		}
+			
 		this.vertex3d = [];
-		this.vertex3d = points.length == 0 ? []: order_path(points);
+		this.vertex3d = points;
 		this.vertex2d = [];
-		this.geometry = points.length == 0 ? geometry : this.custom_geo(this.vertex3d);
 		this.material = null;
 		this.self = null;
 		this.normal = null;
 		this.onclick = null;
 		this.bbox = null;
-		return this;
+		isAbstract == false ? this.quad_geo() : this.abstract_geo();
 	}
-	custom_geo(points){
-		let geometry;
-		if (points[0].length == 3)
-		{
-			geometry = new THREE.BufferGeometry();
-			const vertices = [];
-			for (let i = 0; i < points.length; i++)
-				vertices.push(points[i][0], points[i][1], points[i][2]);
-			geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-			const indices = [0, 1, 2, 2, 3, 0];
-			geometry.setIndex(indices);
-		}
-		else if (points[0].length == 2)
-		{
-			const shape = new THREE.Shape();
-			shape.moveTo(points[0][0], points[0][1]);
-			for (let i = 1; i < points.length; i++)
-				shape.lineTo(points[i][0], points[i][1]);
-			shape.closePath();
-			geometry = new THREE.ShapeGeometry(shape);
-		}
-		const uvs = this.calc_uvs(geometry);
-		return geometry;
+	quad_geo(){
+		this.geometry = new THREE.BufferGeometry();
+		const vertices = [];
+		for (let i = 0; i < this.vertex3d.length; i++)
+			vertices.push(this.vertex3d[i][0], this.vertex3d[i][1], this.vertex3d[i][2]);
+		this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+		const indices = [0, 1, 2, 2, 3, 0];
+		this.geometry.setIndex(indices);
+		this.calc_uvs();
 	}
-	calc_uvs(geometry)
+	abstract_geo(){
+		const shape = new THREE.Shape();
+		shape.moveTo(this.vertex3d[0][0], this.vertex3d[0][1]);
+		for (let i = 1; i < this.vertex3d.length; i++)
+		{
+			shape.lineTo(this.vertex3d[i][0], this.vertex3d[i][1]);
+		}
+		shape.closePath();
+		this.geometry = new THREE.ShapeGeometry(shape);
+	}
+	calc_uvs()
 	{
-		let curr = get_geometry_normal_vector(geometry);
+		let curr = get_geometry_normal_vector(this.geometry);
 		let target = new THREE.Vector3(0, 0, 1);
 		let quaternion = new THREE.Quaternion().setFromUnitVectors(curr, target);
 		this.vertex2d = this.vertex3d.map(p => {
@@ -88,14 +94,28 @@ class Shape {
 			return clean_vector(v);
 		});
 		const limits = update_min_max(this.vertex2d);
-		const min = limits.min[0] < limits.min[1] ? limits.min[0] : limits.min[1];
-		const max = limits.max[0] > limits.max[1] ? limits.max[0] : limits.max[1];
-		const uvs =[];
+		const minX = limits.min[0]
+		const minY = limits.min[1]
+		const maxX = limits.max[0]
+		const maxY = limits.max[1]
+		let uvs =[];
 		this.vertex2d.forEach((v)=>{
-			uvs.push((v.x - min) / (max - min));
-			uvs.push((v.y - min) / (max - min));
+			uvs.push((v.x - minX) / (maxX - minX));
+			uvs.push((v.y - minY) / (maxY - minY));
+			// const u = (v.x - minX) / (maxX - minX);
+			// const v_ = 1 - (v.y - minY) / (maxY - minY); // <-- flipped Y
+			// uvs.push(u, v_);
 		});
-		geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
+		// console.log("uvs: ", uvs);
+		uvs = [
+			0, 0,  // top-left
+			0, 1,  // top-right
+			1, 1,  // bottom-right
+			1, 0,  // bottom-left
+		];
+		this.geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
+		// console.log("geo: ", this.geometry)
+
 	}
 	add_material(material)
 	{
@@ -103,7 +123,7 @@ class Shape {
 		{
 			this.material = material;
 			this.self = new THREE.Mesh(this.geometry, this.material);
-			this.self.position.z -= this.z;
+			this.self.position.z = this.z;
 			this.self.userData.instance = this;
 		}
 		else

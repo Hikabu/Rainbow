@@ -1,17 +1,16 @@
 
-
-import * as THREE from 'three';
-
-import { StateManager } from '../../core/stateManager/StateManager';
 import { State } from '../../core/stateManager/States';
-import { CssSubState,MeshSubState } from '../../core/stateManager/SubStatesExtends';
-import { aiMachineObj,center, object, partIndex, screenSurface, surfaceIndex } from '../objects/machines/aiMachineObj';
+import { MeshSubState , CssSubState } from '../../core/stateManager/SubStatesExtends';
 import { screenMaterial } from '../objects/simpleAssets';
-import { AlertManager } from '../overlays/alerts/Alerts';
-import { create_exit_alert } from '../overlays/alerts/exit_warning';
-import { End } from '../overlays/divs/end';
+import { screenSurface, center, object, partIndex,  surfaceIndex, aiMachineObj } from '../objects/machines/aiMachineObj';
 import { StartScreen } from '../overlays/divs/start'
-import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
+import { End } from '../overlays/divs/end';
+import { pongGame } from '../overlays/scenes/pong-game/Game';		
+import { AlertManager } from '../overlays/alerts/Alerts';
+import { StateManager } from '../../core/stateManager/StateManager';
+import * as THREE from 'three';
+import { create_exit_alert } from '../overlays/alerts/exit_warning';
+import { controls } from '../overlays/divs/controls';
 const divStart = new StartScreen('white', "START GAME");
 
 const restScreen = new CssSubState(
@@ -28,7 +27,7 @@ const restScreen = new CssSubState(
 	null,
 	null,
 	()=>{ divStart.resize();},
-	(event)=> { return divStart.keyHandler(event);},
+	null,
 	null,
 )
 
@@ -49,15 +48,37 @@ const startScreen = new CssSubState(
 	()=>{divStart.animate()},
 )
 
+const divControls = controls;
+const controlScreen = new CssSubState(
+	"controls", 
+	object,
+	partIndex,
+	surfaceIndex,
+	divControls.div,
+	0,
+	()=>{
+		divControls['show-buttons']();
+		divControls["enter"]("ai");
+	},
+	null,
+	()=>{
+		divControls['hide-buttons']();
+		divControls["exit"]()
+	},
+	()=>{divControls["resize"]()},
+	(event)=>{return divControls["keyHandler"](event)},
+	null
+)
+
 
 const gameScreen = new MeshSubState(
-	"rest", 
+	"game", 
 	screenSurface,
 	pongGame,
 	1,
-	()=>{startPongGame("AI")},
+	()=>{pongGame["enter"](2)},
 	()=>{
-		new AlertManager().remove_latest_alert("exit_alert");
+		new AlertManager().remove_latest_alert("exit alert");
 	},
 )
 
@@ -78,7 +99,7 @@ const endScreen = new CssSubState(
 )
 
 const aiMachineState = new State(
-	"ai game screen", 
+	"ai-duel", 
 	{
 		pos: true,
 		duration: 2,
@@ -87,13 +108,14 @@ const aiMachineState = new State(
 	null,
 	[
 		restScreen,
-		startScreen, 
-		gameScreen,
+		startScreen,
+		controlScreen,
+		gameScreen,//3
 		endScreen
 	],
 	null,
 	()=>{
-		if (new StateManager().currentState.currentSubstateIndex == "2")
+		if (new StateManager().currentState.currentSubstate.name == "game")
 			{
 				if (create_exit_alert() == "cancelled")
 					return ("cancelled")
