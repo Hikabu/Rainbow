@@ -1,16 +1,17 @@
-import { Engine } from './setUp/Engine';
-import { MiddleBars } from "./objects/MiddleBars";
-import { PaddleGroup } from './objects/Paddle';
+import * as THREE from 'three';
+
+import { Font } from '../../../../core/objectFactory/customFont3d';
+import { StateManager } from '../../../../core/stateManager/StateManager';
+import { Socket } from '../../../utils/Socket';
+import { dispose_object } from '../../../utils/utils';
+import { createRenderTarget, createScreenMaterial } from '../utils';
 import { Ball } from './objects/Ball';
 import { Header } from './objects/Header';
+import { MiddleBars } from "./objects/MiddleBars";
+import { PaddleGroup } from './objects/Paddle';
+import { Engine } from './setUp/Engine';
 import { GameSocket } from './setUp/GameSocket';
 import { KeyControls } from './setUp/KeyControls';
-import { Font } from '../../../../core/objectFactory/customFont3d';
-import { dispose_object } from '../../../utils/utils';
-import { StateManager } from '../../../../core/stateManager/StateManager';
-import { createRenderTarget, createScreenMaterial } from '../utils';
-import * as THREE from 'three';
-import { Socket } from '../../../utils/Socket';
 
 //STATES: waiting, playing, error, completed
 

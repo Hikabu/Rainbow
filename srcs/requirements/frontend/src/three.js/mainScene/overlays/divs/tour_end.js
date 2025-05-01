@@ -1,9 +1,9 @@
 import { StateManager } from "../../../core/stateManager/StateManager";
-import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
-import { Text, Button, Input } from '../../../core/UIFactory/Elements';
+import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
-import { Ball } from "../scenes/pong-game/objects/Ball";
 import { AlertManager } from "../alerts/Alerts";
+import { Ball } from "../scenes/pong-game/objects/Ball";
 
 //you won round x | you lost round x | you won the tournament!
 //you earned

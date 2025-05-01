@@ -1,13 +1,14 @@
+import * as THREE from 'three';
+
 import { StateManager } from '../../core/stateManager/StateManager';
 import { State } from '../../core/stateManager/States';
 import { SubState } from '../../core/stateManager/SubStates';
-import { localMachineState } from "./localMachineState";
-import { aiMachineState } from './aiMachineState';
-import { tourMachineState } from './tournamentMachineState';
-import { localMachineObj } from '../objects/machines/localMachineObj';
 import { aiMachineObj } from '../objects/machines/aiMachineObj';
+import { localMachineObj } from '../objects/machines/localMachineObj';
 import { tourMachineObj } from '../objects/machines/tournamentMachineObj';
-import * as THREE from 'three';
+import { aiMachineState } from './aiMachineState';
+import { localMachineState } from "./localMachineState";
+import { tourMachineState } from './tournamentMachineState';
 
 const mainSceneObj = new THREE.Group();
 mainSceneObj.add(localMachineObj.self)
@@ -58,4 +59,4 @@ const stateManager = new StateManager(
 
 
 
-export { stateManager, mainSceneObj}
+export { mainSceneObj,stateManager}
