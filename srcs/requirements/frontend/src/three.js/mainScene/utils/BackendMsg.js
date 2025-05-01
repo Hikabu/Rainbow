@@ -1,14 +1,10 @@
 import { StateManager } from '../../core/stateManager/StateManager';
-import { create_redirection_alert } from '../overlays/alerts/redirection_warning';
 import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake'; //ppb will couse fail
 import { create_redirection_alert, delete_redirection_alert, fadeout_redirection_alert } from '../overlays/alerts/redirection_warning';
 import { join } from '../overlays/divs/tour_join';
-import { State } from '../../core/stateManager/States';
-import { MainEngine } from './MainEngine';
 import { OnLoad } from './OnLoad';
 import { stateManager } from '../states/mainMenuState';
-import { AlertManager } from '../overlays/alerts/Alerts';
 import { create_info_alert } from '../overlays/alerts/info_alert';
 
 
