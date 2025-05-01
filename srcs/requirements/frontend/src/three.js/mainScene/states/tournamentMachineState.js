@@ -1,6 +1,3 @@
-
-import * as THREE from 'three';
-
 import { StateManager } from '../../core/stateManager/StateManager';
 import { State } from '../../core/stateManager/States';
 import { CssSubState,MeshSubState } from '../../core/stateManager/SubStatesExtends';
@@ -17,7 +14,6 @@ import { start } from '../overlays/divs/tour_start';
 import { pongGame } from '../overlays/scenes/pong-game/Game';
 import { waiting } from '../overlays/scenes/waiting';
 import { Socket } from '../utils/Socket';
-import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { controls } from '../overlays/divs/controls';
 import * as THREE from 'three';
 
