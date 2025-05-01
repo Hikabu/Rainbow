@@ -1,11 +1,6 @@
 import {getUserID} from './utils'
 import { msgRouter } from './BackendMsg';
-import { stateManager } from '../states/mainMenuState';
-import { StateManager } from '../../core/stateManager/StateManager';
-import axios from 'axios';
 
-import { msgRouter } from './BackendMsg';
-import {getUserID} from './utils'
 
 export class Socket {
 	constructor(){
