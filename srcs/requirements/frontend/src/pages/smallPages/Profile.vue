@@ -69,7 +69,7 @@
                                 <li v-for="friend in user.friends" :key="friend.id">
                                     {{ friend.username || friend?.intraLogin }} 
                                     <span v-if="friend.isOnline">(Online)</span>
-                                    <span v-else>(Ofline)</span>
+                                    <span v-else>(Offline)</span>
                                 </li>
                             </ul>
                             <p v-else class="text-white">No friends yet.</p>
@@ -102,12 +102,16 @@ import axios from 'axios'
 import { onMounted,ref } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
+// import { user } from '../../stores/users'
 
 const fileInput = ref(null)
 
 const triggerFileInput = () => {
     fileInput.value.click()
 }
+//User connects --> Add user to active_users --> Send updated active_users to frontend
+//User disconnects --> Remove user from active_users --> Send updated active_users to frontend
+//Frontend receives active_users list --> Display online users
 
 const user = ref(null)
 const isEditing = ref(false)
@@ -155,6 +159,9 @@ const profileData = async () => {
         user.value = response.data
         user.value.displayName ||= user.value.username ?? user.value.intraLogin
 
+        if (user.friends && Array.isArray(user.friends)){
+            user.friends = user.friends.map(f => ref(f) )
+        }
         return user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)
