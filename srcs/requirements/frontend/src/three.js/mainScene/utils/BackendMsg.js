@@ -4,10 +4,19 @@ import { end } from '../overlays/divs/tour_end';
 import { matchmake } from '../overlays/divs/tour_matchamake';
 import { create_redirection_alert } from '../overlays/alerts/redirection_warning';
 import { join } from '../overlays/divs/tour_join';
+import { user } from '../../../stores/users'
+
+
+const updateStatus = (id, isOnline) => {
+	const friend = user.value?.friends.find(f => f.id === id)
+	if (friend) {
+		friend.isOnline = isOnline
+	}
+}
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);
-	// console.log("data: ", data);
+	console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "game.updates")
@@ -21,11 +30,21 @@ export function msgRouter(event){
 		else
 			console.log("state name: ", new StateManager().currentState.name)
 	}
+	console.log("IM here in the sockets")
 	if (data.type == "live.game.updates")
 	{
 		pongGame["receive"](data);
 	}
-	else if (data.type == "tour.updates" || data.type == "consumer.updates")
+	else if (data.type == "consumer.updates"){
+		if (data.active_users && user.value?.friends?.length) {
+			console.log("Users who are online:", data.active_users);
+			user.value.friends.forEach(friend => {
+				const isOnline = data.active_users.includes(String(friend.id))
+				updateStatus(friend.id, isOnline)
+			});
+		}
+	}
+	else if (data.type == "tour.updates" )
 	{
 		console.log("received: ", data)
 		for (const key of Object.keys(tourActions)) {

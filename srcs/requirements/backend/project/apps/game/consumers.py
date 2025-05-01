@@ -1,5 +1,6 @@
 import json, asyncio, numpy as np
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.layers import get_channel_layer
 from .gameChannel import GameChannel, gameManager
 from .tournamentChannel import TournamentChannel, TournamentManager
 from .playLog import new_game
@@ -25,7 +26,13 @@ class MainConsumer(AsyncWebsocketConsumer):
 		if active_users == None:
 			active_users = []
 		active_users.append(self.user_id)
+		active_users = list(set(active_users))
 		cache.set('active_users', active_users)
+		await self.send_active_users()
+		# await self.send_channel("all", {
+		# 	"type": "consumer.updates",
+		# 	"active_users": active_users
+		# })
 		#TODO cehck if self consumer was here before....
 		self.user_data = cache.get(f"consumer_{self.user_id}")
 		if self.user_data :
@@ -39,6 +46,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.join_channel(f"{self.user_id}")
 			await self.update_tournament_display()
 			cache.set(f"consumer_{self.user_id}", self.user_data)
+		await self.send_active_users()
+
 
 	async def disconnect(self, code=None):
 		global active_users
@@ -53,6 +62,12 @@ class MainConsumer(AsyncWebsocketConsumer):
 			active_users = []
 		active_users.remove(self.user_id)
 		cache.set('active_users', active_users)
+		#broadcast new users
+		await self.send_active_users()
+		# await self.send_channel("all", {
+		# 	"type": "consumer.updates",
+		# 	"active_users": active_users
+		# })
 		print("WEBOSCKET DISCONNECTED!!!!!")
 
 	async def receive(self, text_data):
@@ -101,6 +116,17 @@ class MainConsumer(AsyncWebsocketConsumer):
 				await self.tournament.disconnect(self)
 				await self.gameChannel.finish()
 
+ 
+	#Lera stuff list of the users
+	async def send_active_users(self):
+		active_users = cache.get('active_users') or []
+  		# await get_channel_layer()({
+
+		await get_channel_layer().group_send("all", {
+			"type": "consumer.updates",
+			"active_users": active_users
+		})
+  
 	async def update_tournament_display(self):
 		pending_tournament = TournamentManager().get_tournament(cache.get("pending_tournament"))
 		if pending_tournament == None:
@@ -193,6 +219,10 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def tour_updates(self, event):
 		await self.send(text_data=json.dumps(event))
+  
+	async def consumer_updates(self, event):
+		await self.send(text_data=json.dumps(event))
+
 
 			
 
