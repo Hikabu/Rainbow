@@ -71,9 +71,8 @@ class MainConsumer(AsyncWebsocketConsumer):
 		# 	"type": "consumer.updates",
 		# 	"active_users": active_users
 		# })
-		#TODO cehck if self consumer was here before....
 		self.user_data = cache.get(f"consumer_{self.user_id}")
-		await self.notify_friends(is_online=True)
+		# await self.notify_friends(is_online=True)
 		if self.user_data :
 			print("retrieving consumer", self.user_data)
 			self.tournament = TournamentManager().get_tournament(self.user_data.get("tournament"))
