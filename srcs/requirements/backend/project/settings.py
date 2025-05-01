@@ -115,6 +115,15 @@ CHANNEL_LAYERS = {
 REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 ROOT_URLCONF = 'project.urls'
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
 
 
 # Password validation
@@ -179,7 +188,7 @@ STORAGES = {
 AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=2592000", # 2 days 
 }
-
+# settings.py
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOW_CREDENTIALS = True #?

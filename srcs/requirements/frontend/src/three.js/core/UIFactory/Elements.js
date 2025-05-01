@@ -1,6 +1,6 @@
 import { BaseNonDivElement } from "./Base";
 class Text extends BaseNonDivElement{
-	constructor({id = "text", content, flex = 0, fontSize = 1, w, h, marginLR = 0, margin = 0, marginBot = 0, paddingLR = 0})
+	constructor({id = "text", fontFamily="Press Start 2P", content, color ="", flex = 0, fontSize = 1, w, h, marginLR = 0, margin = 0, marginBot = 0, paddingLR = 0})
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.element.textContent = content;
@@ -11,6 +11,10 @@ class Text extends BaseNonDivElement{
 		this.element.style.mariginRight = marginLR;
 		this.element.style.paddingRight = paddingLR;
 		this.element.style.paddingLeft = paddingLR;
+		this.element.style.fontFamily = fontFamily;
+		if (color)
+			this.element.style.color = color;
+
 
 	}
 }
@@ -31,7 +35,7 @@ class Input extends BaseNonDivElement{
 }
 
 class Button extends BaseNonDivElement{
-	constructor({id = "button", content, color, onClick =()=>{}, flex = 0, fontSize = 1, w, h, margin = 0, marginBot = 0})
+	constructor({id = "button", fontFamily="Press Start 2P",content, color, onClick = null, onClickAsync = null, flex = 0, fontSize = 1, w, h, margin = 0, marginBot = 0})
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.isSelected = false;
@@ -51,14 +55,19 @@ class Button extends BaseNonDivElement{
 		}
 		this.element.textContent = content;
 		this.onClick = onClick;
+		this.onClickAsync = onClickAsync;
 		this.element.style.color = color;
 		this.color = color;
 		this.element.style.textAlign = "center";
 		this.element.style.marginTop = margin;
 		this.element.style.marginBottom = margin + marginBot;
+		this.element.style.fontFamily = fontFamily;
 		this.element.addEventListener('mouseover', ()=>{this.activate()});
 		this.element.addEventListener('mouseout', ()=> { this.deactivate()});
-		this.element.addEventListener('click', ()=>{ this.onClick();});
+		if (this.onClick)
+			this.element.addEventListener('click', ()=>{ this.onClick();});
+		else if (this.onClickAsync)
+			this.element.addEventListener('click', async ()=>{ await this.onClickAsync();});
 	}
 	animate(){
 		const r =  Math.random() * (100);
@@ -70,4 +79,4 @@ class Button extends BaseNonDivElement{
 	}
 }
 
-export {Text, Input, Button}
+export {Button,Input, Text}

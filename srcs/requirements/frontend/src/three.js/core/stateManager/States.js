@@ -1,8 +1,9 @@
+import * as THREE from 'three';
+
 import { MainEngine } from '../../mainScene/utils/MainEngine';
 import { moveCamera } from './cameraMovement';
+import { fitCameraToObject,get_camera_animation } from './cameraMovement';
 import { StateManager } from './StateManager';
-import { get_camera_animation, fitCameraToObject } from './cameraMovement';
-import * as THREE from 'three';
 
 class State {
     constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials, targetObject, targetNormal, targetPadding = 1.25) {
@@ -48,25 +49,39 @@ class State {
 		if (postCam)
 			this.currentSubstate.postCamEnter();
     }
+	get_camera_position(){
+		return fitCameraToObject(this.targetObject, this.targetNormal, this.targetPadding);
+	}
 	enter(slow) {
 		this.enterState();
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
-		console.log("this.object: ", this.object)
-		if (slow && this.slowCameraMovement)
-			moveCamera(this.slowCameraMovement, this.targetObject, this.targetNormal, this.targetPadding,
+		if (slow  == 1 && this.slowCameraMovement)
+		{
+			// console.log("slow camera movement...")
+			moveCamera(this.slowCameraMovement, this.get_camera_position(),
 			() =>{
 				this.currentSubstate.postCamEnter();
 			})
-		else if (this.cameraMovement)
-			moveCamera(this.cameraMovement,this.targetObject, this.targetNormal, this.targetPadding, 
+		}
+		else if (slow == 0 && this.cameraMovement)
+		{
+			// console.log("fast camaera movement")
+			moveCamera(this.cameraMovement,this.get_camera_position(), 
 			() =>{
 				this.currentSubstate.postCamEnter();
 			})
+		}
+		else if (slow == -1)
+		{
+			// console.log("no camera movement")
+			new MainEngine().camera.position.copy(this.get_camera_position());
+			this.currentSubstate.postCamEnter();
+		}
 	}
 	exit() {
-		if (this.exitState() == "cancelled" || this.currentSubstate.exit() == "cancelled")
+		if (this.exitState() == "cancelled" || this.changeSubstate(this.startIndex, false) == "cancelled")
 			return 'cancelled';
-		this.changeSubstate(this.startIndex, false);
+		//this.changeSubstate(this.startIndex, false);
 	}
 	handleKeyPress(event) {
 		const view = this.currentSubstate?.handleKeyPress(event);

@@ -1,23 +1,41 @@
 import { Object } from '../../../core/objectFactory/Object'
-import { materialsgroup, singleMaterial, 
-		part_sym_2d, part_sym_3d, 
-		part_asym, part_asym_ang,
-		threeCube} from '../simpleAssets';
-import { screenMaterial } from '../simpleAssets';
+import { Part } from '../../../core/objectFactory/Part';
 import { StateManager } from '../../../core/stateManager/StateManager';
+import { arcade_points, scale_points } from '../assets';
+import { screenMaterial } from '../simpleAssets';
+import * as THREE from 'three';
 
-const object = new Object(part_asym);
+const part_test = new Part(
+	scale_points(arcade_points, 2, 6), 
+	2.5,
+	[
+		new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }), // Red
+		new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }), // Red
+		new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide }), // Red
+		new THREE.MeshStandardMaterial({ color: 0xff7f00, side: THREE.DoubleSide }), // Orange
+		new THREE.MeshStandardMaterial({ color: 0xffff00, side: THREE.DoubleSide }), // Yellow
+		new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide }), // Green
+		new THREE.MeshStandardMaterial({ color: 0x0000ff, side: THREE.DoubleSide }), // Blue
+		new THREE.MeshStandardMaterial({ color: 0x800080, side: THREE.DoubleSide }), // Purple
+		new THREE.MeshStandardMaterial({ color: 0xff1493, side: THREE.DoubleSide }), // Pink
+		new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }), // Black
+	  ]
+);
+
+const object = new Object(part_test);
 object.self.position.z = 3;
 object.self.position.x = 4;
-object.self.position.y = 2;
+object.self.position.y = 2.4;
+object.self.rotation.y -= Math.PI / 2;
 
 const tourMachineObj = object;
 tourMachineObj.add_onclick(()=>{ new StateManager().changeState(3);})
 
 const partIndex = 0;
-const surfaceIndex = 0;
+const surfaceIndex = 5;
 const screenSurface = object.self.children[partIndex].children[surfaceIndex].userData.instance;
 screenSurface.add_material( screenMaterial);
 const center = object.self.position.clone();
 center.z += 2;
+
 export {tourMachineObj, screenSurface, center, object, partIndex, surfaceIndex}

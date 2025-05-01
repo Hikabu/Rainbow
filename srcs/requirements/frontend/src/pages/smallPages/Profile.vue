@@ -4,62 +4,64 @@
             <SideBar />
             <div class="about col-md-10 p-5 flex-grow-1 position-relative">
                 <!-- avatars -->
-                <div style="cursor: pointer;" @click="triggerFileInput" >
-                    <img 
-                        v-if="user?.avatar || user?.intra_avatar" 
-                        :src="user.avatar || user?.intra_avatar" 
-                        class="rounded-circle"
-                        style="width: 210px; height: 210px; object-fit: cover;"
+                <!-- <div v-if="user"> -->
+                    <div style="cursor: pointer;" @click="triggerFileInput" >
+                        <img 
+                            v-if="user?.avatar || user?.intra_avatar" 
+                            :src="user.avatar || user?.intra_avatar" 
+                            class="rounded-circle"
+                            style="width: 210px; height: 210px; object-fit: cover;"
+                        >
+                    </div>
+                    <input 
+                        ref="fileInput"
+                        type="file"
+                        style="display: none;"
+                        accept="image/*"
+                        @change="handleFileUpload"
                     >
-                </div>
-                <input 
-                    ref="fileInput"
-                    type="file"
-                    style="display: none;"
-                    accept="image/*"
-                    @change="handleFileUpload"
-                >
-                <h1 class="text-white mb-5">My Details</h1>
-                
-                <div class="card ">
-                    <div class="card-body ">
-                        <!-- Display Name Section -->
-                        <div class="mb-4 d-flex row-flex justify-content-between">
-                         <label >Display Name</label>
-                                <input 
-                                    v-if="isEditing"
-                                    v-model="newDisplayName" 
-                                >
-                                <div v-else class=" text-white">
-                                    {{ user?.displayName }}
-                                </div>
-                                <button 
-                                    class="btn btn-outline-primary"
-                                    @click="toggleEdit"
-                                >
-                                    {{ isEditing ? 'Cancel' : 'Edit' }}
-                                </button>
-                                <button 
-                                    v-if="isEditing"
-                                    class="btn btn-primary"
-                                    @click="saveDisplayName"
-                                >
-                                    Save
-                                </button>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="mb-4 d-flex row-flex justify-content-between">
-                            <label >Email</label>
-                            <div class="text-white">
-                                {{ user?.email }}
+                    <h1 class="text-white mb-5">My Details</h1>
+                    
+                    <div class="card ">
+                        <div class="card-body ">
+                            <!-- Display Name Section -->
+                            <div class="mb-4 d-flex row-flex justify-content-between">
+                            <label >Display Name</label>
+                                    <input 
+                                        v-if="isEditing"
+                                        v-model="newDisplayName" 
+                                    >
+                                    <div v-else class=" text-white">
+                                        {{ user?.displayName }}
+                                    </div>
+                                    <button 
+                                        class="btn btn-outline-primary"
+                                        @click="toggleEdit"
+                                    >
+                                        {{ isEditing ? 'Cancel' : 'Edit' }}
+                                    </button>
+                                    <button 
+                                        v-if="isEditing"
+                                        class="btn btn-primary"
+                                        @click="saveDisplayName"
+                                    >
+                                        Save
+                                    </button>
                             </div>
-                        </div>
-                        <!-- Username -->
-                        <div class="mb-4 d-flex row-flex justify-content-between">
-                            <label >Friends can find you by </label>
-                            <div class="text-white">
-                                {{ user?.username || user?.intraLogin }}
+
+                            <!-- Email -->
+                            <div class="mb-4 d-flex row-flex justify-content-between">
+                                <label >Email</label>
+                                <div class="text-white">
+                                    {{ user?.email }}
+                                </div>
+                            </div>
+                            <!-- Username -->
+                            <div class="mb-4 d-flex row-flex justify-content-between">
+                                <label >Friends can find you by </label>
+                                <div class="text-white">
+                                    {{ user?.username || user?.intraLogin }}
+                                </div>
                             </div>
                         </div>
                         <!-- Friends -->
@@ -69,7 +71,7 @@
                                 <li v-for="friend in user.friends" :key="friend.id">
                                     {{ friend.username || friend?.intraLogin }} 
                                     <span v-if="friend.isOnline">(Online)</span>
-                                    <span v-else>(Ofline)</span>
+                                    <span v-else>(Offline)</span>
                                 </li>
                             </ul>
                             <p v-else class="text-white">No friends yet.</p>
@@ -83,11 +85,10 @@
                                     {{ user?.wins || 0 }}
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label">Losses</label>
-                                <div class="form-control-plaintext text-white ">
-                                    {{ user?.losses || 0 }}
-                                </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Losses</label>
+                            <div class="form-control-plaintext text-white ">
+                                {{ user?.losses || 0 }}
                             </div>
                         </div>
                     </div>
@@ -102,12 +103,16 @@ import axios from 'axios'
 import { onMounted,ref } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
+// import { user } from '../../stores/users'
 
 const fileInput = ref(null)
 
 const triggerFileInput = () => {
     fileInput.value.click()
 }
+//User connects --> Add user to active_users --> Send updated active_users to frontend
+//User disconnects --> Remove user from active_users --> Send updated active_users to frontend
+//Frontend receives active_users list --> Display online users
 
 const user = ref(null)
 const isEditing = ref(false)
@@ -155,6 +160,9 @@ const profileData = async () => {
         user.value = response.data
         user.value.displayName ||= user.value.username ?? user.value.intraLogin
 
+        if (user.friends && Array.isArray(user.friends)){
+            user.friends = user.friends.map(f => ref(f) )
+        }
         return user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)

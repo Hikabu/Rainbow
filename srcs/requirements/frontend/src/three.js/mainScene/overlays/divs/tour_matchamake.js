@@ -1,6 +1,6 @@
 import { StateManager } from "../../../core/stateManager/StateManager";
-import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
-import { Text, Button, Input } from '../../../core/UIFactory/Elements';
+import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 
 const container = new Overlay([
@@ -25,12 +25,9 @@ const container = new Overlay([
 	})
 	
 ])
-function getAlias(){
-	return "alias"
-}
 
 function organize_players_array(array){
-	console.log("all players length: ", array.length)
+	// console.log("all players length: ", array.length)
 	if (array.length % 2 == 1)
 		array.push("")
 	// const index_user = array.indexOf(getAlias());
@@ -46,7 +43,7 @@ function dynamic_content(data){
 	container.getElementById("title").element.textContent=`Round ${data["current round"]}`;
 	container.getElementById("subtitle").element.textContent=`${data["players"].length} players`;
 	new_matches = createTextGrid(organize_players_array(data["players"]));
-	container.getElementById("matches").element.replaceWith(new_matches.element);
+	container.getElementById("matches").replaceWith(new_matches);
 }
 
 function getStringMatch(i, players){
@@ -96,6 +93,7 @@ function createTextGrid(players) {
 				}));
 		}
 		return new FlexBox({
+			id: "matches",
 			dir: "column",
 			flex: 1,
 			width: "100%",
@@ -114,7 +112,6 @@ function hide_div(){
 }
 
 function exit(){
-	new_matches.element.replaceWith(container.getElementById("matches").element)
 }
 
 
