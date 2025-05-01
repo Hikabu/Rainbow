@@ -93,6 +93,7 @@ function createTextGrid(players) {
 				}));
 		}
 		return new FlexBox({
+			id: "matches",
 			dir: "column",
 			flex: 1,
 			width: "100%",
@@ -111,7 +112,6 @@ function hide_div(){
 }
 
 function exit(){
-	new_matches.element.replaceWith(container.getElementById("matches").element)
 }
 
 
