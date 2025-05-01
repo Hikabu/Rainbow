@@ -11,7 +11,8 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+
 import SideBar from '../../components/SideBar.vue'
 import { enterScene, exitScene } from '../../three.js/index.js'
 

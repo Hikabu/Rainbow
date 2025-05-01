@@ -1,6 +1,7 @@
-import {getUserID} from './utils'
-import { msgRouter } from './BackendMsg';
 import axios from 'axios';
+
+import { msgRouter } from './BackendMsg';
+import {getUserID} from './utils'
 
 export class Socket {
 	constructor(){
