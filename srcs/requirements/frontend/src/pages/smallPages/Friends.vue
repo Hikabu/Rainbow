@@ -61,7 +61,8 @@
                                 <li v-for="friend in user.friends" :key="friend.id">
                                     {{ friend.username || friend?.intraLogin }} 
                                     <span v-if="friend.isOnline">(Online)</span>
-                                    <span v-else>(Ofline)</span>
+                                    <span v-else>(Offline)</span>
+                                    
                                 </li>
                             </ul>
                             <p v-else class="text-white">No friends yet.</p>
@@ -78,6 +79,7 @@ import axios from 'axios'
 import { onMounted,ref, watch  } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
+// import { user } from '../../stores/users'
 //make same reactivity
 const fileInput = ref(null)
 const searchQuery = ref('') 
@@ -92,12 +94,12 @@ const addFriend = async (friendId) => {
         const updateFriend = [...currentFriends, friendId]
         //updatePr
         await axios.patch('api/profiles/me/', { 
-           friendsQueryset: updateFriend 
+            friendsQueryset: updateFriend 
         }, {
             withCredentials: true
         })
         await profileData()
-
+        
         searchResult.value = []
         searchQuery.value = ''
         alert('Frined catched successfully!')
@@ -115,7 +117,7 @@ const searchFriends = async () => {
     try {
         const response = await axios.get(`api/friends/search/?query=${encodeURIComponent(searchQuery.value)}`,{
             withCredentials: true
-    })
+        })
         searchResult.value = response.data
     } catch (error){
         console.error('Error searchong friends', error)
@@ -141,7 +143,7 @@ const triggerFileInput = () => {
 const handleFileUpload = async (event) => {
     const file = event.target.files[0]
     if (!file) return
-
+    
     // Validate file type and size
     if (!file.type.startsWith('image/')) {
         alert('Please upload an image file')
@@ -153,7 +155,7 @@ const handleFileUpload = async (event) => {
     }
     const formData = new FormData()
     formData.append('avatar', file)
-
+    
     try {
         const response = await axios.patch('api/profiles/me/', formData, {
             withCredentials: true,
@@ -180,11 +182,14 @@ const profileData = async () => {
         user.value = response.data
         if (!user.value.displayName){
             if ((user.value.displayName = user.value.username) == null)
-                user.value.displayName = user.value.intraLogin
-            user.value.displayName = user.value.username
+            user.value.displayName = user.value.intraLogin
+        user.value.displayName = user.value.username
+        if (user.friends && Array.isArray(user.friends)){
+            user.friends = user.friends.map(f => ref(f) )
         }
-        else
-            return user.value.displayName
+    }
+    else
+    return user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)
     }
