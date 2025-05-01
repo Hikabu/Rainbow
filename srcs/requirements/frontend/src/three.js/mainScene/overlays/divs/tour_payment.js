@@ -1,7 +1,7 @@
 import { StateManager } from "../../../core/stateManager/StateManager";
 import { State } from "../../../core/stateManager/States";
-import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
-import { Text, Button, Input } from '../../../core/UIFactory/Elements';
+import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 
 const container = new Overlay([

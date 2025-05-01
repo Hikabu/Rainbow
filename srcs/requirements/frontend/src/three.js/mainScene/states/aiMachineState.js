@@ -1,16 +1,17 @@
 
 
-import { State } from '../../core/stateManager/States';
-import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
-import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex, surfaceIndex, aiMachineObj } from '../objects/machines/aiMachineObj';
-import { StartScreen } from '../overlays/divs/start'
-import { End } from '../overlays/divs/end';
-import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
-import { AlertManager } from '../overlays/alerts/Alerts';
-import { StateManager } from '../../core/stateManager/StateManager';
 import * as THREE from 'three';
+
+import { StateManager } from '../../core/stateManager/StateManager';
+import { State } from '../../core/stateManager/States';
+import { CssSubState,MeshSubState } from '../../core/stateManager/SubStatesExtends';
+import { aiMachineObj,center, object, partIndex, screenSurface, surfaceIndex } from '../objects/machines/aiMachineObj';
+import { screenMaterial } from '../objects/simpleAssets';
+import { AlertManager } from '../overlays/alerts/Alerts';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
+import { End } from '../overlays/divs/end';
+import { StartScreen } from '../overlays/divs/start'
+import { pongGame, startPongGame } from '../overlays/scenes/pong-game/Game';		
 const divStart = new StartScreen('white', "START GAME");
 
 const restScreen = new CssSubState(

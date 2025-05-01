@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import { order_path, update_min_max } from '../../mainScene/utils/utils';
 import { or, orthographicDepthToViewZ } from 'three/tsl';
+
+import { order_path, update_min_max } from '../../mainScene/utils/utils';
 
 function get_geometry_normal_vector(geometry)
 {

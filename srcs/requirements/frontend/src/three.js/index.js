@@ -1,16 +1,14 @@
 import * as THREE from 'three';
-import { MainEngine } from './mainScene/utils/MainEngine';
-import { stateManager, mainSceneObj } from './mainScene/states/mainMenuState';
-
-import { backBox } from './mainScene/objects/background/backBox';
-import { localMachineObj } from './mainScene/objects/machines/localMachineObj';
-import { aiMachineObj } from './mainScene/objects/machines/aiMachineObj';
-import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineObj';
-import { StateManager } from './core/stateManager/StateManager';
-
-import { Socket } from './mainScene/utils/Socket';
 
 import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
+import { StateManager } from './core/stateManager/StateManager';
+import { backBox } from './mainScene/objects/background/backBox';
+import { aiMachineObj } from './mainScene/objects/machines/aiMachineObj';
+import { localMachineObj } from './mainScene/objects/machines/localMachineObj';
+import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineObj';
+import { mainSceneObj,stateManager } from './mainScene/states/mainMenuState';
+import { MainEngine } from './mainScene/utils/MainEngine';
+import { Socket } from './mainScene/utils/Socket';
 // import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
 
 const engine = new MainEngine();
