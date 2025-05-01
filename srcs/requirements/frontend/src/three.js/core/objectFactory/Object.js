@@ -18,6 +18,8 @@ class Object {
 		const object = (part instanceof THREE.Object3D) ? part : part.self;
 		const obj_height = (part instanceof CSS3DObject) ? false : true;
 		this.self.children[indexObject].userData.instance.add_object(Xpercent, Ypercent, indexFace, object, obj_height, axis)
+		// if (!(part instanceof CSS3DObject))
+		// 	this.self.add(object)
 	}
 	add_onclick(ft) {
 		this.onclick = ft

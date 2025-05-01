@@ -18,6 +18,7 @@ class Overlay extends BaseDivElement{
 		this.getElementsWith("text").forEach(element => { element.element.style.color = color;});
 	}
 	resize(){
+		//console.log("resizing overlay...")
 		const w = this.element.offsetWidth;
 		const h = this.element.offsetHeight;
 		this.getElementsWith("size").forEach(element => { element.extensions.size.updateSize(w, h);});
@@ -32,7 +33,7 @@ class FlexBox extends BaseDivElement {
 			children = [],
 			width, height,
 			dir, mainAxis = "center", crossAxis = "center", flex = 0,
-			marginTop = '0.5%', marginLeft= '0%', marginRight='0%', marginBottom= '0.5%',scrollable = false, padding,
+			marginTop = '0.5%, auto', marginLeft= '0%', marginRight='0%', marginBottom= '0.5%, auto',scrollable = false, padding,
 		})
 		{
 			super(id, children);

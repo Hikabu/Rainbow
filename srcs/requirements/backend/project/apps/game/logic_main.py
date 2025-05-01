@@ -1,9 +1,9 @@
 
 import time, random, numpy as np
-from .ball import Ball
-from .paddle import Paddle
+from .logic_ball import Ball
+from .logic_paddle import Paddle
 
-class Game:
+class GameLogic:
 	duration = 15.0
 
 	def __init__(self, gameID):
