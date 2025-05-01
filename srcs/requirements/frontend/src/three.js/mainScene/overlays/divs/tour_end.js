@@ -3,6 +3,8 @@ import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
 import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 import { AlertManager } from "../alerts/Alerts";
+import { SwitchButtons } from "../../../core/UIFactory/SwitchButtons";
+import { MainEngine } from "../../utils/MainEngine";
 import { Ball } from "../scenes/pong-game/objects/Ball";
 
 //you won round x | you lost round x | you won the tournament!
@@ -26,7 +28,7 @@ const container = new Overlay([
 							new Text({
 								id: "title",
 								fontSize : 1,
-								marginBot: "8%"
+								marginBot: "1%, auto"
 							}),
 							new Text({
 								id : "error",
@@ -36,8 +38,8 @@ const container = new Overlay([
 							dir: "column",
 							mainAxis: "space-between",
 							id: "prize-announcement",
-							marginBottom: "12%",
-							marginTop: "8%",
+							marginBottom: "2%, auto",
+							marginTop: "1%, auto",
 							children: [
 								new Text({
 									id: "subtitle",
@@ -65,17 +67,30 @@ const container = new Overlay([
 					}),
 					new FlexBox({
 						dir: "row",
-						mainAxis: "end",
+						mainAxis: "space-between",
+						width: "100%",
 						children: [
 							new Button({
-								id: "button",
+								id: "back-button",
 								fontSize: 0.55,
-								content: "tst",
+								content: "BACK",
 								onClick: ()=>{
-									if (container.getElementById("button").element.textContent == "EXIT")
+									if (container.getElementById("exit-button").element.textContent == "EXIT")
 										{
 											let stateManager = new StateManager();
 											stateManager.currentState.changeSubstate(stateManager.currentState.startIndex + 1);
+										}	
+								}
+							}),
+							new Button({
+								id: "exit-button",
+								fontSize: 0.55,
+								content: "tst",
+								onClick: ()=>{
+									if (container.getElementById("exit-button").element.textContent == "EXIT")
+										{
+											new MainEngine().blockRaycast_to_true();
+											new StateManager().changeState(0);
 										}	
 								}
 							})
@@ -85,17 +100,24 @@ const container = new Overlay([
 			})
 		])
 
+let keyHandlerSwitchButtons = null;
+let switchButtons = new SwitchButtons(container.getElementsOfType(Button));
+
 function dynamic_content(data){
 	container.element.style.visibility = "visible";
 
 	if (data.button == "exit") 
 	{
-		container.getElementById("button").element.textContent = "EXIT";
-		new AlertManager().remove_latest_alert("exit_alert");
+		keyHandlerSwitchButtons = switchButtons;
+		container.getElementById("back-button").element.style.visibility = "visible";
+		container.getElementById("exit-button").element.textContent = "EXIT";
+		new AlertManager().remove_latest_alert("exit alert");
 	}
 	else if (data.button == "wait")
 	{
-		container.getElementById("button").element.textContent = "loading next round...";
+		keyHandlerSwitchButtons = null;
+		container.getElementById("back-button").element.style.visibility = "hidden";
+		container.getElementById("exit-button").element.textContent = "loading next round...";
 		setTimeout(() => {
 			if (new StateManager().currentState.currentSubstateIndex == 10)
 				new StateManager().currentState.changeSubstate(11);
@@ -138,16 +160,17 @@ function dynamic_content(data){
 }
 
 function show_buttons(){
-	container.getElementById("button").element.style.visibility = "visible";
+	container.getElementById("exit-button").element.style.visibility = "visible";
 
 }
 
 function hide_buttons(){
-	container.getElementById("button").element.style.visibility = "hidden";
+	container.getElementById("exit-button").element.style.visibility = "hidden";
+	container.getElementById("back-button").element.style.visibility = "hidden";
 }
 
 function show_div(){
-	//container.element.style.visibility = "visible";
+	container.element.style.visibility = "visible";
 }
 
 function hide_div(){
@@ -156,27 +179,34 @@ function hide_div(){
 }
 
 function can_exit(){
-	console.log("can_exit ft");
-	if (new StateManager().currentState.currentSubstateIndex == 10 &&
-	container.getElementById("button").element.textContent == "EXIT")
-	{
-		console.log("curr state", new StateManager().currentState.currentSubstateIndex);
-		console.log("cutton: ", container.getElementById("button").element.textContent);
+	if (container.getElementById("exit-button").element.textContent == "EXIT")
 		return true;
-	}
-	console.log("should create alert")
 	return false;
+}
+
+function enter(){
+	show_div();
+	show_buttons();
+	keyHandlerSwitchButtons.switch("prev");
+}
+
+function exit(){
+	hide_div();
+	hide_buttons();
 }
 
 const end = {
 	"div" : container.element,
-	"show-buttons" : show_buttons,
-	"hide-buttons" : hide_buttons,
-	"show-div" : show_div,
-	"hide-div" : hide_div,
+	"enter" : enter,
+	"exit" : exit,
 	"resize": ()=>{container.resize()},
 	"dynamic-content" : dynamic_content,
 	"can-exit" : can_exit,
+	"keyHandler": (event)=>{
+		if (keyHandlerSwitchButtons)
+			keyHandlerSwitchButtons.keyHandler(event);
+		event.preventDefault();
+	}
 }
 
 export {end}
