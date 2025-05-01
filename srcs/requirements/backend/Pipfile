@@ -61,6 +61,7 @@ django-storages = "*"
 boto3 = "*"
 numpy = "*"
 channels-redis = "*"
+django-redis = "*"
 
 [dev-packages]
 black = "==25.1.0"

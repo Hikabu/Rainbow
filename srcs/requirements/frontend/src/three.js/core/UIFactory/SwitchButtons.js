@@ -36,6 +36,7 @@ class SwitchButtons {
 	}
 	keyHandler(event){
 		if (event.key === 'Enter') {
+			    //  console.log("enter changing substate ... ")
 				event.preventDefault();
 				this.activeButton.onClick();
 		}

@@ -1,9 +1,11 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
-import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
-import { Button,Text } from '../../../core/UIFactory/Elements';
-
+import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
+import { Text, Button } from '../../../core/UIFactory/Elements';
+import { stateManager } from '../../states/mainMenuState';
+import { OnLoad } from '../../utils/OnLoad';
+import { Socket } from '../../utils/Socket';
 class StartScreen{
-	constructor(color = "black", title = "START GAME", fontSize=1.8){
+	constructor(color = "black", title = "PONG GAME", fontSize=1.8){
 		this.overlay = new Overlay([
 					new FlexBox({
 						flex: 1,
@@ -22,8 +24,10 @@ class StartScreen{
 								color: color,
 								content: "ENTER",
 								id: "enter-button",
-								onClick: ()=>{new StateManager().currentState.changeSubstate();},
-							})
+								onClick: ()=>{
+									can_user_log_game()
+								}
+							}),
 						]
 					}),
 		]);
@@ -34,21 +38,31 @@ class StartScreen{
 	keyHandler(event){
 		if (event.key === 'Enter') {
 				event.preventDefault();
-				return {change : "substate"};
+				can_user_log_game();
 		}
 		return undefined;
 	}
 	enter(){
 		this.div.style.visibility = "visible";
 		this.enterButton.element.style.color = this.color;
+		this.enterButton.element.style = "visible"
 	}
 	exit(){
-		this.enterButton.element.style.color = "transparent";
+		this.enterButton.element.style = "hidden"
 		this.div.style.visibility = "hidden";
 
 	}
 	animate(){this.enterButton.animate();}
 	resize(){this.overlay.resize();}
 }
+
+export function can_user_log_game(){
+	console.log("can user log game...")
+	new Socket().send({"channel" : "log",
+		"action":"can_user_log_game",
+		'state' : new StateManager().currentStateIndex,
+	})
+}
+
 
 export { StartScreen};
