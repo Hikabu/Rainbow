@@ -6,18 +6,22 @@ import { join } from '../overlays/divs/tour_join';
 import { OnLoad } from './OnLoad';
 import { stateManager } from '../states/mainMenuState';
 import { create_info_alert } from '../overlays/alerts/info_alert';
+import { pongGame } from '../overlays/scenes/pong-game/Game';
+import { user } from '../../../stores/users'
 
 
 const updateStatus = (id, isOnline) => {
 	const friend = user.value?.friends.find(f => f.id === id)
 	if (friend) {
 		friend.isOnline = isOnline
+		//to force
+		user.value = {...user.value};
 	}
 }
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);
-	//console.log("data: ", data);
+	console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "switch tabs")
@@ -77,14 +81,13 @@ export function msgRouter(event){
 		pongGame["receive"](data);
 	}
 	else if (data.type == "consumer.updates"){
-		if (data.active_users && user.value?.friends?.length) {
-			console.log("Users who are online:", data.active_users);
-			user.value.friends.forEach(friend => {
-				const isOnline = data.active_users.includes(String(friend.id))
-				updateStatus(friend.id, isOnline)
-			});
+		console.log("inside the sockets")
+		if (data.user_status) {
+			console.log("Users who are online:", data.user_status);
+			const { user_id, is_online} = data.user_status
+			updateStatus(user_id, is_online)
+			}
 		}
-	}
 	else if (data.type == "tour.updates" )
 	{
 		// console.log("received: ", data)
