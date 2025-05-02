@@ -33,7 +33,6 @@ const loadingOpacity = ref(1);
 const appOpacity = ref(0);  
 
 onMounted(async () => {
-  console.log("on mount")
   if (threeContainer.value) {
 	console.log("ok")
     await preEnterScene(threeContainer.value)
