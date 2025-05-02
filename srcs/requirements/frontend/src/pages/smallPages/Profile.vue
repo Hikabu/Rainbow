@@ -103,7 +103,7 @@ import axios from 'axios'
 import { onMounted,ref } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
-// import { user } from '../../stores/users'
+import { user } from '../../stores/users'
 
 const fileInput = ref(null)
 
@@ -114,7 +114,7 @@ const triggerFileInput = () => {
 //User disconnects --> Remove user from active_users --> Send updated active_users to frontend
 //Frontend receives active_users list --> Display online users
 
-const user = ref(null)
+// const user = ref(null)
 const isEditing = ref(false)
 const newDisplayName = ref('')
 
@@ -159,10 +159,12 @@ const profileData = async () => {
         const response = await axios.get('api/profiles/me/')
         user.value = response.data
         user.value.displayName ||= user.value.username ?? user.value.intraLogin
-
-        if (user.friends && Array.isArray(user.friends)){
-            user.friends = user.friends.map(f => ref(f) )
+        //put friends to reactivity to updte 
+        if (user.value.friends && Array.isArray(user.value.friends)){
+            //if every friend is reactive
+            user.value.friends = user.value.friends.map(friend => ({...friend}));
         }
+        console.log("the value of friend is", user.value.friends)
         return user.value.displayName
     } catch (error) {
         console.error('Error fetching profile:', error)

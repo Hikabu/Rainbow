@@ -9,8 +9,9 @@ export async function fetchProfile() {
 
         user.value.displayName ||= user.value.username ?? user.value.intraLogin
         //put friends to reactivity to updte 
-        if (user.friends && Array.isArray(user.friends)){
-            user.friends = user.friends.map(f => ref(f) )
+        if (user.value.friends && Array.isArray(user.value.friends)){
+            //if every friend is reactive
+            user.value.friends = user.value.friends.map(friend => ({...friend}));
         }
 
         return user.value.displayName
