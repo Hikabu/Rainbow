@@ -12,6 +12,7 @@ import { Socket } from './mainScene/utils/Socket';
 // import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
 import { Object } from './core/objectFactory/Object';
 import { Part } from './core/objectFactory/Part';
+import { OnLoad } from './mainScene/utils/OnLoad';
 const engine = new MainEngine();
 
 let isAnimating = false;
@@ -84,6 +85,8 @@ export async function preEnterScene(app_container){
 		engine.stateManager = stateManager;
 		engine.sceneInitialized = true;
 	}
+	else
+		new OnLoad().set_texture_ready()
 	if (!engine.stateManager)
 		engine.stateManager = stateManager
 	engine.addContainerWrapper(app_container);
@@ -109,10 +112,10 @@ export function uponEnter(){
 			//console.log("entering main state")
 			engine.stateManager.changeState(0, true, 1);
 			//console.log(engine.camera.position)
-	
-	
 		}
 	window.dispatchEvent(new Event("resize"));
+		console.log("state : ", engine.stateManager.currentStateIndex)
+		console.log("substate : ", engine.stateManager.currentState.currentSubstateIndex)
 
 	// document.body.focus()
 	// engine.container.focus()
@@ -136,6 +139,7 @@ export function exitScene(){
 	window.removeEventListener('resize', onResize);
 	window.removeEventListener('click', onClick);
 	document.body.removeEventListener("keydown", key_events)
+	new OnLoad().reset();
 }
 
 function popstate(event){
