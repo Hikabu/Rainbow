@@ -6,6 +6,10 @@ from .tournamentChannel import TournamentChannel, TournamentManager
 from .registration import new_game, can_user_log_game
 from django.utils import timezone
 from django.core.cache import cache
+from django.conf import settings
+from project.apps.intrauth.models import Profile
+from django.contrib.auth import get_user_model 
+
 # import logging
 
 # logging.basicConfig(
@@ -26,37 +30,34 @@ def isUserOnline(user_id):
 #static global
 max_reconnection_time = 10
 all_consumers = {}
-#async def friends_status(self, event):
- #   await self.send(text_data=json.dumps({
-#		"type": "friend_status",
-#		"friend_id": event["friend_id"],
-#		"is_online": event["is_online"],
-#	}))
-#async def notify_friends(self, is_online):
-#	try:
-#		#take user with orm from db but on async so the loop will loop
-#		#send to separate thread so it will not block the websocket perfomance
-#		user = await database_sync_to_async(User.objects.get)(id=self.user_id)
-#		#lambda to call the fuction not the result so when its safe to call the labbda will be executed
-#		friends = await database_sync_to_async(lambda: list(user.friends.all().values_list('id', flat=True))) # only friends id[2,5,6]
-#
-#		for friend_id in friends:
-#			await self.channel_layer.group_send(
-#				str(friend_id),
-#				{
-#					"type": "friend_status",
-#					"frined_id": self.user_id,
-#					"is_online": is_online,
-#				}
-#			)
-#     
-#    
-	#except Exception as e:
-#	    print(f"Error with friend connection: {e} ")
-#    
-#			
-
 class MainConsumer(AsyncWebsocketConsumer):
+
+	@database_sync_to_async
+	def get_friends_id(self, user_id):
+		try:
+			#take user with orm from db but on async so the loop will loop
+			#send to separate thread so it will not block the websocket perfomance
+			user = Profile.objects.get(id=user_id)
+			return list(user.friends.values_list('id', flat=True)) # only friends id[2,5,6]
+		except Profile.DoesNotExist:
+			return []
+
+	async def notify_friends(self, is_online):
+		print(f"Notifying friends of {self.user_id} status: {is_online}")
+		friends_id = await self.get_friends_id(self.user_id)
+		for friend_id in friends_id:
+				await self.channel_layer.group_send(
+					f"{friend_id}",#???? friends channel 
+					{
+						"type": "consumer.updates",
+						"user_status":{
+							"user_id": str(self.user_id),
+							"is_online": is_online,
+						}
+						
+					}
+				)
+
 	async def connect(self):
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		await self.accept()
@@ -66,13 +67,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 		active_users.append(self.user_id)
 		active_users = list(set(active_users))
 		cache.set('active_users', active_users)
-		#await self.send_active_users() #Lera staff
-		# await self.send_channel("all", {
-		# 	"type": "consumer.updates",
-		# 	"active_users": active_users
-		# })
 		self.user_data = cache.get(f"consumer_{self.user_id}")
-		# await self.notify_friends(is_online=True)
+		await self.notify_friends(is_online=True)
+		print(f"TESTING: User {self.user_id} connected")
 		if self.user_data :
 			print("retrieving consumer", self.user_data)
 			self.tournament = TournamentManager().get_tournament(self.user_data.get("tournament"))
@@ -107,6 +104,12 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.exit_live()
 	
 	async def exit_live(self):
+		active_users = cache.get('active_users', [])
+		if self.user_id in active_users:
+			active_users.remove(self.user_id)
+			cache.set('active_users', active_users)
+			await self.notify_friends(is_online=False)
+		print(f"TESTING: User {self.user_id} going offline")
 		print("yes, exiting live")
 		if self.game and self.game.status != "finished":
 			print("end game")
@@ -121,14 +124,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 		
 		asyncio.create_task(self.should_exit_live())
 		await self.remove_channel("all")
-		active_users = None
-		active_users = cache.get('active_users')
-		if active_users == None:
-			active_users = []
-		if self.user_id in active_users:
-			active_users.remove(self.user_id)
-			cache.set('active_users', active_users)
 		print("WEBOSCKET DISCONNECTED!!!!!")
+  
+		# active_users = None
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
