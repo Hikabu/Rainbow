@@ -7,11 +7,11 @@ export async function fetchProfile() {
         const response = axios.get('api/profile/me')
         user.value = response.data;
 
+        user.value.displayName ||= user.value.username ?? user.value.intraLogin
         //put friends to reactivity to updte 
         if (user.friends && Array.isArray(user.friends)){
             user.friends = user.friends.map(f => ref(f) )
         }
-        user.value.displayName ||= user.value.username ?? user.value.intraLogin
 
         return user.value.displayName
     } catch (error) {
