@@ -85,7 +85,7 @@ export function msgRouter(event){
 		if (data.user_status) {
 			console.log("Users who are online:", data.user_status);
 			const { user_id, is_online} = data.user_status
-			updateStatus(user_id, is_online)
+			updateStatus(user_id, is_online);
 			}
 		}
 	else if (data.type == "tour.updates" )
