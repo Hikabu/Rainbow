@@ -90,6 +90,11 @@ export function useAuth() {
       const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=public`;
       console.log(authUrl);
       window.location.href = authUrl;
+      // const windowFeatures = "left=100,top=100,width=320,height=320";
+      // const win = window.open(authUrl, "_blank", windowFeatures);
+      // if (!win)
+      //   console.log("enable js");
+      //   return;
   };
   
 
