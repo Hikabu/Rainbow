@@ -1,0 +1,32 @@
+{
+  "english": "English",
+  "russian": "Русский",
+  "thai": "ภาษาไทย",
+  "french": "Français",
+
+  "player": "Игрок",
+
+  "menu.items.item.quick_start.title": "Быстрая Игра",
+  "menu.items.item.quick_start.description": "Быстрая игра против компьютера",
+  "menu.items.item.new_game.title": "Новая Игра",
+  "menu.items.item.new_game.description": "Настройка и начало новой игры",
+  "menu.items.item.online.title": "Онлайн",
+  "menu.items.item.online.description": "Игра онлайн с игроками по всему Миру",
+  "menu.items.item.profile.title": "Профиль",
+  "menu.items.item.profile.description": "Настройки профиля",
+  "menu.items.item.settings.title": "Настройки",
+  "menu.items.item.settings.description": "Общие настройки",
+
+  "menu.settings": "Настройки",
+  "menu.settings.game": "Игра",
+  "menu.settings.game.language": "Язык",
+
+  "game_settings.tabs.sides.title": "Стороны",
+  "game_settings.tabs.gameplay.title": "Геймлей",
+  "game_settings.tabs.ball_skin.title": "Скины",
+  "game_settings.tabs.ball_skin.colors.title": "Цвета",
+  "game_settings.tabs.ball_skin.skins_list.regular.title": "Стандартные",
+  "game_settings.tabs.ball_skin.skins_list.special.title": "Особые",
+
+  "form.validation.required": "Поле является обязательным"
+}
