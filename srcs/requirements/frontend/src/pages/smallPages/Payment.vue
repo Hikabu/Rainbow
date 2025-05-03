@@ -42,11 +42,11 @@
 import { useOnboard } from '@web3-onboard/vue';
 import axios from 'axios'
 import { onMounted,ref} from 'vue'
+import { user, fetchProfile } from '../../stores/users'
 
 import SideBar from '../../components/SideBar.vue';
-// import { user } from '../../stores/users'
 //make same reactivity
-const user = ref(null)
+// const user = ref(null)
 const { connectWallet, wallets, disconnectWallet } = useOnboard()
 
 const connect = async () => {
@@ -60,22 +60,23 @@ const disconnect = async () => {
     }
 }
 
-const profileData = async () => {
-    try {
-        const response = await axios.get('api/profiles/me/')
-        user.value = response.data
-        user.value.displayName ||= user.value.username ?? user.value.intraLogin
+// const profileData = async () => {
+//     try {
+//         const response = await axios.get('api/profiles/me/')
+//         user.value = response.data
+//         user.value.displayName ||= user.value.username ?? user.value.intraLogin
 
-        if (user.friends && Array.isArray(user.friends)){
-            user.friends = user.friends.map(f => ref(f) )
-        }
-        return user.value.displayName
-    } catch (error) {
-        console.error('Error fetching profile:', error)
-    }
-}
-onMounted(() => {
-    profileData()
+//         if (user.friends && Array.isArray(user.friends)){
+//             user.friends = user.friends.map(f => ref(f) )
+//         }
+//         return user.value.displayName
+//     } catch (error) {
+//         console.error('Error fetching profile:', error)
+//     }
+// }
+onMounted(async () => {
+    await fetchProfile()
+    // profileData()
 })
 </script>
 

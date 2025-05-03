@@ -79,17 +79,17 @@ import axios from 'axios'
 import { onMounted,ref, watch  } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
-// import { user } from '../../stores/users'
+import { user, fetchProfile } from '../../stores/users'
 //make same reactivity
 const fileInput = ref(null)
 const searchQuery = ref('') 
 const searchResult = ref([])
-const user = ref(null)
+// const user = ref(null)
 
 //add friend
 const addFriend = async (friendId) => {
     try {
-        const currentFriends = user.value.friends.map(friend => friend.id)
+        const currentFriends = user.value.friends.map(friend => ({...friend}))
         //spread to append to array withput changing 
         const updateFriend = [...currentFriends, friendId]
         //updatePr
@@ -98,7 +98,8 @@ const addFriend = async (friendId) => {
         }, {
             withCredentials: true
         })
-        await profileData()
+        // await profileData()
+        await fetchProfile()
         
         searchResult.value = []
         searchQuery.value = ''
@@ -176,27 +177,28 @@ const handleFileUpload = async (event) => {
     }
 }
 
-const profileData = async () => {
-    try {
-        const response = await axios.get('api/profiles/me/')
-        user.value = response.data
-        if (!user.value.displayName){
-            if ((user.value.displayName = user.value.username) == null)
-            user.value.displayName = user.value.intraLogin
-        user.value.displayName = user.value.username
-        if (user.friends && Array.isArray(user.friends)){
-            user.friends = user.friends.map(f => ref(f) )
-        }
-    }
-    else
-    return user.value.displayName
-    } catch (error) {
-        console.error('Error fetching profile:', error)
-    }
-}
+// const profileData = async () => {
+//     try {
+//         const response = await axios.get('api/profiles/me/')
+//         user.value = response.data
+//         if (!user.value.displayName){
+//             if ((user.value.displayName = user.value.username) == null)
+//             user.value.displayName = user.value.intraLogin
+//         user.value.displayName = user.value.username
+//         if (user.friends && Array.isArray(user.friends)){
+//             user.friends = user.friends.map(f => ref(f) )
+//         }
+//     }
+//     else
+//     return user.value.displayName
+//     } catch (error) {
+//         console.error('Error fetching profile:', error)
+//     }
+// }
 const debouncedSearch = debounce(searchFriends, 300)
-onMounted(() => {
-    profileData()
+onMounted(async () => {
+    await fetchProfile()
+    // profileData()
 })
 watch(searchQuery, debouncedSearch) //if query changed calles debounce
 </script>

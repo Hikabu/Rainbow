@@ -7,16 +7,28 @@ import { OnLoad } from './OnLoad';
 import { stateManager } from '../states/mainMenuState';
 import { create_info_alert } from '../overlays/alerts/info_alert';
 import { pongGame } from '../overlays/scenes/pong-game/Game';
-import { user } from '../../../stores/users'
+import { fetchProfile, user } from '../../../stores/users'
 
 
 const updateStatus = (id, isOnline) => {
+	console.log("trying and im here")
+	console.log("Calling updateStatus with ID:", id, "isOnline:", isOnline);
+	console.log("Current user value:", user.value);
+	if (!user.value || !Array.isArray(user.value.friends)){
+		console.warn("user or friends not ready yet");
+		return;
+	}
+
 	const friend = user.value?.friends.find(f => f.id === id)
+	console.log("fried found", friend);
+	console.log("the value of store in there ", user.value.friends)
 	if (friend) {
-		friend.isOnline = isOnline
-		//to force
+		friend.isOnline = true
+		console.log("am i doing something????")
+		console.log("status of friend", friend.isOnline)
 		user.value = {...user.value};
 	}
+	console.log("value afetr some mahination:", user.value);
 }
 
 export function msgRouter(event){
@@ -84,8 +96,9 @@ export function msgRouter(event){
 		console.log("inside the sockets")
 		if (data.user_status) {
 			console.log("Users who are online:", data.user_status);
-			const { user_id, is_online} = data.user_status
-			updateStatus(user_id, is_online);
+			const { user_id, isOnline} = data.user_status
+			console.log("users staus in data is", data.user_status)
+			updateStatus(Number(user_id), Boolean(isOnline));
 			}
 		}
 	else if (data.type == "tour.updates" )
