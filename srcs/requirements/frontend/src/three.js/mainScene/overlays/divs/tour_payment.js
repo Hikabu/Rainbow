@@ -24,7 +24,7 @@ const container = new Overlay([
 					}),
 					],
 				}),
-			new FlexBox({
+			new FlexBox({//figure this out 
 				dir: "row",
 				mainAxis: "space-around",
 				children: [
@@ -110,16 +110,22 @@ function payment_error(){
 
 function payment_logic(){
 	//TODO
+	//just write here the payment logic anad call payment usscessfullk ft or payment error ft abd get rid of acccept bka bla bla buttons t the top thqat cll tghese
 }
 
 function pay_winner(){
 	//TODO
+	//pay the winner
 }
 
 function refund(){
 	//TODO
+	//refund price for man alone
 }
-
+//if confusion
+	///arturo(some patience)
+//else
+	//write(bullshit)
 const payment = {
 	"div" : container.element,
 	"show-buttons" : show_buttons,
