@@ -103,7 +103,7 @@ import axios from 'axios'
 import { onMounted,ref } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
-import { user } from '../../stores/users'
+import { user, fetchProfile } from '../../stores/users'
 
 const fileInput = ref(null)
 
@@ -154,22 +154,23 @@ const handleFileUpload = async (event) => {
     }
 }
 
-const profileData = async () => {
-    try {
-        const response = await axios.get('api/profiles/me/')
-        user.value = response.data
-        user.value.displayName ||= user.value.username ?? user.value.intraLogin
-        //put friends to reactivity to updte 
-        if (user.value.friends && Array.isArray(user.value.friends)){
-            //if every friend is reactive
-            user.value.friends = user.value.friends.map(friend => ({...friend}));
-        }
-        console.log("the value of friend is", user.value.friends)
-        return user.value.displayName
-    } catch (error) {
-        console.error('Error fetching profile:', error)
-    }
-}
+// const profileData = async () => {
+//     try {
+//         console.log("if im first");
+//         const response = await axios.get('api/profiles/me/')
+//         user.value = response.data
+//         user.value.displayName ||= user.value.username ?? user.value.intraLogin
+//         //put friends to reactivity to updte 
+//         if (user.value.friends && Array.isArray(user.value.friends)){
+//             //if every friend is reactive
+//             user.value.friends = user.value.friends.map(friend => ({...friend}));
+//         }
+//         console.log("the value of friend is", user.value.friends)
+//         return user.value.displayName
+//     } catch (error) {
+//         console.error('Error fetching profile:', error)
+//     }
+// }
 
 const toggleEdit = () => {
     isEditing.value = !isEditing.value
@@ -193,8 +194,9 @@ const saveDisplayName = async () => {
     }
 }
 
-onMounted(() => {
-    profileData()
+onMounted(async () => {
+    await fetchProfile()
+    // profileData()
 })
 </script>
 
