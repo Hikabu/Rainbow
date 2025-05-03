@@ -47,7 +47,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		friends_id = await self.get_friends_id(self.user_id)
 		for friend_id in friends_id:
 				await self.channel_layer.group_send(
-					f"{friend_id}",#???? friends channel 
+					f"{friend_id}", #group name must be string
 					{
 						"type": "consumer.updates",
 						"user_status":{
