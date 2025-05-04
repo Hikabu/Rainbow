@@ -11,22 +11,18 @@ import { fetchProfile, user } from '../../../stores/users'
 
 
 const updateStatus = (id, isOnline) => {
-	console.log("trying and im here")
 	console.log("Calling updateStatus with ID:", id, "isOnline:", isOnline);
 	console.log("Current user value:", user.value);
-	if (!user.value || !Array.isArray(user.value.friends)){
-		console.warn("user or friends not ready yet");
-		return;
-	}
+	if (!user.value.friends) return 
 
-	const friend = user.value?.friends.find(f => f.id === id)
+	const friend = user.value?.friends.find(f => f.id === Number(id))
 	console.log("fried found", friend);
 	console.log("the value of store in there ", user.value.friends)
 	if (friend) {
-		friend.isOnline = true
+		// friend.isOnline = true
 		console.log("am i doing something????")
+		friend.isOnline = isOnline
 		console.log("status of friend", friend.isOnline)
-		user.value = {...user.value};
 	}
 	console.log("value afetr some mahination:", user.value);
 }
