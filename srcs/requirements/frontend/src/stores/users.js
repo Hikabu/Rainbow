@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import axios from 'axios'
 
 export const user = ref(null) //global user market
@@ -12,7 +12,10 @@ export async function fetchProfile() {
         //put friends to reactivity to updte 
         if (user.value.friends && Array.isArray(user.value.friends)){
             //if every friend is reactive
-            user.value.friends = user.value.friends.map(friend => ({...friend}));
+            user.value.friends = user.value.friends.map(friend => 
+                reactive({
+                    ...friend,
+                    isOnline: false }));
         }
         console.log("the value in the store is ", user.value.friends)
         return user.value.displayName

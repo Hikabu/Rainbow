@@ -25,6 +25,7 @@ def isUserOnline(user_id):
 	if active_users == None or user_id not in active_users:
 		return False
 	return True
+
 #user bla connects-axios bla's friends-for every frined-send live update that bla is onlien
 
 #static global
@@ -52,7 +53,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 						"type": "consumer.updates",
 						"user_status":{
 							"user_id": str(self.user_id),
-							"is_online": is_online,
+							"isOnline": is_online,
 						}
 						
 					}
