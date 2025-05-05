@@ -16,9 +16,9 @@ load_dotenv()
 SECRET_KEY = "django-insecure-k1!svx5pna71t3&y#w!9iie&5p2)7)0acb9%@k788a@2y=9r54"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 
 #Does this backend recognize this user and their credentials?
 #modelbackend - checks the database for a user with the provided username and password.

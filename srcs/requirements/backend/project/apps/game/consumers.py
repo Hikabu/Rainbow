@@ -9,6 +9,9 @@ from django.core.cache import cache
 from django.conf import settings
 from project.apps.intrauth.models import Profile
 from django.contrib.auth import get_user_model 
+import logging
+
+logger = logging.getLogger(__name__)
 
 # import logging
 
@@ -25,6 +28,7 @@ def isUserOnline(user_id):
 	if active_users == None or user_id not in active_users:
 		return False
 	return True
+
 #user bla connects-axios bla's friends-for every frined-send live update that bla is onlien
 
 #static global
@@ -43,31 +47,50 @@ class MainConsumer(AsyncWebsocketConsumer):
 			return []
 
 	async def notify_friends(self, is_online):
-		print(f"Notifying friends of {self.user_id} status: {is_online}")
+		logger.info(f"User ID {self.user_id} is now {'online' if is_online else 'offline'}.")
 		friends_id = await self.get_friends_id(self.user_id)
+		logger.debug(f"Fetched friends for user {self.user_id}: {friends_id}")
 		for friend_id in friends_id:
-				await self.channel_layer.group_send(
-					f"{friend_id}", #group name must be string
-					{
-						"type": "consumer.updates",
-						"user_status":{
-							"user_id": str(self.user_id),
-							"is_online": is_online,
-						}
-						
+			logger.debug(f"Sending status update to friend {friend_id} about user {self.user_id} being {'online' if is_online else 'offline'}.")
+			await self.channel_layer.group_send(
+				f"{friend_id}", #group name must be string
+				{
+					"type": "consumer.updates",
+					"user_status":{
+						"user_id": str(self.user_id),
+						"isOnline": is_online,
 					}
-				)
+					
+				}
+			)
+			logger.debug(f"Confirming status update in user {self.user_id}'s own group for tracking.")
+			await self.channel_layer.group_send(
+				f"{self.user_id}", #group name must be string
+				{
+					"type": "consumer.updates",
+					"user_status":{
+						"user_id": str(self.user_id),
+						"isOnline": is_online,
+					}
+					
+				}
+			)
 
 	async def connect(self):
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
-		await self.accept()
-		active_users = cache.get('active_users')
-		if active_users == None:
-			active_users = []
+		
+
+		await self.channel_layer.group_add(self.user_id, self.channel_name)
+
+	#add to redis
+		active_users = cache.get('active_users') or []
+  
 		active_users.append(self.user_id)
 		active_users = list(set(active_users))
 		cache.set('active_users', active_users)
 		self.user_data = cache.get(f"consumer_{self.user_id}")
+  
+		await self.accept()
 		await self.notify_friends(is_online=True)
 		print(f"TESTING: User {self.user_id} connected")
 		if self.user_data :
@@ -89,6 +112,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 		await self.join_channel("all")
 		prev_consumer = None
 		await self.enter_scene()
+		
 
 	async def should_exit_live(self):
 		global max_reconnection_time
@@ -121,7 +145,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			del all_consumers[self.user_id]
 
 	async def disconnect(self, code=None):
-		
+		await self.channel_layer.group_discard(f"{self.user_id}", self.channel_name)
 		asyncio.create_task(self.should_exit_live())
 		await self.remove_channel("all")
 		print("WEBOSCKET DISCONNECTED!!!!!")
