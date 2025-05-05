@@ -89,9 +89,11 @@ const searchResult = ref([])
 //add friend
 const addFriend = async (friendId) => {
     try {
-        const currentFriends = user.value.friends.map(friend => ({...friend}))
+        // const currentFriends = user.friends.map(friend => ({...friend}))
         //spread to append to array withput changing 
-        const updateFriend = [...currentFriends, friendId]
+        const updateFriend = [
+            ...user.friends.map(friend => friend.id), // on;u ids
+                friendId] //add current one 
         //updatePr
         await axios.patch('api/profiles/me/', { 
             friendsQueryset: updateFriend 
@@ -166,7 +168,7 @@ const handleFileUpload = async (event) => {
         })
         console.log("Upload response is:", response.data)
         // Update avatar URL with timestamp to prevent caching
-        user.value.avatar = `${response.data.avatar}?${Date.now()}`
+        user.avatar = `${response.data.avatar}?${Date.now()}`
         alert('Avatar updated successfully!')
     } catch (error) {
         console.error('Error uploading avatar:', error)
