@@ -11,24 +11,23 @@ import { fetchProfile, user } from '../../../stores/users'
 
 
 const updateStatus = (id, isOnline) => {
-	console.log("trying and im here")
 	console.log("Calling updateStatus with ID:", id, "isOnline:", isOnline);
-	console.log("Current user value:", user.value);
-	if (!user.value || !Array.isArray(user.value.friends)){
-		console.warn("user or friends not ready yet");
-		return;
+	console.log("Current user value:", user);
+	if (!user.friends) return 
+	// user.isOnline = isOnline
+	const friend = user.friends?.find(f => f.id === Number(id))
+	console.log("fried found", friend);
+	console.log("the value of store in there ", user.friends)
+	if (friend) {
+		// friend.isOnline = true
+		console.log("am i doing something????")
+		user.isOnline = true
+		console.log("status of user", user.isOnline)
+		friend.isOnline = isOnline
+		console.log("status of friend", friend.isOnline)
 	}
 
-	const friend = user.value?.friends.find(f => f.id === id)
-	console.log("fried found", friend);
-	console.log("the value of store in there ", user.value.friends)
-	if (friend) {
-		friend.isOnline = true
-		console.log("am i doing something????")
-		console.log("status of friend", friend.isOnline)
-		user.value = {...user.value};
-	}
-	console.log("value afetr some mahination:", user.value);
+	console.log("value afetr some mahination:", user);
 }
 
 export function msgRouter(event){
@@ -94,11 +93,14 @@ export function msgRouter(event){
 	}
 	else if (data.type == "consumer.updates"){
 		console.log("inside the sockets")
+		console.log("User_ status:", data.user_status);
+		
+
 		if (data.user_status) {
 			console.log("Users who are online:", data.user_status);
 			const { user_id, isOnline} = data.user_status
 			console.log("users staus in data is", data.user_status)
-			updateStatus(Number(user_id), Boolean(isOnline));
+			updateStatus(Number(user_id), Boolean(isOnline) );
 			}
 		}
 	else if (data.type == "tour.updates" )
