@@ -143,7 +143,7 @@ const handleFileUpload = async (event) => {
         })
         console.log("Upload response is:", response.data)
         // Update avatar URL with timestamp to prevent caching
-        user.value.avatar = `${response.data.avatar}?${Date.now()}`
+        user.avatar = `${response.data.avatar}?${Date.now()}`
         alert('Avatar updated successfully!')
     } catch (error) {
         console.error('Error uploading avatar:', error)
@@ -154,28 +154,10 @@ const handleFileUpload = async (event) => {
     }
 }
 
-// const profileData = async () => {
-//     try {
-//         console.log("if im first");
-//         const response = await axios.get('api/profiles/me/')
-//         user.value = response.data
-//         user.value.displayName ||= user.value.username ?? user.value.intraLogin
-//         //put friends to reactivity to updte 
-//         if (user.value.friends && Array.isArray(user.value.friends)){
-//             //if every friend is reactive
-//             user.value.friends = user.value.friends.map(friend => ({...friend}));
-//         }
-//         console.log("the value of friend is", user.value.friends)
-//         return user.value.displayName
-//     } catch (error) {
-//         console.error('Error fetching profile:', error)
-//     }
-// }
-
 const toggleEdit = () => {
     isEditing.value = !isEditing.value
     if (!isEditing.value) {
-        newDisplayName.value = user.value.username
+        newDisplayName.value = user.username
     }
 }
 
@@ -185,7 +167,7 @@ const saveDisplayName = async () => {
             displayName: newDisplayName.value});
         console.log(response)
         // user.value.displayName = newDisplayName.value
-        user.value = response.data
+        user.displayName = newDisplayName.value;
         isEditing.value = false
         alert('Display name updated successfully!')
     } catch (error) {
@@ -196,7 +178,6 @@ const saveDisplayName = async () => {
 
 onMounted(async () => {
     await fetchProfile()
-    // profileData()
 })
 </script>
 
