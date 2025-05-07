@@ -1,9 +1,8 @@
 import * as THREE from 'three';
+import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 import { mapToCenter,order_path } from '../../mainScene/utils/utils';
 import { Shape } from "./Shape";
-
-import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 class Part {
 	constructor(pointsLeftXY, pointsRightXY, materials){
