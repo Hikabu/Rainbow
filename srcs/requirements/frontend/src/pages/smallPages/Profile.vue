@@ -103,7 +103,7 @@ import axios from 'axios'
 import { onMounted,ref } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
-import { user, fetchProfile } from '../../stores/users'
+import { fetchProfile,user } from '../../stores/users'
 
 const fileInput = ref(null)
 

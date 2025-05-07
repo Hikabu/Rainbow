@@ -1,7 +1,8 @@
 
+import * as THREE from 'three';
+
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 import { StateManager } from "./StateManager";
-import * as THREE from 'three';
 
 // const engine = ;
 

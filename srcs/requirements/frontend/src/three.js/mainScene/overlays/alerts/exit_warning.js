@@ -1,13 +1,13 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
 import { State } from '../../../core/stateManager/States';
 import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { fadeout } from '../../../core/UIFactory/effects';
 import { Button,Text } from '../../../core/UIFactory/Elements';
 import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
+import { stateManager } from '../../states/mainMenuState';
 import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
-import { fadeout } from '../../../core/UIFactory/effects';
-import { stateManager } from '../../states/mainMenuState';
 
 const children = [
 	new FlexBox({
