@@ -1,6 +1,5 @@
-import * as THREE from 'three';
-
 import { Font } from "../../../../../core/objectFactory/customFont3d";
+import * as THREE from 'three';
 
 export class Header {
 	constructor(visibility, engine){

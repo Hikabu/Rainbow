@@ -1,23 +1,32 @@
 import {getUserID} from './utils'
 import { msgRouter } from './BackendMsg';
-
+import { stateManager } from '../states/mainMenuState';
+import { StateManager } from '../../core/stateManager/StateManager';
+//OPTION RAINBOW
+// import axios from 'axios';
 
 export class Socket {
 	constructor(){
 		if (Socket.instance)
 			return Socket.instance
 		this.msgQueue = [];
-		console.log("first call socket");
-		//this.init();
+		this.init();
 		this.userID = null;
 		Socket.instance = this;
 	}
 	async init(){
-		console.log("init sokcet with user id")
+			// OPTION RAINBOW
+		// const response = await axios.get('api/profiles/me/')
+		// this.userID = response.data.id
+			// OPTION TEST
 		this.userID = await getUserID()
-		console.log("user: ", this.userID);
+			///end
 		try {
-			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
+					// OPTION RAINBOW
+			// this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
+				// OPTION TEST
+			this.socket = new WebSocket(`ws://localhost:8004/ws/${this.userID}/`);
+				//end
 			this.socket.onerror = this.myError.bind(this);
 			this.socket.onopen = this.myOpen.bind(this);
 			this.socket.onclose = this.myClose.bind(this);
@@ -29,7 +38,7 @@ export class Socket {
 	}
 	myError(err){
 		console.error("WebSocket error:", err);		
-		//this.myRetry();	//TODO: after testing uncomment	
+		//this.myRetry();		
 	}
 	myOpen(){
 		this.msgQueue.forEach(msg => {

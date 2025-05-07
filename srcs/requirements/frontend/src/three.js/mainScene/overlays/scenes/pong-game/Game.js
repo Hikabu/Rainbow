@@ -11,7 +11,8 @@ import { createRenderTarget, createScreenMaterial } from '../utils';
 import { OnLoad } from '../../../utils/OnLoad';
 import * as THREE from 'three';
 import { Socket } from '../../../utils/Socket';
-
+//OPTION RAINBOW
+// import axios from 'axios';
 	let end = false;
 	let state = "0";
 	//shoudl send the wndow to engine really ? THINK

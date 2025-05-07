@@ -2,16 +2,10 @@ import * as THREE from 'three';
 
 import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
 import { StateManager } from './core/stateManager/StateManager';
-import { backBox } from './mainScene/objects/background/backBox';
-import { aiMachineObj } from './mainScene/objects/machines/aiMachineObj';
-import { localMachineObj } from './mainScene/objects/machines/localMachineObj';
-import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineObj';
-import { mainSceneObj,stateManager } from './mainScene/states/mainMenuState';
+import { mainScene,stateManager } from './mainScene/states/mainMenuState';
 import { MainEngine } from './mainScene/utils/MainEngine';
 import { Socket } from './mainScene/utils/Socket';
-// import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
-import { Object } from './core/objectFactory/Object';
-import { Part } from './core/objectFactory/Part';
+
 const engine = new MainEngine();
 
 let isAnimating = false;
@@ -76,16 +70,8 @@ export async function preEnterScene(app_container){
 	let socket = new Socket();
 	await socket.init();
 	init_scene_state();
-	if (!engine.sceneInitialized) {	
-	//	console.log("add to engine...")
-		//engine.add(test, false);
-		engine.add(backBox, false);
-		engine.add(mainSceneObj, true);
-		engine.stateManager = stateManager;
-		engine.sceneInitialized = true;
-	}
-	if (!engine.stateManager)
-		engine.stateManager = stateManager
+	engine.add(mainScene, true);
+	engine.stateManager = stateManager;
 	engine.addContainerWrapper(app_container);
 }
 
@@ -136,6 +122,21 @@ export function exitScene(){
 	window.removeEventListener('resize', onResize);
 	window.removeEventListener('click', onClick);
 	document.body.removeEventListener("keydown", key_events)
+	let scene = engine.scene;
+	while (scene.children.length > 0)
+	{
+		const child = scene.children[0];
+		if (child.isMesh) {
+			if (child.geometry) child.geometry.dispose();
+			if (Array.isArray(child.material)) {
+				child.material.forEach(mat => mat.dispose());
+			} else if (child.material) {
+				child.material.dispose();
+			}
+		}
+		scene.remove(child);
+	}
+
 }
 
 function popstate(event){

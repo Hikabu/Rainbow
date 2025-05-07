@@ -108,4 +108,4 @@ class Alert{
 	}
 }
 
-export {Alert,AlertManager}
+export {AlertManager, Alert}

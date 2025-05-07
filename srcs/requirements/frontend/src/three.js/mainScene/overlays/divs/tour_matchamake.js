@@ -1,6 +1,6 @@
 import { StateManager } from "../../../core/stateManager/StateManager";
-import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
-import { Button, Input,Text } from '../../../core/UIFactory/Elements';
+import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
+import { Text, Button, Input } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 
 const container = new Overlay([
@@ -93,7 +93,6 @@ function createTextGrid(players) {
 				}));
 		}
 		return new FlexBox({
-			id: "matches",
 			dir: "column",
 			flex: 1,
 			width: "100%",
@@ -112,6 +111,7 @@ function hide_div(){
 }
 
 function exit(){
+	new_matches.element.replaceWith(container.getElementById("matches").element)
 }
 
 

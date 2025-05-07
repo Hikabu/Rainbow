@@ -39,8 +39,8 @@ function moveCamera(data, targetPosition, onComplete) {
 	const engine = new MainEngine()
 	engine.isCamMoving = true;
 	engine.camera_target.copy(newPosition);
-	//console.log("ne poiton: ", newPosition);
-	//console.log("cam target: ", engine.camera_target)
+	// console.log("ne poiton: ", newPosition);
+	// console.log("cam target: ", engine.camera_target)
 	if (tl){
 		tl.kill()
 	}

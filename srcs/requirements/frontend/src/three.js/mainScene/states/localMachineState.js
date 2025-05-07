@@ -1,10 +1,12 @@
+
+
 import { State } from '../../core/stateManager/States';
-import { MeshSubState, CssSubState } from '../../core/stateManager/SubStatesExtends';
-import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, object, partIndex, surfaceIndex, localMachineObj } from '../objects/machines/localMachineObj';
+import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
+import { screenMaterial } from '../objects/materialAssets';
+import { screenSurface, localMachineObj } from '../objects/arcadeMachines/localMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
-import { pongGame } from '../overlays/scenes/pong-game/Game';		
+	import { pongGame } from '../overlays/scenes/pong-game/Game';		
 import { StateManager } from '../../core/stateManager/StateManager';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { AlertManager } from '../overlays/alerts/Alerts';
@@ -12,15 +14,11 @@ import { controls } from '../overlays/divs/controls';
 import * as THREE from 'three';
 
 const divStart = new StartScreen('white', "START GAME");
-// console.log("")
-// console.log("LOCAL MACHINE!!!")
-// console.log("")
 
 const restScreen = new CssSubState(
 	"rest",
-	object,
-	partIndex,
-	surfaceIndex,
+	localMachineObj,
+	screenSurface,
 	divStart.div,
 	0,
 	()=>{
@@ -36,9 +34,8 @@ const restScreen = new CssSubState(
 
 const startScreen = new CssSubState(
 	"start",
-	object,
-	partIndex,
-	surfaceIndex,
+	localMachineObj,
+	screenSurface,
 	divStart.div,
 	0,
 	null,
@@ -54,9 +51,8 @@ const startScreen = new CssSubState(
 const divControls = controls;
 const controlScreen = new CssSubState(
 	"controls", 
-	object,
-	partIndex,
-	surfaceIndex,
+	localMachineObj,
+	screenSurface,
 	divControls.div,
 	0,
 	()=>{
@@ -70,10 +66,10 @@ const controlScreen = new CssSubState(
 	},
 	()=>{divControls["resize"]()},
 	(event)=>{return divControls["keyHandler"](event)},
-	null
+	null,
 )
 
-// console.log("screen surface: ", screenSurface.vertex2d)
+// console.log("screen surface: ", screenSurface)
 let min_x = Math.min(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
 let max_x = Math.max(screenSurface.vertex2d[0].x, screenSurface.vertex2d[1].x, screenSurface.vertex2d[2].x, screenSurface.vertex2d[3].x)
 let width = max_x - min_x;
@@ -88,7 +84,7 @@ let height = max_y - min_y;
 let aspect = width / height;
 // console.log("aspect is : ", aspect)
 const gameScreen = new MeshSubState(
-	"game", 
+	"game",
 	screenSurface,
 	pongGame,
 	1,
@@ -105,9 +101,8 @@ const gameScreen = new MeshSubState(
 const divEnd = new End("white");
 const endScreen = new CssSubState(
 	"end", 
-	object,
-	partIndex,
-	surfaceIndex,
+	localMachineObj,
+	screenSurface,
 	divEnd.div,
 	0,
 	()=>{divEnd.enter()},
@@ -149,13 +144,9 @@ const localMachineState = new State(
 		screenMaterial,
 		pongGame.renderMaterial,
 	],
-	// null,
 	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
-	1.5
+	2.75
 )
 
-// console.log("")
-// console.log("LOCAL MACHINE END!!!")
-// console.log("")
 export {localMachineState}

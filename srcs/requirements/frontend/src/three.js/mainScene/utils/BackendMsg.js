@@ -1,27 +1,19 @@
 import { StateManager } from '../../core/stateManager/StateManager';
+import { pongGame} from '../overlays/scenes/pong-game/Game'
 import { end } from '../overlays/divs/tour_end';
-import { matchmake } from '../overlays/divs/tour_matchamake'; //ppb will couse fail
+import { matchmake } from '../overlays/divs/tour_matchamake';
 import { create_redirection_alert, delete_redirection_alert, fadeout_redirection_alert } from '../overlays/alerts/redirection_warning';
 import { join } from '../overlays/divs/tour_join';
+import { State } from '../../core/stateManager/States';
+import { MainEngine } from './MainEngine';
 import { OnLoad } from './OnLoad';
 import { stateManager } from '../states/mainMenuState';
+import { AlertManager } from '../overlays/alerts/Alerts';
 import { create_info_alert } from '../overlays/alerts/info_alert';
-import { pongGame } from '../overlays/scenes/pong-game/Game';
-import { user } from '../../../stores/users'
-
-
-const updateStatus = (id, isOnline) => {
-	const friend = user.value?.friends.find(f => f.id === id)
-	if (friend) {
-		friend.isOnline = isOnline
-		//to force
-		user.value = {...user.value};
-	}
-}
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);
-	console.log("data: ", data);
+	//console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "switch tabs")
@@ -80,15 +72,7 @@ export function msgRouter(event){
 		}
 		pongGame["receive"](data);
 	}
-	else if (data.type == "consumer.updates"){
-		console.log("inside the sockets")
-		if (data.user_status) {
-			console.log("Users who are online:", data.user_status);
-			const { user_id, is_online} = data.user_status
-			updateStatus(user_id, is_online)
-			}
-		}
-	else if (data.type == "tour.updates" )
+	else if (data.type == "tour.updates" || data.type == "consumer.updates")
 	{
 		// console.log("received: ", data)
 		for (const key of Object.keys(tourActions)) {

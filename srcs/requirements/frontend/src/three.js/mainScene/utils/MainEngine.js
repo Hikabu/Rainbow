@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { InstanceNode } from 'three/webgpu';
 import { fitCameraToObject, onResizeCamMove } from '../../core/stateManager/cameraMovement';
+import { localMachineObj } from '../objects/arcadeMachines/localMachineObj';
+import { aiMachineObj } from '../objects/arcadeMachines/aiMachineObj';
 class MainEngine {
 	constructor(){
 		if (MainEngine.instance)
@@ -42,6 +44,7 @@ class MainEngine {
 		this.raycaster = new THREE.Raycaster();
 		this.mouse = new THREE.Vector2();
 		this.clickableObjects = [];
+		this.cssScene = new THREE.Scene();  // for CSS3DObjects
 	}
 	setUpRenderer(){
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -61,17 +64,64 @@ class MainEngine {
 	setUpLights(){
 		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
 		this.scene.add(ambientLight);
+		const key = new THREE.DirectionalLight(0xffffff, 1.2);
+		key.position.set(5, 10, 5);
 
-		const topLight = new THREE.SpotLight(0x0053f9, 50);
-		topLight.position.set(0, 6, 2);
-		topLight.castShadow = true;
-		this.scene.add(topLight);
+		const fill = new THREE.PointLight(0x8888ff, 0.6, 10);
+		fill.position.set(-5, 5, 5);
 
-		const spotLight = new THREE.SpotLight(0xd34dee, 50);
-		spotLight.position.set(0, 2, 5);
-		// spotLight.position.set(0, 0, 3.5);
-		spotLight.castShadow = true;
-		this.scene.add(spotLight);
+		const back = new THREE.DirectionalLight(0xff00cc, 0.4);
+		back.position.set(-5, 5, -5);
+
+		this.scene.add(key, fill, back);
+
+		//neon
+		// const keySpot = new THREE.SpotLight(0xff00ff, 20, 50, Math.PI / 4.5, 0.3, 1); // pink spotlight
+		// keySpot.position.set(0, 15, 5);
+		// this.scene.add(ambientLight, keySpot, keySpot.target);
+		// this.renderer.shadowMap.enabled = true;
+		// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		
+		//neon pink
+		// const neonPink = new THREE.PointLight(0xff00ff, 1.2, 5, 2);
+		// neonPink.position.copy(localMachineObj.self.position).add(new THREE.Vector3(0, 1.5, 1));
+		// const neonCyan = new THREE.PointLight(0x00ffff, 1.2, 5, 2);
+		// neonCyan.position.copy(aiMachineObj.self.position).add(new THREE.Vector3(0, 1.5, -1));
+		// this.scene.add(neonPink);
+		// this.scene.add(neonCyan)
+
+		//all blue
+// 		const ambient1 = new THREE.AmbientLight(0x223366, 0.5);
+// const dir = new THREE.DirectionalLight(0x88aaff, 1.2);
+// dir.position.set(5, 10, 10);
+// this.scene.add(ambient1, dir);
+
+// 		//moody and dark
+	// const ambient = new THREE.AmbientLight(0x000000); // almost none
+
+// const spot = new THREE.SpotLight(0xffffff, 1, 15, Math.PI / 7);
+// spot.position.set(0, 5, 5);
+// spot.castShadow = true;
+// spot.shadow.bias = -0.005;
+// this.scene.add(ambient, spot, spot.target);
+// 
+// const key = new THREE.DirectionalLight(0xffffff, 1.2);
+// key.position.set(5, 10, 5);
+
+// const fill = new THREE.PointLight(0x8888ff, 0.6, 10);
+// fill.position.set(-5, 5, 5);
+
+// const back = new THREE.DirectionalLight(0xff00cc, 0.4);
+// back.position.set(-5, 5, -5);
+
+// this.scene.add(key, fill, back);
+
+
+
+
+
+
+
 	}
 	animate(){
 		this.renderer.render(this.scene, this.camera);
@@ -139,12 +189,17 @@ class MainEngine {
 		for (let i = 0; i < this.clickableObjects.length; i++)
 		{
 			if (! this.clickableObjects[i].userData.instance)
+			{
+				console.log("skipping object")
 				continue ;
+
+			}
 			const bbox = this.clickableObjects[i].userData.instance.get_bbox();
 			const intersectsModel = this.raycaster.ray.intersectBox(bbox, new THREE.Vector3());
 			if (intersectsModel)
 			{
-				this.clickableObjects[i].userData.instance.handle_click(this.raycaster);
+				console.log("clicked obj")
+				console.log(this.clickableObjects[i].userData.instance.handle_click(this.raycaster));
 				return ;
 			}
 		}

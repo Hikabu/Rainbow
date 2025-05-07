@@ -1,8 +1,9 @@
 
+
 import { State } from '../../core/stateManager/States';
-import { MeshSubState , CssSubState } from '../../core/stateManager/SubStatesExtends';
-import { screenMaterial } from '../objects/simpleAssets';
-import { screenSurface, center, object, partIndex,  surfaceIndex, aiMachineObj } from '../objects/machines/aiMachineObj';
+import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
+import { screenMaterial } from '../objects/materialAssets';
+import { screenSurface, aiMachineObj } from '../objects/arcadeMachines/aiMachineObj';
 import { StartScreen } from '../overlays/divs/start'
 import { End } from '../overlays/divs/end';
 import { pongGame } from '../overlays/scenes/pong-game/Game';		
@@ -11,13 +12,13 @@ import { StateManager } from '../../core/stateManager/StateManager';
 import * as THREE from 'three';
 import { create_exit_alert } from '../overlays/alerts/exit_warning';
 import { controls } from '../overlays/divs/controls';
+
 const divStart = new StartScreen('white', "START GAME");
 
 const restScreen = new CssSubState(
 	"rest",
-	object,
-	partIndex,
-	surfaceIndex,
+	aiMachineObj,
+	screenSurface,
 	divStart.div,
 	0,
 	()=>{
@@ -33,9 +34,8 @@ const restScreen = new CssSubState(
 
 const startScreen = new CssSubState(
 	"start",
-	object,
-	partIndex,
-	surfaceIndex,
+	aiMachineObj,
+	screenSurface,
 	divStart.div,
 	0,
 	null,
@@ -51,9 +51,8 @@ const startScreen = new CssSubState(
 const divControls = controls;
 const controlScreen = new CssSubState(
 	"controls", 
-	object,
-	partIndex,
-	surfaceIndex,
+	aiMachineObj,
+	screenSurface,
 	divControls.div,
 	0,
 	()=>{
@@ -76,7 +75,7 @@ const gameScreen = new MeshSubState(
 	screenSurface,
 	pongGame,
 	1,
-	()=>{pongGame["enter"](2)},
+	()=>{pongGame["enter"](1)},
 	()=>{
 		new AlertManager().remove_latest_alert("exit alert");
 	},
@@ -85,9 +84,8 @@ const gameScreen = new MeshSubState(
 const divEnd = new End("white");
 const endScreen = new CssSubState(
 	"end", 
-	object,
-	partIndex,
-	surfaceIndex,
+	aiMachineObj,
+	screenSurface,
 	divEnd.div,
 	0,
 	()=>{divEnd.enter()},
@@ -126,7 +124,7 @@ const aiMachineState = new State(
 		pongGame.renderMaterial,
 	],
 	// null,
-	aiMachineObj.self,
+	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
 	1.5
 )

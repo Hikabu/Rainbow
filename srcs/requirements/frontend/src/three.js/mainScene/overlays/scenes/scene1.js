@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-
 import {MainEngine} from '../../utils/MainEngine';
 import {createRenderTarget, createScreenMaterial } from './utils';
 const engine = new MainEngine();

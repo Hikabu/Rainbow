@@ -1,6 +1,6 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
-import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
-import { Button,Text } from '../../../core/UIFactory/Elements';
+import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
+import { Text, Button } from '../../../core/UIFactory/Elements';
 import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
 import { MainEngine } from '../../utils/MainEngine';
 import { can_user_log_game } from './start';

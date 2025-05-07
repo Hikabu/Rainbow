@@ -1,9 +1,8 @@
-import * as THREE from 'three';
-
 import { MainEngine } from '../../mainScene/utils/MainEngine';
 import { moveCamera } from './cameraMovement';
-import { fitCameraToObject,get_camera_animation } from './cameraMovement';
 import { StateManager } from './StateManager';
+import { get_camera_animation, fitCameraToObject } from './cameraMovement';
+import * as THREE from 'three';
 
 class State {
     constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials, targetObject, targetNormal, targetPadding = 1.25) {
@@ -40,7 +39,7 @@ class State {
 		if (index >= this.substates.length) index = 0;
         this.currentSubstateIndex = index;
         this.currentSubstate = this.substates[this.currentSubstateIndex];
-		if (this.materialIndex != this.currentSubstate.materialIndex)
+		if (this.materials && this.materialIndex != this.currentSubstate.materialIndex)
 		{
 			this.materialIndex = this.currentSubstate.materialIndex;
 			this.currentSubstate.surface.material = this.materials[this.materialIndex];
@@ -77,6 +76,7 @@ class State {
 			new MainEngine().camera.position.copy(this.get_camera_position());
 			this.currentSubstate.postCamEnter();
 		}
+		this.resize()
 	}
 	exit() {
 		if (this.exitState() == "cancelled" || this.changeSubstate(this.startIndex, false) == "cancelled")

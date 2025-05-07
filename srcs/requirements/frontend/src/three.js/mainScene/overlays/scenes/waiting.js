@@ -1,10 +1,9 @@
 import * as THREE from 'three';
-
-import { Font } from '../../../core/objectFactory/customFont3d';
 // import {MainEngine} from '../../utils/MainEngine';
 import { StateManager } from '../../../core/stateManager/StateManager';
-import { Engine } from './pong-game/setUp/Engine';
 import {createRenderTarget, createScreenMaterial } from './utils';
+import { Font } from '../../../core/objectFactory/customFont3d';
+import { Engine } from './pong-game/setUp/Engine';
 
 
 const engine = new Engine()

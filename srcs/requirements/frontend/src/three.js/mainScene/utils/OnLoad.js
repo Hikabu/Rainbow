@@ -1,68 +1,79 @@
 import { uponEnter } from "../..";
-import { Engine } from "../overlays/scenes/pong-game/setUp/Engine";
-import { MainEngine } from "./MainEngine";
+import { StateManager } from "../../core/stateManager/StateManager";
 
-export class OnLoad {
-	constructor() {
-		if (OnLoad.instance) return OnLoad.instance;
-
-		this.firstLoad = false;
+export class OnLoad{
+	constructor(){
+		if (OnLoad.instance)
+			return OnLoad.instance;
+		// console.log("NEW ONLAOD INSTANCE!!!!")
+		this.firstLoad = null;
 		this.socket_ready = false;
 		this.textures_ready = false;
 		this.switched_already = false;
-
-		this.isLoadingRef = null;
-		this.appVisibleRef = null;
-		this.loadingOpacityRef = 1;
-		this.appOpacityRef = 0;
 		this.reconnecting = false;
 		OnLoad.instance = this;
 	}
-
-	set_first_load(isLoadingRef, appVisibleRef, loadingOpacityRef, appOpacityRef) {
-		console.log("set first load")
-		this.firstLoad = true;
-		this.isLoadingRef = isLoadingRef;
-		this.appVisibleRef = appVisibleRef;
-		this.loadingOpacityRef = loadingOpacityRef;
-		this.appOpacityRef = appOpacityRef;
-		this.try_switch_pages();
+	set_first_load(newPage){
+		// console.log("FIRST LOAD")
+		this.firstLoad = newPage;
+		this.switch_pages()
 	}
-	set_socket_ready() {
-		console.log("set sockeet ready")
+	set_socket_ready(){
+		// console.log("SOCKET READY")
 		this.socket_ready = true;
-		this.try_switch_pages();
+		this.switch_pages()
 	}
-	set_texture_ready() {
-		console.log("set texture ready")
+	set_texture_ready(){
+		// console.log("TEXTURES READY")
 		this.textures_ready = true;
-		this.try_switch_pages();
+		this.switch_pages()
 	}
-
-	try_switch_pages() {
-		if (!this.socket_ready || !this.firstLoad || !this.textures_ready || this.switched_already) return;
-		console.log("switching pages")
+	switch_pages(){
+		if (this.socket_ready == false)
+		{
+			// console.log("sokcet not ready")
+			return
+		}
+		if (this.firstLoad == null)
+		{
+			// console.log("first load nto ready")
+			return;
+		}
+		if (this.textures_ready == false)
+		{
+			// console.log("textures nto ready")
+			return;
+		}
+		if (this.switched_already == true){
+			// console.log("switched already ...")
+			return;
+		}
 		this.switched_already = true;
-
-		// Start fading out loading
-		gsap.to(this.loadingOpacityRef, {
-			duration: 1,
-			value: 0,
-			ease: "power2.out",
+			//  || this.firstLoad == null || this.textures_ready == false || this.switched_already == true)
+			// return;
+		//RAINBOW:
+		//this.firstLoad = true;
+		//TEST ENV:
+	const loadingScreen = document.getElementById("loading-screen");
+	loadingScreen.style.display = "flex";
+	loadingScreen.style.opacity = 1;
+	document.getElementById("app-container").style.display = "none";
+	// setTimeout(() => {
+		gsap.to(loadingScreen, {
+			duration: 0.5,
+			opacity: 0,
 			onComplete: () => {
-				this.isLoadingRef.value = false; // hide loading div completely
+				loadingScreen.style.display = "none";
+				const appContainer = document.getElementById("app-container");
+				appContainer.style.opacity = 0;
+				appContainer.style.display = "block";
 				uponEnter();
-				new MainEngine().resize()
-				this.appVisibleRef.value = true; // show app div
-				gsap.to(this.appOpacityRef, {
+				gsap.to(appContainer, {
 					duration: 1,
-					value: 1,
-					ease: "power2.out",
-					// onComplete: () => {
-					// 	uponEnter(); // whatever you want after fully loaded
-					// }
+					opacity: 1
 				});
 			}
 		});
+	// }, 1000);
 	}
 }
