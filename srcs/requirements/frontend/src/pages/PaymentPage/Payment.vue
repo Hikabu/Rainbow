@@ -12,14 +12,13 @@
                         style="width: 210px; height: 210px; object-fit: cover;"
                     >
                 </div>
-                  <button @click="connectWallet">
+                  <button class="btn btn-outline-info" @click="connect">
                     {{ currentAccount ? 'Wallet connected' : 'Connect wallet' }}
                   </button>
                   <div v-if="currentAccount">
                     <p>Connected account: {{ currentAccount }}</p>
-                    <input v-model="price" placeholder="amount"/>
+                    <input v-model="message" placeholder="amount"/>
                     <button @click="writeContract">Sent to contract</button>
-
                     <button @click="readContract">Read from contract</button>
                     <p>Paid amount: {{ contractResponse }}</p>
                   </div>
@@ -35,19 +34,19 @@ import SideBar from '../../components/SideBar.vue';
 import { fetchProfile,user } from '../../stores/users'
 import { onBoard } from './util/onBoard';
 //make same reactivity
-const { connectWallet, wallets, disconnectWallet } = onBoard()
+const { connectWallet, readContract, writeContract, currentAccount, message, contractResponse, } = onBoard()
 
 
-// const connect = async () => {
-//     const connected = await connectWallet();
-//     console.log("Connected wallets:", connected);
-// }
-
-const disconnect = async () => {
-    if (wallets.value.length) {
-        await disconnectWallet({ label: wallets.value[0].label})
-    }
+const connect = async () => {
+    const connected = await connectWallet();
+    console.log("Connected wallets:", connected);
 }
+
+// const disconnect = async () => {
+//     if (wallets.value.length) {
+//         await disconnectWallet({ label: wallets.value[0].label})
+//     }
+// }
 onMounted(async () => {
     await fetchProfile()
 })
