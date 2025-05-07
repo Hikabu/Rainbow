@@ -2,10 +2,11 @@
 // -> connect to wallet to pay for runnig the function
 import { ethers } from "ethers";
 import { ref } from 'vue'
+
 import contractABI from "../contract-abi.json";
 export function onBoard() {
-    const alchemyUrl = import.meta.env.VITE_API_URL
-    const contractAddress = import.meta.env.VITE_ALCHEMY_KEY;
+    const alchemyUrl = import.meta.env.VITE_ALCHEMY_KEY;
+    const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 
     const currentAccount = ref(null);
     const message = ref('');
@@ -21,6 +22,7 @@ export function onBoard() {
             try {
                 const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
                 currentAccount.value = accounts[0];
+                return currentAccount.value;
             } catch (error){
                 console.error("Error connecting: ", error);
              }
@@ -38,10 +40,22 @@ export function onBoard() {
     const writeContract = async() => {
         try{
             const contract = await getContract();
-            
+            const tx = await contract.setMessage(message.value)
+            await tx.wait();
+            alert("transaction successfull")
+        } catch (error) {
+            console.error("Write error", error);
         }
     }
-
+    const readContract = async() => {
+        try {
+            const contract = await getContract();
+            const response = await contract.getMessage();
+            contractResponse.value = response; 
+        } catch(error) {
+            console.error("Read error", error);
+        }
+    }
     const loadCurrentMessage = async () => { //call publick method 
         return await getContract.message();
     };
@@ -49,6 +63,11 @@ export function onBoard() {
     return {
         loadCurrentMessage,
         connectWallet,
-        getContract,
+        // getContract,
+        writeContract,
+        readContract,
+        currentAccount,
+        message,
+        contractResponse,
     }
 };
