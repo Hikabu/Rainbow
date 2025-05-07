@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 
+// import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
+import { Object } from './core/objectFactory/Object';
+import { Part } from './core/objectFactory/Part';
 import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
 import { StateManager } from './core/stateManager/StateManager';
 import { backBox } from './mainScene/objects/background/backBox';
@@ -9,9 +12,6 @@ import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineOb
 import { mainSceneObj,stateManager } from './mainScene/states/mainMenuState';
 import { MainEngine } from './mainScene/utils/MainEngine';
 import { Socket } from './mainScene/utils/Socket';
-// import { create_redirection_alert } from './mainScene/overlays/alerts/redirection_warning';
-import { Object } from './core/objectFactory/Object';
-import { Part } from './core/objectFactory/Part';
 const engine = new MainEngine();
 
 let isAnimating = false;

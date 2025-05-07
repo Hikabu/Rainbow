@@ -1,13 +1,13 @@
-import { StateManager } from '../../core/stateManager/StateManager';
-import { end } from '../overlays/divs/tour_end';
-import { matchmake } from '../overlays/divs/tour_matchamake'; //ppb will couse fail
-import { create_redirection_alert, delete_redirection_alert, fadeout_redirection_alert } from '../overlays/alerts/redirection_warning';
-import { join } from '../overlays/divs/tour_join';
-import { OnLoad } from './OnLoad';
-import { stateManager } from '../states/mainMenuState';
-import { create_info_alert } from '../overlays/alerts/info_alert';
-import { pongGame } from '../overlays/scenes/pong-game/Game';
 import { fetchProfile, user } from '../../../stores/users'
+import { StateManager } from '../../core/stateManager/StateManager';
+import { create_info_alert } from '../overlays/alerts/info_alert';
+import { create_redirection_alert, delete_redirection_alert, fadeout_redirection_alert } from '../overlays/alerts/redirection_warning';
+import { end } from '../overlays/divs/tour_end';
+import { join } from '../overlays/divs/tour_join';
+import { matchmake } from '../overlays/divs/tour_matchamake'; //ppb will couse fail
+import { pongGame } from '../overlays/scenes/pong-game/Game';
+import { stateManager } from '../states/mainMenuState';
+import { OnLoad } from './OnLoad';
 
 
 const updateStatus = (id, isOnline) => {

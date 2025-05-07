@@ -79,7 +79,7 @@ import axios from 'axios'
 import { onMounted,ref, watch  } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
-import { user, fetchProfile } from '../../stores/users'
+import { fetchProfile,user } from '../../stores/users'
 //make same reactivity
 const fileInput = ref(null)
 const searchQuery = ref('') 
