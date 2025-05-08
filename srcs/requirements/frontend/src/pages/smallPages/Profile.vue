@@ -104,6 +104,7 @@ import { onMounted,ref } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
 import { fetchProfile,user } from '../../stores/users'
+import { Socket} from '../../three.js/mainScene/utils/Socket.js'
 
 const fileInput = ref(null)
 
@@ -177,6 +178,10 @@ const saveDisplayName = async () => {
 }
 
 onMounted(async () => {
+		new Socket().send({
+		"type" : "friends",
+		"action" : "users",
+	})
     await fetchProfile()
 })
 </script>

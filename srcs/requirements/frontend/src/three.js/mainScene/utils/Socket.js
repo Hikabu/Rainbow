@@ -1,6 +1,6 @@
 import { msgRouter } from './BackendMsg';
 import {getUserID} from './utils'
-
+import { fetchProfile, user } from '../../../stores/users'
 
 export class Socket {
 	constructor(){
@@ -13,9 +13,12 @@ export class Socket {
 		Socket.instance = this;
 	}
 	async init(){
+		if (this.socket)
+			return;
 		console.log("init sokcet with user id")
 		this.userID = await getUserID()
 		console.log("user: ", this.userID);
+		//this.userID = user.id;
 		try {
 			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
 			this.socket.onerror = this.myError.bind(this);

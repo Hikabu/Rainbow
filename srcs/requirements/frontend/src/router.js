@@ -8,6 +8,7 @@ import MainPage from './pages/MainPage/MainPage.vue';
 import Payment from './pages/PaymentPage/Payment.vue';
 import Friends from './pages/smallPages/Friends.vue';
 import Profile from './pages/smallPages/Profile.vue';
+import {Socket} from './three.js/mainScene/utils/Socket.js';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -162,6 +163,8 @@ router.beforeEach(async (to, from, next) => {
         console.error("Access token not found, redirecting to login...");
         return next({ name: 'Login' });
       }
+	 let sock = new Socket();
+	 await sock.init()
     } catch (error) {
       clearInterval(refreshTimeOut)
       console.error('Error during authentication check:', error);

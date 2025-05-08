@@ -76,6 +76,21 @@ class MainConsumer(AsyncWebsocketConsumer):
 				}
 			)
 
+	async def check_user(self, user_id):
+		if isUserOnline(user_id):
+			await self.send_self({
+				"type" : "consumer.updates",
+				"user_status" : {
+					"user_id" : str(user_id),
+					"isOnline" : True,
+				}
+			})
+
+	async def check_friends(self):
+		friends_id = await self.get_friends_id(self.user_id)
+		for user in friends_id:
+			await self.check_user(user)
+
 	async def connect(self):
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
 		
@@ -154,6 +169,11 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		if data["channel"] == "friends":
+			if data["action"] == "user":
+				await self.check_user(data["user_id"])
+			elif data["action"] == "users":
+				await self.check_friends()
 		if data["channel"] == "log":
 			if "action" in data:
 				if data["action"] == "can_user_log_game":
