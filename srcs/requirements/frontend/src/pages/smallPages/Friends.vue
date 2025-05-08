@@ -80,6 +80,8 @@ import { onMounted,ref, watch  } from 'vue'
 
 import SideBar from '../../components/SideBar.vue';
 import { fetchProfile,user } from '../../stores/users'
+import { Socket} from '../../three.js/mainScene/utils/Socket.js'
+
 //make same reactivity
 const fileInput = ref(null)
 const searchQuery = ref('') 
@@ -102,7 +104,11 @@ const addFriend = async (friendId) => {
         })
         // await profileData()
         await fetchProfile()
-        
+        new Socket().send({
+			"channel" : "friends",
+			"action" : "user",
+			"user_id" : user.id,
+		})
         searchResult.value = []
         searchQuery.value = ''
         alert('Frined catched successfully!')
@@ -200,6 +206,10 @@ const handleFileUpload = async (event) => {
 const debouncedSearch = debounce(searchFriends, 300)
 onMounted(async () => {
     await fetchProfile()
+	new Socket().send({
+		"type" : "friends",
+		"action" : "users",
+	})
     // profileData()
 })
 watch(searchQuery, debouncedSearch) //if query changed calles debounce
