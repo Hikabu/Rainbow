@@ -11,6 +11,11 @@
                         class="rounded-circle"
                         style="width: 210px; height: 210px; object-fit: cover;"
                     >
+                    <div 
+                        v-else 
+                        class="rounded-circle bg-secondary position-absolute top-1 end-0"
+                        style="width: 110px; height: 110px;"
+                    ></div>
                 </div>
                   <button class="btn btn-outline-info" @click="connect">
                     {{ currentAccount ? 'Wallet connected' : 'Connect wallet' }}
