@@ -207,7 +207,7 @@ const debouncedSearch = debounce(searchFriends, 300)
 onMounted(async () => {
     await fetchProfile()
 	new Socket().send({
-		"type" : "friends",
+		"channel" : "friends",
 		"action" : "users",
 	})
     // profileData()

@@ -24,9 +24,13 @@ logger = logging.getLogger(__name__)
 # logger = logging.getLogger(__name__)
 #LERA use online
 def isUserOnline(user_id):
+	logger.info(f"is {user_id} online?")
 	active_users = cache.get('active_users')
-	if active_users == None or user_id not in active_users:
+	logger.info(f"active users: {active_users}")
+	if active_users is None or str(user_id) not in map(str, active_users):
+		logger.info("false...")
 		return False
+	logger.info("true...")
 	return True
 
 #user bla connects-axios bla's friends-for every frined-send live update that bla is onlien
@@ -77,7 +81,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 			)
 
 	async def check_user(self, user_id):
+		logger.info(f"check user: {user_id}")
 		if isUserOnline(user_id):
+			logger.info("sending user online")
 			await self.send_self({
 				"type" : "consumer.updates",
 				"user_status" : {
@@ -87,7 +93,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 			})
 
 	async def check_friends(self):
+		logger.info("check friends")
 		friends_id = await self.get_friends_id(self.user_id)
+		logger.info(f"friends id {friends_id}")
 		for user in friends_id:
 			await self.check_user(user)
 
@@ -169,6 +177,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		logger.info(f"data received: {data}")
 		if data["channel"] == "friends":
 			if data["action"] == "user":
 				await self.check_user(data["user_id"])
