@@ -6,26 +6,20 @@
                 <!-- avatars -->
                 <div style="cursor: pointer;">
                     <img 
-                        v-if="user?.avatar || user?.intra_avatar" 
-                        :src="user.avatar || user?.intra_avatar" 
+                        :src="user.avatar || user?.intra_avatar || logout" 
                         class="rounded-circle"
                         style="width: 210px; height: 210px; object-fit: cover;"
                     >
-                    <div 
-                        v-else 
-                        class="rounded-circle bg-secondary position-absolute top-1 end-0"
-                        style="width: 110px; height: 110px;"
-                    ></div>
                 </div>
                   <button class="btn btn-outline-info" @click="connect">
                     {{ currentAccount ? 'Wallet connected' : 'Connect wallet' }}
                   </button>
-                  <div v-if="currentAccount">
+                  <div v-if="currentAccount" class=" text-white">
                     <p>Connected account: {{ currentAccount }}</p>
                     <input v-model="message" placeholder="amount"/>
                     <button @click="writeContract">Sent to contract</button>
                     <button @click="readContract">Read from contract</button>
-                    <p>Paid amount: {{ contractResponse }}</p>
+                    <p>Paid amount: {{ contractResponse }} </p>
                   </div>
             </div>
         </div>
@@ -35,11 +29,12 @@
 <script setup>
 import { onMounted} from 'vue'
 
+import logout from '../../assets/logout.png';
 import SideBar from '../../components/SideBar.vue';
 import { fetchProfile,user } from '../../stores/users'
 import { onBoard } from './util/onBoard';
 //make same reactivity
-const { connectWallet, readContract, writeContract, currentAccount, message, contractResponse, } = onBoard()
+const { connectWallet, readContract, writeContract, currentAccount, message, contractResponse} = onBoard()
 
 
 const connect = async () => {
