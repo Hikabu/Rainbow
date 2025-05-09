@@ -6,8 +6,7 @@
                 <!-- avatars -->
                 <div style="cursor: pointer;" @click="triggerFileInput" >
                     <img 
-                        v-if="user?.avatar || user?.intra_avatar" 
-                        :src="user.avatar || user?.intra_avatar" 
+                        :src="user.avatar || user?.intra_avatar || logout" 
                         class="rounded-circle"
                         style="width: 210px; height: 210px; object-fit: cover;"
                     >
@@ -78,6 +77,7 @@
 import axios from 'axios'
 import { onMounted,ref, watch  } from 'vue'
 
+import logout from '../../assets/logout.png';
 import SideBar from '../../components/SideBar.vue';
 import { fetchProfile,user } from '../../stores/users'
 //make same reactivity
