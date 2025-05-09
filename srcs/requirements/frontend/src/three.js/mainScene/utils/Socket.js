@@ -51,6 +51,7 @@ export class Socket {
 		this.socket = null;
 		Socket.instance = null;
 	}
+	
 	send(obj){
 		if (this.socket && this.socket.readyState == WebSocket.OPEN)
 				this.socket.send(JSON.stringify(obj));
