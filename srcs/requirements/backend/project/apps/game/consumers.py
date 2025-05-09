@@ -28,15 +28,17 @@ def isUserOnline(user_id):
 	active_users = cache.get('active_users')
 	logger.info(f"active users: {active_users}")
 	if active_users is None or str(user_id) not in map(str, active_users):
-		logger.info("false...")
-		return False
+		pending_users = cache.get('pending_users')
+		if pending_users is None or str(user_id) not in map(str, pending_users):
+			logger.info("false...")
+			return False
 	logger.info("true...")
 	return True
 
 #user bla connects-axios bla's friends-for every frined-send live update that bla is onlien
 
 #static global
-max_reconnection_time = 10
+max_reconnection_time = 3
 all_consumers = {}
 class MainConsumer(AsyncWebsocketConsumer):
 
@@ -155,9 +157,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 		if self.user_id in active_users:
 			active_users.remove(self.user_id)
 			cache.set('active_users', active_users)
-			await self.notify_friends(is_online=False)
-		print(f"TESTING: User {self.user_id} going offline")
-		print("yes, exiting live")
+			# await self.notify_friends(is_online=False)
+		logger.info(f"TESTING: User {self.user_id} going offline")
+		logger.info("yes, exiting live")
 		if self.game and self.game.status != "finished":
 			print("end game")
 			await self.game.disconnect(self)
@@ -168,12 +170,14 @@ class MainConsumer(AsyncWebsocketConsumer):
 			del all_consumers[self.user_id]
 
 	async def disconnect(self, code=None):
+		await self.notify_friends(is_online=False)
+		pending_users = cache.get('pending_users', [])
+		pending_users.append(self.user_id)
+		cache.set('pending_users', pending_users)
 		await self.channel_layer.group_discard(f"{self.user_id}", self.channel_name)
 		asyncio.create_task(self.should_exit_live())
 		await self.remove_channel("all")
-		print("WEBOSCKET DISCONNECTED!!!!!")
-  
-		# active_users = None
+		logger.info(f"WEBOSCKET {self.user_id} DISCONNECTED!!!!!")
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)

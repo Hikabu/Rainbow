@@ -15,7 +15,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Login',
+      name: 'login',
       component: LoginPage,
       meta: { requiresAuth: false }
     },
@@ -153,7 +153,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     try {
       //cookies
-      const token = await api.get('auth-status/');
+	  const token = await api.get('auth-status/');
       if (!refreshTimeOut && token.status === 200){
         startRefrInterval();
       }
@@ -171,6 +171,13 @@ router.beforeEach(async (to, from, next) => {
       return next({ name: 'Login' });
     } 
   } else {
+	// try {
+	// 	const token = await api.get('auth-status/');
+	// 	if (token.status == 200)
+	// 		return next({ name: 'lobby' });
+	// }catch (error) {}
+	if (Socket.instance)
+		new Socket().socket.close()
     clearInterval(refreshTimeOut);
     refreshTimeOut = null;
     next()
