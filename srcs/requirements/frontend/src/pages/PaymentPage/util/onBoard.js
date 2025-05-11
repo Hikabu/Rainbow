@@ -1,6 +1,6 @@
 //flow find provider-> connect to smart contract-> take public functions -> 
 // -> connect to wallet to pay for runnig the function
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 import { ref } from 'vue'
 
 import contractABI from "../contract-abi.json";
@@ -18,17 +18,17 @@ export function onBoard() {
     //provider - read only access
     // const readContract = new ethers.Contract(contractAddress, contractABI, provider)
     const connectWallet = async() => {
-        if (window.ethereum) {
-            try {
-                const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-                currentAccount.value = accounts[0];
-                return currentAccount.value;
-            } catch (error){
-                console.error("Error connecting: ", error);
-             }
-        } else  {
-                alert("Metamask not found!")
-            };
+        // if (window.ethereum) {
+        //     try {
+        //         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        //         currentAccount.value = accounts[0];
+        //         return currentAccount.value;
+        //     } catch (error){
+        //         console.error("Error connecting: ", error);
+        //      }
+        // } else  {
+        //         alert("Metamask not found!")
+        //     };
     };
 
     const getContract = async() => {

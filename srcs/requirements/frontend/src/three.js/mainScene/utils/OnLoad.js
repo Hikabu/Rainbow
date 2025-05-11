@@ -6,11 +6,7 @@ export class OnLoad {
 	constructor() {
 		if (OnLoad.instance) return OnLoad.instance;
 
-		this.firstLoad = false;
-		this.socket_ready = false;
-		this.textures_ready = false;
-		this.switched_already = false;
-
+		this.reset()
 		this.isLoadingRef = null;
 		this.appVisibleRef = null;
 		this.loadingOpacityRef = 1;
@@ -18,7 +14,12 @@ export class OnLoad {
 		this.reconnecting = false;
 		OnLoad.instance = this;
 	}
-
+	reset(){
+		this.firstLoad = false;
+		this.socket_ready = false;
+		this.textures_ready = false;
+		this.switched_already = false;
+	}
 	set_first_load(isLoadingRef, appVisibleRef, loadingOpacityRef, appOpacityRef) {
 		console.log("set first load")
 		this.firstLoad = true;
