@@ -12,6 +12,7 @@ import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineOb
 import { mainSceneObj,stateManager } from './mainScene/states/mainMenuState';
 import { MainEngine } from './mainScene/utils/MainEngine';
 import { Socket } from './mainScene/utils/Socket';
+import { OnLoad } from './mainScene/utils/OnLoad';
 const engine = new MainEngine();
 
 let isAnimating = false;
@@ -33,8 +34,13 @@ document.addEventListener('keydown', (event) => {
 // enterScene is called in mounted() or onMounted().
 export async function preEnterScene(app_container){
 	console.log("pre enter")
-	let socket = new Socket();
-	await socket.init();
+	if (Socket.instance)
+		new OnLoad().set_socket_ready();
+	else
+	{
+		let socket = new Socket();
+		await socket.init();
+	}
 	init_scene_state();
 	if (!engine.sceneInitialized) {	
 	//	console.log("add to engine...")
@@ -44,9 +50,12 @@ export async function preEnterScene(app_container){
 		engine.stateManager = stateManager;
 		engine.sceneInitialized = true;
 	}
+	else
+		new OnLoad().set_texture_ready()
 	if (!engine.stateManager)
 		engine.stateManager = stateManager
 	engine.addContainerWrapper(app_container);
+	observer.observe(app_container);
 }
 
 export function uponEnter(){
@@ -63,10 +72,13 @@ export function uponEnter(){
 	isAnimating = true;
 	animate();
 	window.dispatchEvent(new Event("resize"));
+	// if (engine.stateManager.currentState && engine.stateManager.currentStateIndex == 0)
+	// 	engine.stateManager.currentState = null
 	if (engine.stateManager.currentState == null)
 		{
 			//console.log(engine.camera.position)
-			//console.log("entering main state")
+			console.log("entering main state")
+			engine.stateManager.currentStateIndex = -1;
 			engine.stateManager.changeState(0, true, 1);
 			//console.log(engine.camera.position)
 	
@@ -89,20 +101,27 @@ export function animate() {
 //exitScene is called in beforeUnmount() or onBeforeUnmount().
 export function exitScene(){
 	isAnimating = false;
+	observer.unobserve(engine.wrapper);
 	engine.removeContainerWrapper();
 	window.removeEventListener('popstate', popstate);
 	window.removeEventListener("wheel", wheel_scroll_animations);
 	window.removeEventListener('resize', onResize);
 	window.removeEventListener('click', onClick);
 	document.body.removeEventListener("keydown", key_events)
+	new OnLoad().reset()
 }
 
 function popstate(event){
 	if (event.state)
 		new StateManager().changeState(event.state.num, false);
 }
+const observer = new ResizeObserver(() => {
+		console.log("observer working")
+		onResize();
+});
 
 function onResize() {
+	console.log("resize")
 	engine.resize();
 }
 

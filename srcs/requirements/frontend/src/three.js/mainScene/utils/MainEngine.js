@@ -16,17 +16,21 @@ class MainEngine {
 		this.stateManager = null;
 		this.isCamMoving = false;
 		this.camera_target = new THREE.Vector3();
+		this.wrapper = null;
 		MainEngine.instance = this;
 	}
 	addContainerWrapper(wrapper){
-		wrapper.appendChild(this.container);
+		console.log("contianer: ", this.container)
+		this.wrapper = wrapper;
+		this.wrapper.appendChild(this.container);
 		this.resizeObserver = new ResizeObserver(() => this.resize());
 		this.resizeObserver.observe(this.container);
 		this.resize();
 		// console.log("add container wrapper")
 	}
 	removeContainerWrapper(){
-		this.container?.remove();
+		this.wrapper.removeChild(this.container);
+		this.wrapper = null;
 		this.resizeObserver?.disconnect();
 	}
 	setUpContainer(){
@@ -76,6 +80,7 @@ class MainEngine {
 	}
 	animate(){
 		this.renderer.render(this.scene, this.camera);
+		this.css3DRenderer.render(this.scene, this.camera);
 		this.stateManager.animate();
 	}
 	add(newObject, clickable){
@@ -122,6 +127,8 @@ class MainEngine {
 			// else console.log("NO STATE")
 				// console.log("pos ", camera_pos);)
 		}
+		this.renderer.render(this.scene, this.camera);
+		this.css3DRenderer.render(this.scene, this.camera);
 		// else 
 		// 	console.log("NO STATE MANAGER")
 

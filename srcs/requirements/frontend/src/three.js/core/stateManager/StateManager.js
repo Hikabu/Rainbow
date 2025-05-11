@@ -21,7 +21,12 @@ class StateManager {
 	}
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true, slow = 0) {
         if (this.currentStateIndex == index || index < 0)
+		{
+			console.log("this currenstte index: ", this.currentStateIndex)
+			console.log("index", index)
+			console.log("change state cancelled")
 			return;
+		}
 		this.scheduledStateIndex = index;
 		if (this.currentState && this.currentState.exit() == "cancelled" && !this.forcedRedirect)
 			return "cancelled";
