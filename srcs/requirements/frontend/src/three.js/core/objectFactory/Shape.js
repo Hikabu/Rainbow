@@ -1,7 +1,6 @@
 import * as THREE from 'three';
-import { or, orthographicDepthToViewZ } from 'three/tsl';
-
 import { order_path, update_min_max } from '../../mainScene/utils/utils';
+import { or, orthographicDepthToViewZ } from 'three/tsl';
 
 function get_geometry_normal_vector(geometry)
 {
@@ -39,7 +38,7 @@ function clean_vector(v, decimals = 5) {
 }
 
 class Shape {
-	constructor(points, isAbstract = false)
+	constructor(points, isAbstract = false, normal =null, all_quads = false)
 	{
 		this.z = 0;
 		if (points[0].length == 3)
@@ -52,7 +51,6 @@ class Shape {
 			if (this.z != 0)
 				this.z /= points.length
 		}
-			
 		this.vertex3d = [];
 		this.vertex3d = points;
 		this.vertex2d = [];
@@ -61,7 +59,7 @@ class Shape {
 		this.normal = null;
 		this.onclick = null;
 		this.bbox = null;
-		isAbstract == false ? this.quad_geo() : this.abstract_geo();
+		isAbstract == false ? this.quad_geo() : this.abstract_geo(normal, all_quads);
 	}
 	quad_geo(){
 		this.geometry = new THREE.BufferGeometry();
@@ -73,8 +71,10 @@ class Shape {
 		this.geometry.setIndex(indices);
 		this.calc_uvs();
 	}
-	abstract_geo(){
+	abstract_geo(normal, all_quads){
+		this.normal = normal;
 		const shape = new THREE.Shape();
+		this.vertex2d = this.vertex3d.map(v => [v[0], v[1]]);
 		shape.moveTo(this.vertex3d[0][0], this.vertex3d[0][1]);
 		for (let i = 1; i < this.vertex3d.length; i++)
 		{
@@ -82,6 +82,8 @@ class Shape {
 		}
 		shape.closePath();
 		this.geometry = new THREE.ShapeGeometry(shape);
+		if (all_quads)
+			this.calc_uvs()
 	}
 	calc_uvs()
 	{
@@ -106,16 +108,13 @@ class Shape {
 			// const v_ = 1 - (v.y - minY) / (maxY - minY); // <-- flipped Y
 			// uvs.push(u, v_);
 		});
-		// console.log("uvs: ", uvs);
 		uvs = [
-			0, 0,  // top-left
-			0, 1,  // top-right
-			1, 1,  // bottom-right
 			1, 0,  // bottom-left
-		];
+			0, 0,  // bottom-right
+			0, 1,  // top-right
+			1, 1   // top-left
+		  ];
 		this.geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
-		// console.log("geo: ", this.geometry)
-
 	}
 	add_material(material)
 	{
@@ -153,6 +152,7 @@ class Shape {
 		this.self.material.needsUpdate = true;
 	}
 	get_borders(lineBasicMaterial){
+		// console.log(this.geometry, "this geometry");
 		const border = new THREE.LineLoop(this.geometry, lineBasicMaterial);
 		if (this.z != 0)
 			border.position.z -= this.z;
@@ -163,15 +163,17 @@ class Shape {
 
 	get_points(xPercent, yPercent){
 		let limits = update_min_max(this.vertex2d);
+		// console.log("limits: ", limits);
 		let x = limits.min[0] + ((limits.max[0]- limits.min[0]) * xPercent);
 		let y = limits.min[1] + ((limits.max[1]- limits.min[1]) * yPercent);
 		let z = limits.min[2];
 		const curr = new THREE.Vector3(0, 0, 1);
 		const target = get_geometry_normal_vector(this.geometry);
+		// console.log("target: ", target)
 		if (curr.x == target.x && curr.y == target.y && curr.z == target.z)
 			return [x, y, this.vertex3d[0][2]];
 		let point = new THREE.Vector3(x, y, z);
-
+		//return (point.x, point.y, point.z)
 		let quaternion = new THREE.Quaternion().setFromUnitVectors(curr, target);
 		let transformed_point = clean_vector(point.applyQuaternion(quaternion));
 		return [transformed_point.x, transformed_point.y, transformed_point.z];

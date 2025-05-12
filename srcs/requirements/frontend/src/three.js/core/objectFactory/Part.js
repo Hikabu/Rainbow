@@ -1,11 +1,11 @@
 import * as THREE from 'three';
+import { Shape } from "./Shape";
+import { order_path, mapToCenter } from '../../mainScene/utils/utils';
+
 import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
-import { mapToCenter,order_path } from '../../mainScene/utils/utils';
-import { Shape } from "./Shape";
-
 class Part {
-	constructor(pointsLeftXY, pointsRightXY, materials){
+	constructor(pointsLeftXY, pointsRightXY, materials, all_quads = false){
 		this.width = 0;
 		this.shapes = [];
 		this.self = null;
@@ -19,7 +19,7 @@ class Part {
 			console.log("Incorrect parameters");
 			return;
 		}
-		this.init();
+		this.init(all_quads);
 		if (materials)
 			this.add_material(materials);
 		else
@@ -52,14 +52,14 @@ class Part {
 			this.pointsRight = null;
 		}
 	}
-	init(){
+	init(all_quads){
 		const newPoints = mapToCenter(this.pointsLeft, this.pointsRight);
 		this.pointsLeft = newPoints.left;
 		this.pointsRight = newPoints.right;
 		this.pointsRight = order_path(this.pointsRight);
 		this.pointsLeft = order_path(this.pointsLeft);
-		this.shapes[0] =  new Shape(this.pointsRight, true);
-		this.shapes[1] = new Shape(this.pointsLeft, true);
+		this.shapes[0] =  new Shape(this.pointsRight, true, new THREE.Vector3(0, 0, 1), all_quads);
+		this.shapes[1] = new Shape(this.pointsLeft, true, new THREE.Vector3(0, 0, 1), all_quads);
 		for (let i = 0; i < this.pointsRight.length; i++){
 			const currRight = this.pointsRight[i];
 			const nextRight = i + 1 < this.pointsRight.length ? this.pointsRight[i + 1] : this.pointsRight[0];	
@@ -162,34 +162,62 @@ class Part {
 	// 	this.self.add(object);
 	// 	this.joined_parts.push(object);
 	// }
-	add_object(xPercent, yPercent, index, object, obj_height, obj_up) {
-		const surface = this.shapes[index];
+	add_object(xPercent, yPercent, index, object, obj_up, obj_forward, obj_height, height_depth) {
+		// console.log("index-> ", index);
+		let i = Array.isArray(index) ? index[0] : index;
+		// console.log("in part shape[", i, "] ... ad new 'object'")
+		const surface = this.shapes[i];
 		const point = surface.get_points(xPercent, yPercent);
-		const forward = surface.get_normal(point, this.self).normalize();
+		const forward = surface.get_normal(point, this.self).normalize();		
 		const up = new THREE.Vector3(obj_up[0], obj_up[1], obj_up[2]);
+		
 		const right = new THREE.Vector3().crossVectors(up, forward).normalize();
-		const adjustedUp = new THREE.Vector3().crossVectors(forward, right).normalize();
-	
+		const adjustedUp = new THREE.Vector3().crossVectors(forward, right).normalize();		// console.log("right", right);
 		// Apply quaternion to object based on forward, up, right
 		const matrix = new THREE.Matrix4();
 		matrix.makeBasis(right, adjustedUp, forward);
 		object.quaternion.setFromRotationMatrix(matrix);
 		object.updateMatrixWorld(true);
-	
 		// Get object's bounding box size
 		const bbox = new THREE.Box3().setFromObject(object);
-		let object_half_len = obj_height ? (bbox.max.y - bbox.min.y) * 0.5 : 0;
-	
-
+		let object_half_len;
+		if (obj_height == false)
+			object_half_len = 0;
+		else {
+			const center = new THREE.Vector3();
+			bbox.getCenter(center);
+			const points = [
+			new THREE.Vector3(bbox.min.x, bbox.min.y, bbox.min.z),
+			new THREE.Vector3(bbox.min.x, bbox.min.y, bbox.max.z),
+			new THREE.Vector3(bbox.min.x, bbox.max.y, bbox.min.z),
+			new THREE.Vector3(bbox.min.x, bbox.max.y, bbox.max.z),
+			new THREE.Vector3(bbox.max.x, bbox.min.y, bbox.min.z),
+			new THREE.Vector3(bbox.max.x, bbox.min.y, bbox.max.z),
+			new THREE.Vector3(bbox.max.x, bbox.max.y, bbox.min.z),
+			new THREE.Vector3(bbox.max.x, bbox.max.y, bbox.max.z),
+			];
+			let maxDot = -Infinity;
+			points.forEach(p => {
+			const dir = new THREE.Vector3().subVectors(p, center).normalize();
+			const dot = dir.dot(forward);
+			if (dot > maxDot) {
+				maxDot = dot;
+			}
+			});
+			const size = new THREE.Vector3();
+			bbox.getSize(size);
+			const radius = size.length() / 2;
+			object_half_len = radius * maxDot;
+		}
+		object_half_len *= height_depth;
 			object.position.set(
-				point[0] + (forward.x * object_half_len),
-				point[1] + (forward.y * object_half_len),
-				point[2] + (forward.z * object_half_len)
+				point[0] + (forward.x * object_half_len * obj_forward),
+				point[1] + (forward.y * object_half_len * obj_forward),
+				point[2] + (forward.z * object_half_len * obj_forward)
 			);
-	
-		// Add object to scene and tracking
-		this.self.add(object);
-		this.joined_parts.push(object);
+		if (object instanceof CSS3DObject)
+			this.self.add(object);
+		// this.joined_parts.push(object);
 	}
 	
 }
