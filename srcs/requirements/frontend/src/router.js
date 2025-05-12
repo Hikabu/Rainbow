@@ -9,6 +9,7 @@ import Payment from './pages/PaymentPage/Payment.vue';
 import Friends from './pages/smallPages/Friends.vue';
 import Profile from './pages/smallPages/Profile.vue';
 import {Socket} from './three.js/mainScene/utils/Socket.js';
+import {previousRoute} from './stores/routerStore.js';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -149,7 +150,9 @@ function startRefrInterval() {
     }
   }, time);
 }
+
 router.beforeEach(async (to, from, next) => {
+	previousRoute.value = from
   if (to.meta.requiresAuth) {
     try {
       //cookies
