@@ -1,36 +1,34 @@
 <template>
   <div class="background mainpage container-fluid p-0">
-
 	<div v-if="isLoading" ></div>
     <div v-if="isLoading" id="loading-screen" :style="{ opacity: loadingOpacity }">
       <div>LOADING<span id="loading-dots"></span></div>
     </div>
-
-    <div v-show="appVisible" class="d-flex row-flex" :style="{ opacity: appOpacity }">
-      <SideBar />
-      <div class="about col-md-10 p-0 flex-grow-1 position-relative">
-        <div ref="threeContainer" class="three-container"></div>
-      </div>
+		<div class="d-flex row-flex">
+		<SideBar />
+	<div v-show="appVisible" class="about col-md-10 p-0 flex-grow-1 position-relative"
+			:style="{ opacity: appOpacity }">
+		<div ref="threeContainer" class="three-container"></div>
     </div>
-
+    </div>
   </div>
 </template>
 
 
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, computed } from 'vue'
 
 import SideBar from '../../components/SideBar.vue'
 import { exitScene,preEnterScene } from '../../three.js/index.js'
 import { OnLoad } from '../../three.js/mainScene/utils/OnLoad.js'
+import {previousRoute} from '../../stores/routerStore.js';
 
 const threeContainer = ref(null)
-
 const isLoading = ref(true);
 const appVisible = ref(false);
 const loadingOpacity = ref(1);
-const appOpacity = ref(0);  
+const appOpacity = ref(0); 
 
 onMounted(async () => {
   console.log("on mount")
@@ -71,7 +69,7 @@ onBeforeUnmount(() => {
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
-			background-color: rgba(0, 0, 0, 0.8);
+			background-color: rgba(0, 0, 0,);
 			border: 2px solid #00ffcc;
 			border-radius: 12px;
 			color: #00ffcc;
