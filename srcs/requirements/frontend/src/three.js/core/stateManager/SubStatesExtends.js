@@ -1,19 +1,25 @@
 import * as THREE from 'three';
 import { CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
-
+import { SubState } from "./SubStates";
 import { MainEngine } from "../../mainScene/utils/MainEngine";
 import { StateManager } from './StateManager';
-import { SubState } from "./SubStates";
 
 class CssSubState extends SubState {
-	constructor(name, object, partIndex = 0, surfaceIndex = 0, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate) {
-		super(name,  object.self.children[partIndex].children[surfaceIndex].userData.instance, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate);
+	constructor(name, object, screenSurface, element, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate) {
+		super(name, screenSurface.self, materialIndex, setup, postCamMove, cleanup, updateSize, keyHandler, animate);
 		this.engine =  new MainEngine();
 		this.div = element;
-		this.divObject = new CSS3DObject(this.div);
-		this.divObject.position.set(0, 0, 0);
-		object.add_part(0.5, 0.5, partIndex, surfaceIndex, this.divObject, [0, 1, 0]);
-		this.screenSurface =  object.self.children[partIndex].children[surfaceIndex];
+		this.engine.container.appendChild(this.div)
+		this.div.style.position = "absolute";
+		//this.divObject = new CSS3DObject(this.div);
+		// this.divObject.position.set(0, 0, 0);
+		// console.log("adding css3d div to obj...")
+		// object.add_object(0.5, 0.5, [partIndex, surfaceIndex ], this.divObject, [0, 1, 0]);
+		this.screenSurface = screenSurface
+		// if (screenSurface != null)
+		// 	screenSurface.add_object(0.5, 0.5, [0, 0], this.divObject, [0,1,0], 1, false)
+		// else 
+		// 	this.screenSurface =  object.self.children[partIndex].children[surfaceIndex];
 	}
 	enter() 
 	{
@@ -29,7 +35,9 @@ class CssSubState extends SubState {
 	}
     resize()
 	{
-		const boundingBox = new THREE.Box3().setFromObject(this.screenSurface);
+		// console.log("screensurface: ", this.screenSurface)
+		// console.log("screensurface: ", this.screenSurface.self)
+		const boundingBox = new THREE.Box3().setFromObject(this.screenSurface.self);
 		const worldSize = new THREE.Vector3();
 		boundingBox.getSize(worldSize);
 		const topLeft = new THREE.Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.min.z);
@@ -47,14 +55,13 @@ class CssSubState extends SubState {
 		const screenBottomRight = toScreenPosition(bottomRight, this.engine.camera);
 		const pixelWidth = Math.abs(screenBottomRight.x - screenTopLeft.x);
 		const pixelHeight = Math.abs(screenBottomRight.y - screenTopLeft.y);
-		const scaleX = pixelWidth / worldSize.x;
-		const scaleY = pixelHeight / worldSize.y;
-		const scaleFactor = 1 / Math.min(scaleX, scaleY);
-		this.div.style.border = "2px solid red"; // or any color you like
+
+		this.div.style.left = `${screenTopLeft.x}px`;
+		this.div.style.top = `${screenTopLeft.y}px`;
 		this.div.style.width = `${pixelWidth}px`;
 		this.div.style.height = `${pixelHeight}px`;
-		// this.divObject.scale.set(scaleFactor * 0.9, scaleFactor * 0.9, scaleFactor);
-		this.divObject.scale.set(scaleFactor, scaleFactor, scaleFactor);
+		// this.div.style.border = "2px solid red";
+		this.div.style.position = "absolute";
 		super.resize();
 	}
 	animate(){
@@ -65,7 +72,7 @@ class CssSubState extends SubState {
 
 class MeshSubState extends SubState {
 	constructor(name, surface, scene, materialIndex, enter, exit){
-		super(name, surface, materialIndex,
+		super(name, surface.self, materialIndex,
 			enter || (()=>{}), 
 			scene?.postCamMove || (()=>{}), 
 			exit || (()=>{}), 

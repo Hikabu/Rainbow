@@ -1,29 +1,30 @@
-import * as THREE from 'three';
 
-import { StateManager } from '../../core/stateManager/StateManager';
 import { State } from '../../core/stateManager/States';
-import { CssSubState,MeshSubState } from '../../core/stateManager/SubStatesExtends';
-import { center, object, partIndex, screenSurface, surfaceIndex, tourMachineObj } from '../objects/machines/tournamentMachineObj';
-import { screenMaterial } from '../objects/simpleAssets';
-import { create_exit_alert } from '../overlays/alerts/exit_warning';
-import { controls } from '../overlays/divs/controls';
+import { MeshSubState , CssSubState} from '../../core/stateManager/SubStatesExtends';
+
+import { screenMaterial } from '../objects/materialAssets';
+import { screenSurface, tourMachineObj } from '../objects/arcadeMachines/tournamentMachineObj';
+
+import { start } from '../overlays/divs/tour_start';
 import { create } from '../overlays/divs/tour_create';
-import { end } from '../overlays/divs/tour_end';
 import { join } from '../overlays/divs/tour_join';
-import { matchmake } from '../overlays/divs/tour_matchamake';
 import { payment } from '../overlays/divs/tour_payment';
 import { refund } from '../overlays/divs/tour_refund';
-import { start } from '../overlays/divs/tour_start';
 import { pongGame } from '../overlays/scenes/pong-game/Game';
+import { end } from '../overlays/divs/tour_end';
+import { matchmake } from '../overlays/divs/tour_matchamake';
 import { waiting } from '../overlays/scenes/waiting';
+import { StateManager } from '../../core/stateManager/StateManager';
 import { Socket } from '../utils/Socket';
+import { create_exit_alert } from '../overlays/alerts/exit_warning';
+import { controls } from '../overlays/divs/controls';
+import * as THREE from 'three';
 
 const divStart = start;
 const restScreen = new CssSubState(
 	"rest no info",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divStart["div"],
 	0,
 	()=>{
@@ -41,9 +42,8 @@ const restScreen = new CssSubState(
 
 const startScreen = new CssSubState(
 	"start no info",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divStart['div'],
 	0,
 	()=>{
@@ -65,9 +65,8 @@ const startScreen = new CssSubState(
 const divCreate = create;
 const restScreenCreate = new CssSubState(
 	"rest create",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divCreate["div"],
 	0,
 	()=>{
@@ -85,9 +84,8 @@ const restScreenCreate = new CssSubState(
 
 const startScreenCreate = new CssSubState(
 	"start create",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divCreate['div'],
 	0,
 	()=>{
@@ -108,9 +106,8 @@ const startScreenCreate = new CssSubState(
 const divJoin = join;
 const restScreenJoin = new CssSubState(
 	"rest join",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divJoin["div"],
 	0,
 	()=>{
@@ -128,9 +125,8 @@ const restScreenJoin = new CssSubState(
 
 const startScreenJoin = new CssSubState(
 	"start join",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divJoin['div'],
 	0,
 	()=>{
@@ -151,9 +147,8 @@ const startScreenJoin = new CssSubState(
 const divPay = payment;
 const screenPay = new CssSubState(
 	"pay",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divPay['div'],
 	0,
 	()=>{
@@ -173,9 +168,8 @@ const screenPay = new CssSubState(
 const divRefund = refund;
 const screenRefund = new CssSubState(
 	"refund",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divRefund['div'],
 	0,
 	()=>{
@@ -198,9 +192,8 @@ const screenRefund = new CssSubState(
 const divControls = controls;
 const screenControls = new CssSubState(
 	"controls", 
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divControls.div,
 	0,
 	()=>{
@@ -221,9 +214,8 @@ const screenControls = new CssSubState(
 const divMatchmake = matchmake;
 const screenMatchmake = new CssSubState(
 	"end",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divMatchmake['div'],
 	0,
 	()=>{
@@ -253,9 +245,8 @@ const screenGame = new MeshSubState(
 const divEnd = end;
 const screenEnd = new CssSubState(
 	"end",
-	object,
-	partIndex,
-	surfaceIndex,
+	tourMachineObj,
+	screenSurface,
 	divEnd['div'],
 	0,
 	()=>{
@@ -327,7 +318,7 @@ const tourMachineState = new State(
 		waiting.renderMaterial,
 	],
 	// null,
-	tourMachineObj.self,
+	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
 	1.5
 )

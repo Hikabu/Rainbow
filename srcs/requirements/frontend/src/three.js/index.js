@@ -6,9 +6,9 @@ import { Part } from './core/objectFactory/Part';
 import { wheel_scroll_animations } from './core/stateManager/cameraMovement';
 import { StateManager } from './core/stateManager/StateManager';
 import { backBox } from './mainScene/objects/background/backBox';
-import { aiMachineObj } from './mainScene/objects/machines/aiMachineObj';
-import { localMachineObj } from './mainScene/objects/machines/localMachineObj';
-import { tourMachineObj } from './mainScene/objects/machines/tournamentMachineObj';
+import { aiMachineObj } from './mainScene/objects/arcadeMachines/aiMachineObj';
+import { localMachineObj } from './mainScene/objects/arcadeMachines/localMachineObj';
+import { tourMachineObj } from './mainScene/objects/arcadeMachines/tournamentMachineObj';
 import { mainSceneObj,stateManager } from './mainScene/states/mainMenuState';
 import { MainEngine } from './mainScene/utils/MainEngine';
 import { Socket } from './mainScene/utils/Socket';
@@ -45,7 +45,7 @@ export async function preEnterScene(app_container){
 	if (!engine.sceneInitialized) {	
 	//	console.log("add to engine...")
 		//engine.add(test, false);
-		engine.add(backBox, false);
+		//engine.add(backBox, false);
 		engine.add(mainSceneObj, true);
 		engine.stateManager = stateManager;
 		engine.sceneInitialized = true;
