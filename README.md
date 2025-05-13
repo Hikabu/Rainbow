@@ -45,7 +45,6 @@
 
 ### Authentication
 - **42 API login & sign-in is working** ✅.
-- No logout button yet; to log out, manually delete tokens from **Inspect -> Application** in the browser.
 
 ### Containers & Makefile
 - The project runs in **Docker containers**.
