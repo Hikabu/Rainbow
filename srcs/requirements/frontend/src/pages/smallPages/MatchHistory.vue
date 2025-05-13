@@ -45,11 +45,11 @@
                         </div>
                         <div class="col mb-4">
                             <strong>Your score is:</strong> 
-                            {{ game.user=== user.username ? game.user_score : game.opponent_score }}
+                            {{ game.user=== user.username ? game.user_score : game.player2_score }}
                         </div>
                         <div class="col mb-4">
                             <strong>Opponent's score:</strong> 
-                            {{ game.user === user.username ? game.opponent_score : game.user_score }}
+                            {{ game.user === user.username ? game.player2_score : game.user_score }}
                         </div>
                     </div>
                 <!-- </div> -->
@@ -65,7 +65,7 @@ import { onMounted,ref } from 'vue'
 
 import logout from '../../assets/logout.png';
 import SideBar from '../../components/SideBar.vue';
-import { user } from '../../stores/users'
+import { fetchProfile, user } from '../../stores/users'
 
 const results = ref(null)
 //User connects --> Add user to active_users --> Send updated active_users to frontend
@@ -84,7 +84,8 @@ const gameResults = async() => {
     }
 }
 onMounted(async () => {
-    await gameResults()
+    await gameResults(),
+    await fetchProfile()
 })
 </script>
 
