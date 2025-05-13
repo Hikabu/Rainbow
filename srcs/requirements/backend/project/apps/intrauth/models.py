@@ -105,7 +105,7 @@ class GameResult(models.Model):
     game_type = models.CharField(max_length=100, choices=GAME_TYPE)
     opponent_alias = models.CharField(max_length=100)
     result = models.CharField(max_length=10, choices=RESULT_OPPO)
-    user_score = models.IntegerField()
+    user_score = models.PositiveIntegerField()
     opponent_score = models.IntegerField()
     start_time = models.DateTimeField()
     
