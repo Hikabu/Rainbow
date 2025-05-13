@@ -2,11 +2,19 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from uuid import uuid4, uuid1
+from datetime import date
 from django.core.cache import cache
+from django.contrib.auth import get_user_model
 from .tournamentChannel import TournamentManager
+from asgiref.sync import sync_to_async
+from django.utils import timezone
+from datetime import datetime
 from channels.layers import get_channel_layer
+from project.apps.intrauth.models import GameResult, Profile
 import logging
 
+
+User = get_user_model()
 logger = logging.getLogger(__name__)
 async def can_user_log_game(consumer, data):
 	playing_users = cache.get(f"playing_users")
@@ -76,6 +84,7 @@ async def cancel_game(data):
 		await get_channel_layer().group_send(f"{data.get('userID2')}", message)
 
 async def store_game_results(results):
+    
 	log = cache.get(f"game_log:{results['gameID']}")
 	if log == None:
 		return
@@ -134,10 +143,56 @@ async def store_game_results(results):
 				"players" :  [log['players']['1'], log['players']['2']],
 				"error" : results.get("error", "")
 			})
+ 
+	logger.debug(f"the results are: {log}")
 
-	# store log in data base ... TODO
+	game_id = results["gameID"]
+	player1_data = log['players']['1']
+	player2_data = log['players']['2']
+	
+	player1 = await sync_to_async(User.objects.get)(id=player1_data['id'])
+	player2 = None
+	if isinstance(player2_data['id'],int):
+		player2 = await sync_to_async(User.objects.get)(id=player2_data['id'])
+	game_entries = []
+	logger.debug(f"the results are: {log}")
+	game_entries.append(GameResult(
+		user=player1,
+  		game_id=game_id,
+		game_type=log["type"],
+		opponent_alias=player2_data['alias'],
+  		result=player1_data['result'],
+  		user_score=player1_data['score'],
+		opponent_score=player2_data['score'],
+		start_time=results["start_time"],
+	))
+	if log["type"] == "remote":
+		game_entries.append(GameResult(
+			user=player2,
+			game_id=game_id,
+			game_type=log["type"],
+			opponent_alias=player1_data['alias'],
+			result=player2_data['result'],
+			user_score=player2_data['score'],
+			opponent_score=player1_data['score'],
+			start_time=results["start_time"],
+	))
+	for fart in game_entries:
+		await sync_to_async(fart.save)()
+	await profile_status(player1, player1_data['result'])
+	if player2:
+		await profile_status(player2, player2_data['result'])
+ 
 	cache.delete(f"game_log:{results['gameID']}")
 
+@sync_to_async
+def profile_status(user, result):
+	profile = Profile.objects.get(user=user)
+	if result == "win":
+		profile.wins +=1
+	elif result == "loose":
+		profile.losses +=1
+	profile.save()
 
 def create_new_log():
 	return {
@@ -161,7 +216,7 @@ def create_new_player(data, userID, alias, n):
 		"score": 0,
 		"result": ""
 	}
-	player["id"] = userID
+	player["id"] = userID 
 	player["username"] = data.get("username")
 	player["alias"] =  alias
 	return player
