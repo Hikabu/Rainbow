@@ -1,12 +1,15 @@
 import LoginPage from './LoginPage/LoginPage.vue';
 import MainPage from './MainPage/MainPage.vue';
+import Payment from './PaymentPage/Payment.vue';
 import RegisterPage from './RegisterPage/RegisterPage.vue';
 import Friends from './smallPage/Friends.vue';
-import Payment from './smallPage/Payment.vue';
+import History from './smallPage/MatchHistory.vue';
 import Profile from './smallPage/Profile.vue';
+
 export { LoginPage };
 export { RegisterPage };
 export { MainPage };
 export { Friends };
 export { Profile };
 export { Payment };
+export { History };

@@ -1,7 +1,7 @@
-import { isReactive, reactive, isRef, ref } from 'vue'
 import axios from 'axios'
+import { isReactive, isRef, reactive, ref } from 'vue'
 
-export const user = reactive({
+export let user = reactive({
     id: null,
     username: '',
     email:  '',
@@ -18,10 +18,12 @@ export async function fetchProfile() {
         user.avatar = response.data.avatar
         user.intra_avatar = response.data.intra_avatar
         user.email = response.data.email
+        user.wins = response.data.wins
+        user.losses = response.data.losses
         user.displayName ||= response.data.username ?? response.data.intraLogin
         user.intraLogin =  response.data.intraLogin
         // user.displayName = response.data.displayName || response.data.username || response.data.intraLogin
-        user.isOnline = response.data.isOnline
+        user.isOnline = true
         user.friends = response.data.friends?.map(friend =>
             reactive({...friend, isOnline: false })
         ) || []
