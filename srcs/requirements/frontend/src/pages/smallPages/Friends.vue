@@ -79,7 +79,7 @@ import { onMounted,ref, watch  } from 'vue'
 
 import logout from '../../assets/logout.png';
 import SideBar from '../../components/SideBar.vue';
-import { fetchProfile,user } from '../../stores/users'
+import { fetchProfile, user } from '../../stores/users'
 //make same reactivity
 const fileInput = ref(null)
 const searchQuery = ref('') 
