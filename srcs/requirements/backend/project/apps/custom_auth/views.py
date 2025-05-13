@@ -176,13 +176,21 @@ class ResultsViewSet(viewsets.ModelViewSet):
 	ordering = ['-start_time'] #new
 
 	def get_queryset(self):
-		return GameResult.objects.filter(user = self.request.user).order_by('-start_time')
+		# return GameResult.objects.filter(user = self.request.user).order_by('-start_time')
+		return GameResult.objects.filter(
+			Q(user=self.request.user) | 
+			Q(player2=self.request.user)
+		).order_by('-start_time')
 	@action(detail=False, methods=['get'])
 	def result(self, request):
-		user = request.user
-		games = GameResult.objects.filter(user=user).order_by("-start_time")
-		serilaizer = GameSerializer(games, many=True)
-		return Response(serilaizer.data)
+		queryset = self.get_queryset()
+		serializer = GameSerializer(queryset, many=True)
+		return Response(serializer.data)
+	# def result(self, request):
+	# 	user = request.user
+	# 	games = GameResult.objects.filter(user=user).order_by("-start_time")
+	# 	serilaizer = GameSerializer(games, many=True)
+	# 	return Response(serializer.data)
 class ProfileViewSet(viewsets.ModelViewSet):
     #this api read write
     #view list automatica;;y provides list create retrieve update destroy actions
