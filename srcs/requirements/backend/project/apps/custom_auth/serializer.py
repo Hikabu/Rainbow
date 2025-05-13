@@ -25,12 +25,13 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GameResult
-        fields = ['game_id', 'type', 'opponent_alias', 'result', 'user_score', 'opponent_score', 'start_time']
+        fields = ['user', 'game_id', 'game_type', 'opponent_alias', 'result', 'user_score', 'opponent_score', 'start_time']
 
     def update(self, instance, validated_data):
         instance.opponent_alias = validated_data.get("opponent_alias", instance.opponent_alias)
         instance.result = validated_data.get("result", instance.result)
         instance.user_score = validated_data.get("user_score", instance.user_score)
+        instance.game_type = validated_data.get("game_type", instance.game_type)
         instance.opponent_score = validated_data.get("opponent_score", instance.opponent_score)
         instance.start_time = validated_data.get("start_time", instance.start_time)
         if 'user' in validated_data:
