@@ -163,7 +163,7 @@ async def store_game_results(results):
 		user_score = player1_data['score'], 
 		user_result = player1_data['result'],
 		player2 = player2,
-		player2_alias =player2_data['score'] if not player2 else '', 
+		player2_alias =player2_data['alias'] if not player2 else '', 
 		player2_score = player2_data['score'],
 		player2_result = player2_data['result'],
 	))
