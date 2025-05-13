@@ -18,21 +18,22 @@ class UserSerializer(serializers.ModelSerializer):
         return user
    
 class GameSerializer(serializers.ModelSerializer):
+    game_type = serializers.CharField()
     user = serializers.SlugRelatedField(slug_field = 'username', read_only= True)
-    opponent_alias = serializers.CharField()
-    result = serializers.CharField()
+    player2 = serializers.SlugRelatedField(slug_field = 'username', read_only= True, allow_null=True)
     # start_time = serializers.CharField()
 
     class Meta:
         model = GameResult
-        fields = ['user', 'game_id', 'game_type', 'opponent_alias', 'result', 'user_score', 'opponent_score', 'start_time']
+        fields = ['user', 'user_score', 'user_result', 'game_id', 'game_type', 'player2_alias', 'player2_result', 'player2_score',  'start_time', 'player2']
 
     def update(self, instance, validated_data):
-        instance.opponent_alias = validated_data.get("opponent_alias", instance.opponent_alias)
-        instance.result = validated_data.get("result", instance.result)
-        instance.user_score = validated_data.get("user_score", instance.user_score)
+        instance.user_result = validated_data.get("user_result", instance.user_result)
+        instance.user_score = validated_data.get("user_score", instance.uder_score)
+        instance.player2_alias = validated_data.get("player2_alias", instance.player2_alias)
+        instance.player2_result = validated_data.get("player2_result", instance.player2_result)
+        instance.player2_score = validated_data.get("player2_score", instance.player2_score)
         instance.game_type = validated_data.get("game_type", instance.game_type)
-        instance.opponent_score = validated_data.get("opponent_score", instance.opponent_score)
         instance.start_time = validated_data.get("start_time", instance.start_time)
         if 'user' in validated_data:
             instance.user = validated_data['user']

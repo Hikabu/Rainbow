@@ -154,31 +154,20 @@ async def store_game_results(results):
 	player2 = None
 	if isinstance(player2_data['id'],int):
 		player2 = await sync_to_async(User.objects.get)(id=player2_data['id'])
-	game_entries = []
 	logger.debug(f"the results are: {log}")
-	game_entries.append(GameResult(
-		user=player1,
+	game = (GameResult(
   		game_id=game_id,
 		game_type=log["type"],
-		opponent_alias=player2_data['alias'],
-  		result=player1_data['result'],
-  		user_score=player1_data['score'],
-		opponent_score=player2_data['score'],
 		start_time=results["start_time"],
+		user = player1, 
+		user_score = player1_data['score'], 
+		user_result = player1_data['result'],
+		player2 = player2,
+		player2_alias =player2_data['score'] if not player2 else '', 
+		player2_score = player2_data['score'],
+		player2_result = player2_data['result'],
 	))
-	if log["type"] == "remote":
-		game_entries.append(GameResult(
-			user=player2,
-			game_id=game_id,
-			game_type=log["type"],
-			opponent_alias=player1_data['alias'],
-			result=player2_data['result'],
-			user_score=player2_data['score'],
-			opponent_score=player1_data['score'],
-			start_time=results["start_time"],
-	))
-	for fart in game_entries:
-		await sync_to_async(fart.save)()
+	await sync_to_async(game.save)()
 	await profile_status(player1, player1_data['result'])
 	if player2:
 		await profile_status(player2, player2_data['result'])

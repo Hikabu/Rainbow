@@ -100,13 +100,18 @@ class GameResult(models.Model):
         ('loose', 'Loose'),
         ('draw', 'Draw'),
     ]
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='game_results')
-    game_id = models.CharField(max_length=100)
-    game_type = models.CharField(max_length=100, choices=GAME_TYPE)
-    opponent_alias = models.CharField(max_length=100)
-    result = models.CharField(max_length=10, choices=RESULT_OPPO)
+    #mai user=player1
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='games_as_player1')
     user_score = models.PositiveIntegerField()
-    opponent_score = models.IntegerField()
+    user_result = models.CharField(max_length=10, choices=RESULT_OPPO)
+    #alias player2
+    player2 = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='games_as_player2')
+    player2_alias = models.CharField(max_length=30, blank=True)
+    player2_score = models.PositiveIntegerField()
+    player2_result = models.CharField(max_length=10, choices=RESULT_OPPO)
+    
+    game_id = models.CharField(unique=True, max_length=100, editable=False)
+    game_type = models.CharField(max_length=100, choices=GAME_TYPE)
     start_time = models.DateTimeField()
     
     def __str__(self):
