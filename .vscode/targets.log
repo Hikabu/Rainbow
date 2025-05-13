@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Wed Apr 30 22:18:08 2025
+# Make data base, printed on Sat May  3 06:15:58 2025
 
 # Variables
 
@@ -25,6 +25,7 @@ LC_NUMERIC = en_US.UTF-8
 # environment
 VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
 # environment
+ 
 VSCODE_CWD = /home/artclave
 # environment
 LC_ADDRESS = en_US.UTF-8
@@ -57,7 +58,7 @@ OLDPWD = /home/artclave
 # environment
 VSCODE_CODE_CACHE_PATH = /home/artclave/.config/Code/CachedData/17baf841131aa23349f217ca7c570c76ee87b957
 # environment
-XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session0
+XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session2
 # environment
 LANG = C
 # environment
@@ -97,9 +98,9 @@ MAKEFILE_LIST := Makefile
 # environment
 ZSH = /home/artclave/.oh-my-zsh
 # environment
-VSCODE_PID = 839559
+VSCODE_PID = 281248
 # environment
-KRB5CCNAME = FILE:/tmp/krb5cc_103610_Z2cnT9
+KRB5CCNAME = FILE:/tmp/krb5cc_103610_3lIIOH
 # environment
 XDG_SESSION_TYPE = x11
 # makefile (from 'Makefile', line 8)
@@ -107,7 +108,7 @@ DATA_PATH := /home/artclave/data/
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/z1t1c1.42bangkok.com:@/tmp/.ICE-unix/837292,unix/z1t1c1.42bangkok.com:/tmp/.ICE-unix/837292
+SESSION_MANAGER = local/z2t7c2.42bangkok.com:@/tmp/.ICE-unix/278232,unix/z2t7c2.42bangkok.com:/tmp/.ICE-unix/278232
 # automatic
 *F = $(notdir $*)
 # environment
@@ -151,7 +152,7 @@ LC_MONETARY = en_US.UTF-8
 # environment
 LC_TIME = en_US.UTF-8
 # environment
-INVOCATION_ID = 03459a9efd634f368e40e6410da3d796
+INVOCATION_ID = de4c7f1e5e7d49ffa9352c56ab555c80
 # environment
 DOCKER_HOST = unix:///run/user/103610/docker.sock
 # environment
@@ -181,7 +182,7 @@ GIO_LAUNCHED_DESKTOP_FILE = /usr/share/applications/code.desktop
 # makefile
 .DEFAULT_GOAL := all
 # environment
-SYSTEMD_EXEC_PID = 837328
+SYSTEMD_EXEC_PID = 278276
 # environment
 DISPLAY = :0
 # environment
@@ -193,13 +194,13 @@ MAKE_VERSION := 4.3
 # 'override' directive
 .SHELLSTATUS := 0
 # environment
-MANAGERPID = 836408
+MANAGERPID = 277338
 # environment
 DEBUGINFOD_URLS = https://debuginfod.ubuntu.com 
 # environment
 LC_MEASUREMENT = en_US.UTF-8
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 839559
+GIO_LAUNCHED_DESKTOP_FILE_PID = 281248
 # environment
 PAGER = less
 # environment
@@ -211,7 +212,7 @@ XDG_RUNTIME_DIR = /run/user/103610
 # environment
 GPG_AGENT_INFO = /run/user/103610/gnupg/S.gpg-agent:0:1
 # environment
-JOURNAL_STREAM = 8:4153485
+JOURNAL_STREAM = 8:1173315
 # environment
 XDG_SESSION_CLASS = user
 # environment
@@ -257,9 +258,9 @@ LC_IDENTIFICATION = en_US.UTF-8
 
 # Directories
 
-# . (device 2064, inode 4194460): 8 files, no impossibilities.
+# . (device 2064, inode 4194460): 10 files, no impossibilities.
 
-# 8 files, no impossibilities in 1 directories.
+# 10 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -300,17 +301,17 @@ setup:
 # | := 
 # variable set hash-table stats:
 # Load=8/32=25%, Rehash=0, Collisions=1/11=9%
+ 
 #  recipe to execute (from 'Makefile', line 19):
 	@echo "Setting up the environment for ft_transcendence..."
 	@mkdir -p ./secrets
 	@chmod 777 ./secrets
 	@docker volume rm rm srcs_frontend_build 2>/dev/null || true
- 
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2025-04-18 04:49:57.092911384
+#  Last modified 2025-05-02 21:53:43.964278881
 #  File has been updated.
 #  Successfully updated.
 
@@ -453,12 +454,12 @@ list:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 28 / storage = 219 B / avg = 7 B
-# current buf: size = 8162 B / used = 219 B / count = 28 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 30 / storage = 238 B / avg = 7 B
+# current buf: size = 8162 B / used = 238 B / count = 30 / avg = 7 B
 
-# strcache performance: lookups = 62 / hit rate = 54%
+# strcache performance: lookups = 64 / hit rate = 53%
 # hash-table stats:
-# Load=28/8192=0%, Rehash=0, Collisions=0/62=0%
-# Finished Make data base on Wed Apr 30 22:18:08 2025
+# Load=30/8192=0%, Rehash=0, Collisions=0/64=0%
+# Finished Make data base on Sat May  3 06:15:58 2025
 
  
