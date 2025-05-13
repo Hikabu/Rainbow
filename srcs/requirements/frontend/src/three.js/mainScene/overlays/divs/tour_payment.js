@@ -1,10 +1,11 @@
+import axios from 'axios';
+
 import { StateManager } from "../../../core/stateManager/StateManager";
 import { State } from "../../../core/stateManager/States";
 import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { fadeout } from "../../../core/UIFactory/effects";
 import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
-import { fadeout } from "../../../core/UIFactory/effects";
-import axios from 'axios';
 import { getUserAlias } from "../../utils/utils";
 
 const container = new Overlay([

@@ -1,5 +1,5 @@
-import * as THREE from 'three';
 import axios from 'axios';
+import * as THREE from 'three';
 
 function dispose_object(object){
 	if (object instanceof THREE.Mesh) {
@@ -140,4 +140,4 @@ async function getUserAlias() {
 }
 
 
-export { order_path, mapToCenter, update_min_max, dispose_object, getUserID, getUserAlias};
+export { dispose_object, getUserAlias,getUserID, mapToCenter, order_path, update_min_max};
