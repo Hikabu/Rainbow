@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <h1 class="text-white mb-5">My History</h1>
-                    <!-- <div v-if="results?.lenght > 0"> -->
+                    <div v-if="results?.lenght > 0">
                         <div 
                           v-for="(game, index) in results"
                           :key="index"
@@ -52,8 +52,8 @@
                             {{ game.user === user.username ? game.player2_score : game.user_score }}
                         </div>
                     </div>
-                <!-- </div> -->
-              <!-- <div v-else class="text-white">No game was found</div> -->
+                </div>
+              <div v-else class="text-white">No game was found</div>
             </div>
         </div>
     </div>
