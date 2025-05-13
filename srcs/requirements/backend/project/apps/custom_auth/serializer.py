@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from project.apps.intrauth.models import Profile
+from project.apps.intrauth.models import Profile, GameResult
 from django.contrib.auth import get_user_model
 User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta: #change the behavior of model 
-        model = User
-        fields = ['id', 'username', 'email', 'password', 'intra_login', 'intra_avatar']
+        model = User#whom to srlz
+        fields = ['id', 'username', 'email', 'password', 'intra_login', 'intra_avatar']#json
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -16,7 +16,29 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)  # Hash the password
         user.save()
         return user
-       
+   
+class GameSerializer(serializers.ModelSerializer):
+    game_type = serializers.CharField()
+    user = serializers.SlugRelatedField(slug_field = 'username', read_only= True)
+    player2 = serializers.SlugRelatedField(slug_field = 'username', read_only= True, allow_null=True)
+    # start_time = serializers.CharField()
+
+    class Meta:
+        model = GameResult
+        fields = ['user', 'user_score', 'user_result', 'game_id', 'game_type', 'player2_alias', 'player2_result', 'player2_score',  'start_time', 'player2']
+
+    def update(self, instance, validated_data):
+        instance.user_result = validated_data.get("user_result", instance.user_result)
+        instance.user_score = validated_data.get("user_score", instance.uder_score)
+        instance.player2_alias = validated_data.get("player2_alias", instance.player2_alias)
+        instance.player2_result = validated_data.get("player2_result", instance.player2_result)
+        instance.player2_score = validated_data.get("player2_score", instance.player2_score)
+        instance.game_type = validated_data.get("game_type", instance.game_type)
+        instance.start_time = validated_data.get("start_time", instance.start_time)
+        if 'user' in validated_data:
+            instance.user = validated_data['user']
+        instance.save()
+        return instance
 class FriendSerializer(serializers.ModelSerializer):
     isOnline = serializers.BooleanField(source ='is_online')
     username = serializers.CharField(source='user.username')
@@ -59,6 +81,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         if 'friends_queryset' in validated_data:
             instance.friends.set(validated_data['friends_queryset'])
         instance.save()
+        
         return instance
     
 class OTPRequestSerializer(serializers.Serializer):

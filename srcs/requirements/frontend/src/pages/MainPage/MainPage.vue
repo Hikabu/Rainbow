@@ -22,7 +22,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 import SideBar from '../../components/SideBar.vue'
-import { preEnterScene, exitScene } from '../../three.js/index.js'
+import { exitScene,preEnterScene } from '../../three.js/index.js'
 import { OnLoad } from '../../three.js/mainScene/utils/OnLoad.js'
 
 const threeContainer = ref(null)

@@ -1,12 +1,12 @@
 import { StateManager } from '../../../core/stateManager/StateManager';
 import { State } from '../../../core/stateManager/States';
-import { Overlay, FlexBox } from '../../../core/UIFactory/DivElements';
-import { Text, Button } from '../../../core/UIFactory/Elements';
+import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
+import { doublePump,fadeout } from '../../../core/UIFactory/effects';
+import { Button,Text } from '../../../core/UIFactory/Elements';
 import { SwitchButtons} from '../../../core/UIFactory/SwitchButtons';
 import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
-import { fadeout, doublePump } from '../../../core/UIFactory/effects';
 
 const flexBox = new FlexBox({
 	dir: "column",

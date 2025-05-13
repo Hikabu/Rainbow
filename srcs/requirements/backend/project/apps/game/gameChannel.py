@@ -1,5 +1,5 @@
 from .registration import get_expected_players, store_game_results
-import json, asyncio, time
+import json, asyncio, time, datetime
 from .logic_main import GameLogic
 from channels.layers import get_channel_layer
 import asyncio
@@ -154,7 +154,7 @@ class GameChannel():
 				await store_game_results({
 					"score1":updates["score1"],
 					"score2":updates["score2"],
-					"start_time" : self.logic.start_time,
+					"start_time" : self.logic.date,
 					"gameID" : self.game_id,
 					"connected" : self.active_players,
 					"error" : updates.get("error", ""),
@@ -186,9 +186,9 @@ class GameChannel():
 		if self.status == "finished":
 			return
 		if self.logic:
-			start_time = self.logic.start_time
+			start_time = self.logic.date
 		else:
-			start_time = self.start_time
+			start_time = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
 		await store_game_results({
 				"error": error,
 				"gameID" : self.game_id,

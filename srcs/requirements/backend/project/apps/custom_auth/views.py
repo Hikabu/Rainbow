@@ -10,13 +10,13 @@ from rest_framework.permissions import IsAuthenticated
 import os
 from django.contrib.auth import get_user_model #currently active user model in project
 #custom serializers 
-from .serializer import UserSerializer,  OTPRequestSerializer, OTPVerifySerializer, ProfileSerializer, FriendSerializer
+from .serializer import UserSerializer,  OTPRequestSerializer, OTPVerifySerializer, ProfileSerializer, FriendSerializer, GameSerializer
 #otp verification
 import pyotp
 import resend #sed emails
 import requests #interact with api
 from django.core.cache import cache #to not use db 
-from project.apps.intrauth.models import Profile #additional userelated information
+from project.apps.intrauth.models import Profile, GameResult #additional userelated information
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import AllowAny# unrestricted access to a view/endpoint
 
@@ -53,6 +53,7 @@ class UserCreateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     
 class UserVerify(APIView):
 	authentication_classes = []  # Allow unauthenticated access
@@ -168,6 +169,28 @@ class FriendsViewSet(viewsets.ModelViewSet):
 		serializer = FriendSerializer(profiles, many=True)
 		return Response(serializer.data)
 
+class ResultsViewSet(viewsets.ModelViewSet):
+	permission_classes = [IsAuthenticated]
+	queryset = GameResult.objects.all()
+	serializer_class = GameSerializer
+	ordering = ['-start_time'] #new
+
+	def get_queryset(self):
+		# return GameResult.objects.filter(user = self.request.user).order_by('-start_time')
+		return GameResult.objects.filter(
+			Q(user=self.request.user) | 
+			Q(player2=self.request.user)
+		).order_by('-start_time')
+	@action(detail=False, methods=['get'])
+	def result(self, request):
+		queryset = self.get_queryset()
+		serializer = GameSerializer(queryset, many=True)
+		return Response(serializer.data)
+	# def result(self, request):
+	# 	user = request.user
+	# 	games = GameResult.objects.filter(user=user).order_by("-start_time")
+	# 	serilaizer = GameSerializer(games, many=True)
+	# 	return Response(serializer.data)
 class ProfileViewSet(viewsets.ModelViewSet):
     #this api read write
     #view list automatica;;y provides list create retrieve update destroy actions

@@ -17,9 +17,9 @@
             <span class="Logo"><Icon icon="guidance:skate-park"/> </span>
             <span class="text">Profile</span>
           </router-link>
-          <router-link class="button" to="/">
+          <router-link class="button" to="/results">
             <span class="Logo"><Icon icon="guidance:bowling"/> </span>
-            <span class="text">Turnament</span>
+            <span class="text">History</span>
           </router-link>
           <router-link class="button" to="/friends">
             <span class="Logo"><Icon icon="guidance:fishing-area-1"/> </span>

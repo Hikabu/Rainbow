@@ -1,9 +1,10 @@
+import * as THREE from 'three';
+
 import { Object } from '../../../core/objectFactory/Object'
 import { Part } from '../../../core/objectFactory/Part';
 import { StateManager } from '../../../core/stateManager/StateManager';
 import { arcade_points, scale_points } from '../assets';
 import { screenMaterial } from '../simpleAssets';
-import * as THREE from 'three';
 
 const part_test = new Part(
 	scale_points(arcade_points, 2, 6), 

@@ -1,10 +1,10 @@
 import { StateManager } from "../../../core/stateManager/StateManager";
 import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
 import { Button, Input,Text } from '../../../core/UIFactory/Elements';
-import { Socket } from '../../utils/Socket'
-import { AlertManager } from "../alerts/Alerts";
 import { SwitchButtons } from "../../../core/UIFactory/SwitchButtons";
 import { MainEngine } from "../../utils/MainEngine";
+import { Socket } from '../../utils/Socket'
+import { AlertManager } from "../alerts/Alerts";
 import { Ball } from "../scenes/pong-game/objects/Ball";
 
 //you won round x | you lost round x | you won the tournament!
