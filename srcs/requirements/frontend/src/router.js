@@ -2,12 +2,12 @@ import axios from 'axios';
 import { createRouter, createWebHistory } from 'vue-router';
 
 import LoginPage from '@/pages/LoginPage/LoginPage.vue';
-import NotFound from '@/pages/NotFound.vue';
 import RegisterPage from '@/pages/RegisterPage/RegisterPage.vue';
 
 import MainPage from './pages/MainPage/MainPage.vue';
+import Payment from './pages/PaymentPage/Payment.vue';
 import Friends from './pages/smallPages/Friends.vue';
-import Payment from './pages/smallPages/Payment.vue';
+import History from './pages/smallPages/MatchHistory.vue';
 import Profile from './pages/smallPages/Profile.vue';
 
 const router = createRouter({
@@ -44,9 +44,9 @@ const router = createRouter({
 		meta: { requiresAuth: true }
 	},
 	{
-		path: '/tournament',
-		name: 'tournament',
-		component: MainPage,
+		path: '/results',
+		name: 'results',
+		component: History,
 		meta: { requiresAuth: true }
 	},
     {

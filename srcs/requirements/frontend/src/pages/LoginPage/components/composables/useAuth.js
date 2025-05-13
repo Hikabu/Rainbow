@@ -85,8 +85,9 @@ export function useAuth() {
   const handleOAuthLogin = async() => {
 
       console.log("OAuth login button clicked!"); 
-      const clientId = import.meta.env.VITE_CLIENT_ID;
+      // const clientId = import.meta.env.VITE_CLIENT_ID;
       const redirectUri = 'http://localhost:8000/oauth/redirect/';
+      const clientId = 'u-s4t2ud-e7591373bcd905efa4e3f14174d8608bd8a3b4ac1d6215f2dbd659f4c388ef87'
       const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=public`;
       console.log(authUrl);
       window.location.href = authUrl;

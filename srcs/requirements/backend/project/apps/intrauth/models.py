@@ -8,10 +8,11 @@ from django.db.models.signals import post_save
 from storages.backends.s3 import S3File
 from storages.backends.s3boto3 import S3Boto3Storage
 from uuid import uuid4
+from django.utils import timezone
 # from django.contrib.auth import get_user_model
 # User = get_user_model()
-from django.conf import settings
-User = settings.AUTH_USER_MODEL
+# from django.conf import settings
+# User = settings.AUTH_USER_MODEL
 """
 each model class corresponds to a single database table.  
 
@@ -40,7 +41,7 @@ class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,  # Links to the CustomUser model(can be changed- so direct link to the model)
         on_delete=models.CASCADE,  #profile deleted link delets too
-        related_name='profile'     #accrss profile like user.profile
+        related_name='profile'     #accrss profile like user.profile/ reverse relation
         )
     avatar = models.ImageField(
         storage=MediaStorage(),
@@ -67,6 +68,7 @@ class Profile(models.Model):
         storage = MediaStorage()
         return storage.open(self.file.name, mode="rb")
 
+
 class CustomUser(AbstractUser):
     # Traditional
     id = models.AutoField(primary_key=True)
@@ -87,5 +89,32 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username or self.email  #string representation of class(like print but print will show mem.address)
 
+class GameResult(models.Model):
+    GAME_TYPE = [
+        ('ai', 'Ai'),
+        ('remote', 'Remote'),
+        ('local', 'Local'),
+    ]
+    RESULT_OPPO = [
+        ('win', 'Win'),
+        ('loose', 'Loose'),
+        ('draw', 'Draw'),
+    ]
+    #mai user=player1
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='games_as_player1')
+    user_score = models.PositiveIntegerField()
+    user_result = models.CharField(max_length=10, choices=RESULT_OPPO)
+    #alias player2
+    player2 = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='games_as_player2')
+    player2_alias = models.CharField(max_length=30, blank=True)
+    player2_score = models.PositiveIntegerField()
+    player2_result = models.CharField(max_length=10, choices=RESULT_OPPO)
+    
+    game_id = models.CharField(unique=True, max_length=100, editable=False)
+    game_type = models.CharField(max_length=100, choices=GAME_TYPE)
+    start_time = models.DateTimeField()
+    
+    def __str__(self):
+        return f"Game {self.user} vs {self.opponent_alias} ({self.type})"
 def is_authenticated(self, request):
     return True

@@ -1,11 +1,9 @@
 
-import time, random, datetime, numpy as np
-from .logic_ball import Ball
-from .logic_paddle import Paddle
-import logging
-logger = logging.getLogger(__name__)
+import time, random, numpy as np
+from .ball import Ball
+from .paddle import Paddle
 
-class GameLogic:
+class Game:
 	duration = 15.0
 
 	def __init__(self, gameID):
@@ -15,9 +13,6 @@ class GameLogic:
 			1: Paddle(1, self.move_by_ai, gameID),
 			-1: Paddle(-1, self.move_by_ai, gameID),
 		}
-		logger.debug("hehehe")
-		self.date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-		logger.debug(self.date)
 		self.start_time = time.time()
 		self.active = False
 		self.state = "countdown"

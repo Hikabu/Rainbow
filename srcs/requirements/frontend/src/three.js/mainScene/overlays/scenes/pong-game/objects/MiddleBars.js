@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+
 import { fitCameraToObject } from '../../../../../core/stateManager/cameraMovement';
 
 export class MiddleBars{
