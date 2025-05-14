@@ -4,7 +4,10 @@ from rest_framework.test import APIRequestFactory
 from uuid import uuid4, uuid1
 from django.utils import timezone
 from django.core.cache import cache
+import logging
 
+
+logger = logging.getLogger(__name__)
 #constants
 waitTime = 15
 notificationTime = 5
@@ -222,7 +225,7 @@ class TournamentChannel():
 
 		# start game
 		if player1_id in self.players and player2_id in self.players: 
-			print("start remote game")
+			logger.debug(f"start remote game: {player1_id}, {player2_id}")
 			await new_game({
 				"type": "remote", 
 				"userID1": player1_id,
