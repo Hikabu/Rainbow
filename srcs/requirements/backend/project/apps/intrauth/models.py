@@ -102,12 +102,12 @@ class GameResult(models.Model):
     ]
     #mai user=player1
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='games_as_player1')
-    user_score = models.PositiveIntegerField()
+    user_score = models.IntegerField()
     user_result = models.CharField(max_length=10, choices=RESULT_OPPO)
     #alias player2
     player2 = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='games_as_player2')
     player2_alias = models.CharField(max_length=30, blank=True)
-    player2_score = models.PositiveIntegerField()
+    player2_score = models.IntegerField()
     player2_result = models.CharField(max_length=10, choices=RESULT_OPPO)
     
     game_id = models.CharField(unique=True, max_length=100, editable=False)
