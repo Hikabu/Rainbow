@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { MainEngine } from '../../mainScene/utils/MainEngine';
-
+import router from '../../../router';
 class StateManager {
     constructor(states = []) {
 		if (StateManager.instance)
@@ -30,8 +30,9 @@ class StateManager {
         this.currentState = this.states[this.currentStateIndex];
 		if (shouldPushHistory)
 		{
-			// console.log("pushing to history...")
-			window.history.pushState({ num: this.currentStateIndex }, '', window.location.origin + `/${this.currentState.name}`);
+			const path = `/${this.currentState.name}`;
+			window.history.pushState(null, '', path);
+			router.push(`/${this.currentState.name}`);
 		}
 		this.setAllowedDirection();
         this.currentState.enter(slow);
