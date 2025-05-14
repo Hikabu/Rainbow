@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as THREE from 'three';
+import { user } from '../../../stores/users';
 
 function dispose_object(object){
 	if (object instanceof THREE.Mesh) {
@@ -132,10 +133,9 @@ async function getUserID() {
 	return userID
 }
 
-async function getUserAlias() {
+function getUserAlias() {
 	// return "alias"
-	const response = await axios.get('api/profiles/me/')
-	let alias = response.data.displayName ? response.data.displayName : response.data.username ? response.data.username : response.data.intra_login ? response.data.intra_login : "player";
+	let alias = user.displayName || user.username || user.intraLogin || "player";
 	return alias;
 }
 
