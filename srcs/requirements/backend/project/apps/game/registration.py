@@ -9,6 +9,8 @@ from .tournamentChannel import TournamentManager
 from asgiref.sync import sync_to_async
 from django.utils import timezone
 from datetime import datetime
+import requests
+import os
 from channels.layers import get_channel_layer
 from project.apps.intrauth.models import GameResult, Profile
 import logging
@@ -36,9 +38,14 @@ async def new_game(data):
 	log = create_new_log()
 	log['type'] = data.get('type')
 	log['players']['max'] = 1 if log['type'] in ['local', 'AI'] else 2
-	log['players']['1'] = create_new_player(data, data.get('userID1'), data.get('alias1'), 1)				
-	log['players']['2'] = create_new_player(data, data.get('userID2', 'userID1'), data.get('alias2'), 2)
-	player_mode = log["type"]
+	logger.info(f"data: {data}")
+	logger.info(f"userID in data new_game: {data.get("userID1")}, {data.get("userID2", None)}")
+	log['players']['1'] = create_new_player(data, data.get('userID1'), data.get('alias1'))				
+	log['players']['2'] = create_new_player(data, data.get('userID2', None), data.get('alias2'))
+	logger.info("players: ")
+	logger.info(f"{log['players']['1']}")
+	logger.info(f"{log['players']['2']}")
+	logger.info("")
 	if log["type"] == 'remote':
 		log["tour_id"] = data.get('tour_id')
 
@@ -84,10 +91,11 @@ async def cancel_game(data):
 		await get_channel_layer().group_send(f"{data.get('userID2')}", message)
 
 async def store_game_results(results):
-    
+	logger.debug("STORE GAME RESULTS")
 	log = cache.get(f"game_log:{results['gameID']}")
 	if log == None:
 		return
+	cache.delete(f"game_log:{results['gameID']}")
 	playing_users = cache.get("playing_users")
 	if playing_users:
 		if log["players"]["1"]["id"] in playing_users:
@@ -144,7 +152,7 @@ async def store_game_results(results):
 				"error" : results.get("error", "")
 			})
  
-	logger.debug(f"the results are: {log}")
+	# logger.debug(f"the results are: {log}")
 
 	game_id = results["gameID"]
 	player1_data = log['players']['1']
@@ -152,9 +160,33 @@ async def store_game_results(results):
 	
 	player1 = await sync_to_async(User.objects.get)(id=player1_data['id'])
 	player2 = None
-	if isinstance(player2_data['id'],int):
+	if player2_data['id'] is not None:
 		player2 = await sync_to_async(User.objects.get)(id=player2_data['id'])
+	else:
+		logger.debug(f"hey no player 2? {player2_data['id']}, also-> {player2_data}")
+	logger.debug(f"player1: {player1}") 
+	logger.debug(f"player2: {player2}")
 	logger.debug(f"the results are: {log}")
+	# game_data = {
+	# 	"player1_id": player1_data['id'],
+	# 	"player2_id": player2_data['id'],
+	# 	"player1_score": player1_data['score'],
+	# 	"player2_score": player2_data['score'],
+	# 	"timestamp": results["start_time"], 
+	# }
+	# ipfs_data = upload_to_ifps(game_data)
+	# logger.debug(f"theee ipfs is {ipfs_data}")
+	logger.debug("sending to game results : ")
+	logger.debug(f"game_id={game_id}")
+	logger.debug(f"game_type={log["type"]}")
+	logger.debug(f"start_time={results["start_time"]}")
+	logger.debug(f"user={player1}")
+	logger.debug(f"user_score={player1_data['score']}")
+	logger.debug(f"user_result={player1_data['result']}")
+	logger.debug(f"player2={player2}")
+	logger.debug(f"player2_alias={player2_data['alias'] if not player2 else ''}")
+	logger.debug(f"player2_score={player2_data['score']}")
+	logger.debug(f"player2_result={player2_data['result']}")
 	game = (GameResult(
   		game_id=game_id,
 		game_type=log["type"],
@@ -168,11 +200,11 @@ async def store_game_results(results):
 		player2_result = player2_data['result'],
 	))
 	await sync_to_async(game.save)()
+	logger.debug(f"profile 1 status: {player1}, {player1_data['result']}")
 	await profile_status(player1, player1_data['result'])
 	if player2:
+		logger.debug(f"profile 2 status: {player2}, {player2_data['result']}")
 		await profile_status(player2, player2_data['result'])
- 
-	cache.delete(f"game_log:{results['gameID']}")
 
 @sync_to_async
 def profile_status(user, result):
@@ -183,6 +215,24 @@ def profile_status(user, result):
 		profile.losses +=1
 	profile.save()
 
+# def upload_to_ifps(game_data):
+#     api_key = os.getenv("PINYATA_KEY")
+#     api_secret = os.getenv("PINATA_API_SECRET")
+#     pinyata_jwt = os.getenv("PINYATA_JWT")
+#     url = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
+#     # headers = {'Authorization': f'Bearer {pinyata_jwt}'}
+#     headers = {
+# 		"pinata_api_key": api_key,
+# 		"pinata_api_secret": api_secret,
+# 		"Content-type": "application/json"
+# 	}
+#     response = requests.post(url, headers=headers, json={"pinataContent": game_data})
+#     if response.status_code == 200:
+#         logger.debug(f"Game data uploaded to IPFS: {response.json()["IpfsHash"]}")
+#         print(f"Game data uploaded to IPFS: {response.json()["IpfsHash"]}")
+#         return response.json()["IpfsHash"]
+#     else: Exception(f"Pinata upload fail: {response.text}")
+    
 def create_new_log():
 	return {
 		"gameID": str(uuid4()),
@@ -197,7 +247,8 @@ def create_new_log():
 		"full" : False,
 	}
 
-def create_new_player(data, userID, alias, n):
+def create_new_player(data, userID, alias):
+	logger.debug(f"user recieved ? {userID}")
 	player={
 		"id": "", 
 		"username": "",

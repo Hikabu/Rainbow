@@ -127,7 +127,7 @@ class GameChannel():
 		from .consumers import max_reconnection_time
 
 		if self.start_time - time.time() > max_reconnection_time:
-			self.error_end("player did not join")
+			await self.error_end("player did not join")
 
 		elif len(self.active_players) == len(self.expected_players_id):
 			await self.start_game()
@@ -150,7 +150,8 @@ class GameChannel():
 			await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 			"updates" : updates})
 			if updates["state"] == "game end":
-				print("GAME END")
+				self.status = "end"
+				logger.debug("GAME END")
 				await store_game_results({
 					"score1":updates["score1"],
 					"score2":updates["score2"],
@@ -165,15 +166,17 @@ class GameChannel():
 		if self.status == "finished":
 			return
 		self.status = "finished"
+		logger.debug(f"finish... {self.status}")
 		await GameManager().delete_game(self.game_id)
 		await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 		"action" : "delete game"})
 	
 	async def disconnect(self, consumer):
+		if self.status == "finished" or self.status == "end":
+			return
+		self.status == "end"
 		if consumer.game:
 			consumer.update_user_data({"action" : "set", "game" : None})
-		if self.status == "finished":
-			return
 		self.active_players.remove(consumer.user_id)
 		self.disconnected_players.append(consumer.user_id)
 		await self.error_end("player disconnected")
@@ -189,6 +192,7 @@ class GameChannel():
 			start_time = self.logic.date
 		else:
 			start_time = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+		logger.debug(f"error end... {error}")
 		await store_game_results({
 				"error": error,
 				"gameID" : self.game_id,
