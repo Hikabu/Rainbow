@@ -33,7 +33,7 @@ const container = new Overlay([
 						id: "button-test-1",
 						content: "(test)accept",
 						fontSize: 0.85,
-						onClickAsync: async()=>{await payment_successful()}
+						onClick: ()=>{payment_successful()}
 					}),
 					new Button({
 						id: "button-test-2",
@@ -77,8 +77,8 @@ function hide_div(){
 }
 
 
-async function payment_successful(){
-	let alias = await getUserAlias()
+function payment_successful(){
+	let alias = getUserAlias()
 	console.log("alias: ", alias)
 	new Socket().send({
 		"channel" : "tournament",
