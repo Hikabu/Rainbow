@@ -1,6 +1,6 @@
 //flow find provider-> connect to smart contract-> take public functions -> 
 // -> connect to wallet to pay for runnig the function
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 import { ref } from 'vue'
 
 import contractABI from "../contract-abi.json";

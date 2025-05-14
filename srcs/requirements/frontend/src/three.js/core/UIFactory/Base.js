@@ -1,4 +1,4 @@
-import {SizedExtension,TextExtension} from './Extensions'
+import {TextExtension, SizedExtension} from './Extensions'
 
 class BaseDivElement{
 	constructor(id, children){

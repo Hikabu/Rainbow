@@ -102,7 +102,11 @@ const addFriend = async (friendId) => {
         })
         // await profileData()
         await fetchProfile()
-        
+        new Socket().send({
+			"channel" : "friends",
+			"action" : "user",
+			"user_id" : user.id,
+		})
         searchResult.value = []
         searchQuery.value = ''
         alert('Frined catched successfully!')
@@ -200,6 +204,10 @@ const handleFileUpload = async (event) => {
 const debouncedSearch = debounce(searchFriends, 300)
 onMounted(async () => {
     await fetchProfile()
+	new Socket().send({
+		"channel" : "friends",
+		"action" : "users",
+	})
     // profileData()
 })
 watch(searchQuery, debouncedSearch) //if query changed calles debounce

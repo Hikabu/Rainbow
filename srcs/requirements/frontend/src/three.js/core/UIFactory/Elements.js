@@ -35,7 +35,7 @@ class Input extends BaseNonDivElement{
 }
 
 class Button extends BaseNonDivElement{
-	constructor({id = "button", fontFamily="Press Start 2P",content, color, onClick = null, onClickAsync = null, flex = 0, fontSize = 1, w, h, margin = 0, marginBot = 0})
+	constructor({id = "button", fontFamily="Press Start 2P",content, color, onClick =()=>{}, flex = 0, fontSize = 1, w, h, margin = 0, marginBot = 0})
 	{
 		super('label', id, flex, fontSize, w, h);
 		this.isSelected = false;
@@ -55,7 +55,6 @@ class Button extends BaseNonDivElement{
 		}
 		this.element.textContent = content;
 		this.onClick = onClick;
-		this.onClickAsync = onClickAsync;
 		this.element.style.color = color;
 		this.color = color;
 		this.element.style.textAlign = "center";
@@ -64,10 +63,7 @@ class Button extends BaseNonDivElement{
 		this.element.style.fontFamily = fontFamily;
 		this.element.addEventListener('mouseover', ()=>{this.activate()});
 		this.element.addEventListener('mouseout', ()=> { this.deactivate()});
-		if (this.onClick)
-			this.element.addEventListener('click', ()=>{ this.onClick();});
-		else if (this.onClickAsync)
-			this.element.addEventListener('click', async ()=>{ await this.onClickAsync();});
+		this.element.addEventListener('click', ()=>{ this.onClick();});
 	}
 	animate(){
 		const r =  Math.random() * (100);
@@ -79,4 +75,4 @@ class Button extends BaseNonDivElement{
 	}
 }
 
-export {Button,Input, Text}
+export {Text, Input, Button}
