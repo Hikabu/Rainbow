@@ -135,8 +135,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 			await self.notify_friends(is_online=False)
 		print(f"TESTING: User {self.user_id} going offline")
 		print("yes, exiting live")
-		if self.game and self.game.status != "finished":
-			print("end game")
+		if self.game and self.game.status != "finished" and self.game.status != "end":
+			logger.debug("end game player exit live")
+			logger.debug(f"self.status {self.game.status}")
 			await self.game.disconnect(self)
 		if self.tournament :
 			print("end tournament")
