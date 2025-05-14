@@ -24,15 +24,21 @@ logger = logging.getLogger(__name__)
 # logger = logging.getLogger(__name__)
 #LERA use online
 def isUserOnline(user_id):
+	logger.info(f"is {user_id} online?")
 	active_users = cache.get('active_users')
-	if active_users == None or user_id not in active_users:
-		return False
+	logger.info(f"active users: {active_users}")
+	if active_users is None or str(user_id) not in map(str, active_users):
+		pending_users = cache.get('pending_users')
+		if pending_users is None or str(user_id) not in map(str, pending_users):
+			logger.info("false...")
+			return False
+	logger.info("true...")
 	return True
 
 #user bla connects-axios bla's friends-for every frined-send live update that bla is onlien
 
 #static global
-max_reconnection_time = 10
+max_reconnection_time = 3
 all_consumers = {}
 class MainConsumer(AsyncWebsocketConsumer):
 
@@ -75,6 +81,25 @@ class MainConsumer(AsyncWebsocketConsumer):
 					
 				}
 			)
+
+	async def check_user(self, user_id):
+		logger.info(f"check user: {user_id}")
+		if isUserOnline(user_id):
+			logger.info("sending user online")
+			await self.send_self({
+				"type" : "consumer.updates",
+				"user_status" : {
+					"user_id" : str(user_id),
+					"isOnline" : True,
+				}
+			})
+
+	async def check_friends(self):
+		logger.info("check friends")
+		friends_id = await self.get_friends_id(self.user_id)
+		logger.info(f"friends id {friends_id}")
+		for user in friends_id:
+			await self.check_user(user)
 
 	async def connect(self):
 		self.user_id = self.scope['url_route']['kwargs']['user_id']
@@ -146,15 +171,23 @@ class MainConsumer(AsyncWebsocketConsumer):
 			del all_consumers[self.user_id]
 
 	async def disconnect(self, code=None):
+		await self.notify_friends(is_online=False)
+		pending_users = cache.get('pending_users', [])
+		pending_users.append(self.user_id)
+		cache.set('pending_users', pending_users)
 		await self.channel_layer.group_discard(f"{self.user_id}", self.channel_name)
 		asyncio.create_task(self.should_exit_live())
 		await self.remove_channel("all")
-		print("WEBOSCKET DISCONNECTED!!!!!")
-  
-		# active_users = None
+		logger.info(f"WEBOSCKET {self.user_id} DISCONNECTED!!!!!")
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		logger.info(f"data received: {data}")
+		if data["channel"] == "friends":
+			if data["action"] == "user":
+				await self.check_user(data["user_id"])
+			elif data["action"] == "users":
+				await self.check_friends()
 		if data["channel"] == "log":
 			if "action" in data:
 				if data["action"] == "can_user_log_game":

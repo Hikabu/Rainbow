@@ -63,19 +63,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Friends -->
-                        <div class="mb-4 d-flex row-flex justify-content-between">
-                            <label class="form-label">Friends</label>
-                            <ul v-if ="user?.friends.length" class="list-disc list-inside text-white">
-                                <li v-for="friend in user.friends" :key="friend.id">
-                                    {{ friend.username || friend?.intraLogin }} 
-                                    <span v-if="friend.isOnline">(Online)</span>
-                                    <span v-else>(Offline)</span>
-                                </li>
-                            </ul>
-                            <p v-else class="text-white">No friends yet.</p>
-                        </div>
-
                         <!-- Wins and Losses -->
                         <div class="row">
                             <div class="col-md-6 mb-4 ">
@@ -104,6 +91,7 @@ import { onMounted,ref } from 'vue'
 import logout from '../../assets/logout.png';
 import SideBar from '../../components/SideBar.vue';
 import { fetchProfile,user } from '../../stores/users'
+import { Socket} from '../../three.js/mainScene/utils/Socket.js'
 
 const fileInput = ref(null)
 

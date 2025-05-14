@@ -37,4 +37,4 @@ class SizedExtension{
 	}
 }
 
-export {SizedExtension,TextExtension}
+export {TextExtension, SizedExtension}
