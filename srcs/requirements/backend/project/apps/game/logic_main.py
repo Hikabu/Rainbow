@@ -15,9 +15,7 @@ class GameLogic:
 			1: Paddle(1, self.move_by_ai, gameID),
 			-1: Paddle(-1, self.move_by_ai, gameID),
 		}
-		logger.debug("hehehe")
 		self.date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-		logger.debug(self.date)
 		self.start_time = time.time()
 		self.active = False
 		self.state = "countdown"

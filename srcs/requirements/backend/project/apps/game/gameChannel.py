@@ -25,7 +25,6 @@ class GameManager:
 			cls._instance._new_games_lock = asyncio.Lock()
 			cls._instance._finished_games_lock = asyncio.Lock()
 			cls._routine_start = False
-			print("start task routine")
 		return cls._instance
 
 	def get_game(self, game_id=None):
@@ -52,12 +51,8 @@ class GameManager:
 			self._finished_games.append(game_id)
 		if game_id in self._all_games:
 			del self._all_games[game_id]
-		print("deleted game!")
 
 	async def _routine(self):
-		print("")
-		print("start routine")
-		print("")
 		while True:
 			try:
 				async with self._new_games_lock:
@@ -69,16 +64,13 @@ class GameManager:
 				async with self._finished_games_lock:
 					# remove finished games from active
 					for game_id in self._finished_games:
-						print("attempt to delete")
 						if game_id in self._active_games:
-							print("Delete!")
 							self._active_games.remove(game_id)
 					self._finished_games.clear()
 
 				# check active
 				for game_id in self._active_games:
 					if game_id not in self._all_games:
-						print("no game id?")
 						return
 					game = self._all_games[game_id]
 					if game.status == "active":
@@ -94,7 +86,6 @@ class GameManager:
 
 class GameChannel():
 	def __init__(self, game_id, game_mode):
-		print("CREATING NEW GAME CHANNEL")
 		self.game_mode = game_mode
 		self.game_id = game_id
 		self.room = f"game_{game_id}"
@@ -151,7 +142,6 @@ class GameChannel():
 			"updates" : updates})
 			if updates["state"] == "game end":
 				self.status = "end"
-				logger.debug("GAME END")
 				await store_game_results({
 					"score1":updates["score1"],
 					"score2":updates["score2"],
@@ -166,7 +156,6 @@ class GameChannel():
 		if self.status == "finished":
 			return
 		self.status = "finished"
-		logger.debug(f"finish... {self.status}")
 		await GameManager().delete_game(self.game_id)
 		await get_channel_layer().group_send(self.room, {"type" : "game.updates",
 		"action" : "delete game"})

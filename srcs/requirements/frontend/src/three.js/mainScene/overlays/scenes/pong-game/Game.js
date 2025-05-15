@@ -26,9 +26,10 @@ import { KeyControls } from './setUp/KeyControls';
 	let mode, num;
 
 
-function	start_game(game_id)
+function	start_game(game_id, game_type)
 {
 	console.log("sending to socket start of game")
+	mode = game_type;
 	new Socket().send({
 		"channel": "game",
 		request: "start game",
@@ -152,11 +153,9 @@ function	resize(object_aspect) {
 }
 
 function enter(object_aspect){
-		console.log("enter game state");
+		console.log("enter game state: ", mode);
 		clean();
 		resize(object_aspect);
-		let stateManager = new StateManager()
-		mode = stateManager.currentStateIndex == 1 ? "local" : stateManager.currentStateIndex == 2 ? "AI" : stateManager.currentStateIndex == 3? "remote" : "unkown";
 		document.addEventListener("keydown", key.handleKeyDown);
 		document.addEventListener("keyup", key.handleKeyUp);
 }

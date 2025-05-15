@@ -90,11 +90,6 @@ def send_email(email, otp):
 	}
 	try:
 		response = requests.post(url, headers=headers, json=data)
-		if response.status_code == 200:
-			print('Email sent successfully')
-		else:
-			print(f'Failed to send email: {response.status_code}')
-			print(response.text)
 	except Exception as e:
 		print(f'Error sending email: {str(e)}')
        
@@ -285,14 +280,11 @@ class MyTokenRefreshView(TokenRefreshView):
 	def post(self, request, *args, **kwargs):
 		#self should call exacly token refresh serializer so create new one
 		#recive from ccokies for validation
-		print("Incoming Cookies:", request.COOKIES)  # Debugging
 		refresh_token = request.COOKIES.get('refresh_token') #structure wit the cookies 
 		if not refresh_token:
 			return Response({'error': 'Refresh token is missing'}, status=401)
-		print ("Refresh token:", refresh_token)
 		#get new refrech token too because of rotation security
 		data = {'refresh': refresh_token}
-		print ("data is:", data)
 		serializer = self.get_serializer(data=data) #serializer data will take the parametr 
 		try: 
 			serializer.is_valid(raise_exception=True) # expired or blacklisted 

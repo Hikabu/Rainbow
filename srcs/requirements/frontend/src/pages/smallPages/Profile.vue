@@ -1,87 +1,88 @@
 <template>
-    <div class="profile container-fluid p-0">
-        <div class="d-flex row-flex">
-            <SideBar />
-            <div class="about col-md-10 p-5 flex-grow-1 position-relative">
-                <!-- avatars -->
-                <!-- <div v-if="user"> -->
-                    <div style="cursor: pointer;" @click="triggerFileInput" >
-                        <img 
-                            :src="user.avatar || user?.intra_avatar || logout" 
-                            class="rounded-circle"
-                            style="width: 210px; height: 210px; object-fit: cover;"
-                        >
-                    </div>
-                    <input 
-                        ref="fileInput"
-                        type="file"
-                        style="display: none;"
-                        accept="image/*"
-                        @change="handleFileUpload"
-                    >
-                    <h1 class="text-white mb-5">My Details</h1>
-                    
-                    <div class="card ">
-                        <div class="card-body ">
-                            <!-- Display Name Section -->
-                            <div class="mb-4 d-flex row-flex justify-content-between">
-                            <label >Display Name</label>
-                                    <input 
-                                        v-if="isEditing"
-                                        v-model="newDisplayName" 
-                                    >
-                                    <div v-else class=" text-white">
-                                        {{ user?.displayName }}
-                                    </div>
-                                    <button 
-                                        class="btn btn-outline-primary"
-                                        @click="toggleEdit"
-                                    >
-                                        {{ isEditing ? 'Cancel' : 'Edit' }}
-                                    </button>
-                                    <button 
-                                        v-if="isEditing"
-                                        class="btn btn-primary"
-                                        @click="saveDisplayName"
-                                    >
-                                        Save
-                                    </button>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="mb-4 d-flex row-flex justify-content-between">
-                                <label >Email</label>
-                                <div class="text-white">
-                                    {{ user?.email }}
-                                </div>
-                            </div>
-                            <!-- Username -->
-                            <div class="mb-4 d-flex row-flex justify-content-between">
-                                <label >Friends can find you by </label>
-                                <div class="text-white">
-                                    {{ user?.username || user?.intraLogin }}
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Wins and Losses -->
-                        <div class="row">
-                            <div class="col-md-6 mb-4 ">
-                                <label class="form-label ">Wins</label>
-                                <div class="form-control-plaintext text-white">
-                                    {{ user?.wins || 0 }}
-                                </div>
-                            </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label">Losses</label>
-                            <div class="form-control-plaintext text-white ">
-                                {{ user?.losses || 0 }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="profile container-fluid p-0">
+    <div class="row gx-0">
+      <SideBar />
+      <div class="about col-md-10 p-5">
+        <!-- Avatar and Title -->
+        <div class="d-flex flex-column align-items-center mb-5">
+          <div style="cursor: pointer;" @click="triggerFileInput">
+            <img 
+              :src="user.avatar || user?.intra_avatar || logout" 
+              class="rounded-circle"
+              style="width: 210px; height: 210px; object-fit: cover;"
+            />
+          </div>
+          <input 
+            ref="fileInput"
+            type="file"
+            style="display: none;"
+            accept="image/*"
+            @change="handleFileUpload"
+          />
+          <h1 class="text-white mt-4">My Details</h1>
         </div>
+
+        <!-- Profile Info Card -->
+        <div class="card mx-auto">
+          <div class="card-body">
+            <!-- Display Name Section -->
+            <div class="mb-4">
+              <label class="form-label">Display Name</label>
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <input 
+                  v-if="isEditing"
+                  v-model="newDisplayName"
+                  class="form-control w-auto"
+                />
+                <div v-else class="text-white">
+                  {{ user?.displayName }}
+                </div>
+                <button class="btn btn-outline-primary" @click="toggleEdit">
+                  {{ isEditing ? 'Cancel' : 'Edit' }}
+                </button>
+                <button 
+                  v-if="isEditing"
+                  class="btn btn-primary"
+                  @click="saveDisplayName"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+
+            <!-- Email Section -->
+            <div class="mb-4">
+              <label class="form-label">Email</label>
+              <div class="text-white">{{ user?.email }}</div>
+            </div>
+
+            <!-- Username Section -->
+            <div class="mb-4">
+              <label class="form-label">Friends can find you by</label>
+              <div class="text-white">{{ user?.username || user?.intraLogin }}</div>
+            </div>
+
+            <!-- Wins and Losses -->
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <label class="form-label">Wins</label>
+                <div class="form-control-plaintext text-white">
+                  {{ user?.wins || 0 }}
+                </div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <label class="form-label">Losses</label>
+                <div class="form-control-plaintext text-white">
+                  {{ user?.losses || 0 }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -171,21 +172,22 @@ onMounted(async () => {
 
 <style scoped>
 .card {
-    max-width: 700px;
-    background-color: hsla(0, 0%, 100%, .01);
-    border: 2px solid hsla(0, 0%, 100%, .7);
-    padding: var(--big-space) var(--regular-space);
-    color: var(--light); 
-    border-radius: var(--regular-space);
-    backdrop-filter: blur(70px);
-    padding-block: var(--regular-space);
-
+  max-width: 700px;
+  background-color: hsla(0, 0%, 100%, 0.01);
+  border: 2px solid hsla(0, 0%, 100%, 0.7);
+  color: var(--light);
+  border-radius: var(--regular-space);
+  backdrop-filter: blur(70px);
+  padding: var(--big-space) var(--regular-space);
 }
+
 .about {
-    min-height: 100vh;
-    background: rgb(10,42,54);
-    background: linear-gradient(90deg, rgba(10,42,54,1) 0%, rgba(150,0,0,1) 60%, rgba(120,71,0,1) 94%);
-
+  min-height: 100vh;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 42, 54, 1) 0%,
+    rgba(150, 0, 0, 1) 60%,
+    rgba(120, 71, 0, 1) 94%
+  );
 }
-
 </style>

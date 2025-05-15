@@ -152,28 +152,23 @@ class TournamentChannel():
 
 		#not enough players ? refund | cancel
 		if len(self.players) == 1:
-			print("one player, refund")
-			print("self.nowaitning[0[]]", self.now_waiting[0])
 			await get_channel_layer().group_send(f"{self.now_waiting[0]}", {"type" : "tour.updates",
 				"update_display" : "refund", "reason" : "insufficient players"})
 			await self.pay_user(self.now_waiting[0], entry_price)
 			await self.remove_player(self.now_waiting[0])
 		if len(self.players) <= 1:
-			print("1 or less players, tournament cancelled")
 			# cache.set("pending_tournament", None)
 			TournamentManager().remove_tournament(self.tour_id, _token)
 			return
 
 		#start tournament
-		print("start torunament")
+		logger.debug(f"players at start: {self.players}")
 		self.status = "active"
 		await get_channel_layer().group_send(f"{self.playersRoom}", {
 			"type": "tour.updates",
 			"update_display" : "controls",
 		})
-		print("start controls")
 		await asyncio.sleep(controlsTime)
-		print("end controls")
 		random.shuffle(self.now_waiting)
 		self.current_round = 0
 		await self.matchmake()
@@ -182,7 +177,6 @@ class TournamentChannel():
 	async def matchmake(self):
 		global matchmakeTime
 
-		print("mathmake")
 		self.status = "matchmake"
 		if self.round_history:
 			self.match_history.append({f"Round {self.current_round}" : self.round_history})
@@ -201,18 +195,14 @@ class TournamentChannel():
 
 		#wait for display
 		await asyncio.sleep(matchmakeTime)
-		print("end matchmake")
 
 		#send players to their matches in groups of 2
 		while len(self.now_waiting) >= 2:
-			await self.start_remote_game(self.now_waiting.pop(), self.now_waiting.pop())
+			await self.start_remote_game(self.now_waiting.pop(0), self.now_waiting.pop(0))
 		
 		#send lone player to waiting room
-		print("is alone?")
 		if len(self.now_waiting) == 1:
-			print("loner should wait... ")
 			if await self.tournament_winner(self.now_waiting[0]) == False :
-				print("waiting...")
 				await self.players[self.now_waiting[0]]["user"].send_self({
 					"type": "tour.updates",
 					"update_display" : 'waiting'
@@ -225,6 +215,8 @@ class TournamentChannel():
 		from .registration import new_game
 
 		# add to now_playing array
+		logger.info(f"new game with id: {player1_id}, {player2_id}")
+		logger.info(f"new game with alias: {self.players[player1_id]["alias"]}, {self.players[player2_id]["alias"]}")
 		self.now_playing.append(player1_id)
 		self.now_playing.append(player2_id)
 
@@ -240,11 +232,11 @@ class TournamentChannel():
 				"tour_id": self.tour_id,
 			})
 		elif len(self.players) == 0:
-			print("split prize, 2 disconnections final round")
+			logger.debug("split prize, 2 disconnections final round")
 			await self.tournament_winner(player1_id, "player disconnected", 0.5)
 			await self.tournament_winner(player2_id, "player disconnected", 0.5)
 		else:
-			print("disconnections")
+			logger.debug("disconnections")
 			if player1_id in self.players:
 				await self.match_winner(player1_id, "player disconnected")
 			else:
@@ -267,11 +259,9 @@ class TournamentChannel():
 			self.now_waiting.remove(player_id)
 		if self.now_playing and player_id in self.now_playing:
 			self.now_playing.remove(player_id)
-		print("end remove player")
 		
 
 	async def match_looser(self, player_id):
-		print("match looser")
 		#send end message
 		if player_id in self.players:
 			await self.players[player_id]["user"].send_self({
@@ -284,7 +274,6 @@ class TournamentChannel():
 
 
 	async def match_winner(self, player_id, error, can_be_champion = True):
-		print("match winner")
 		#is it tournament winner?
 		if can_be_champion and await self.tournament_winner(player_id, error) == True:
 			return
@@ -304,7 +293,6 @@ class TournamentChannel():
 	async def tournament_winner(self, player_id, error = ""):
 		global _token
 
-		print("tournametn winner")
 		self.status = "end"
 		#check if there are other users now playing or waiting to play
 		if len(self.now_playing) > 0:
@@ -338,8 +326,6 @@ class TournamentChannel():
 		return True
 
 	async def end_remote_game(self, data):
-		logger.debug(f"received:{data} ")
-		logger.debug("end remote game")
 		if data["players"][0]["result"] == "loose":
 			l = 0
 			w = 1
@@ -353,7 +339,6 @@ class TournamentChannel():
 			"Game Date": data["date"],
 		})
 				
-		logger.debug(f"round history: {self.round_history}")
 		#remove players from now_playing
 		for player in data["players"]:
 			if player["id"] in self.now_playing:
@@ -368,9 +353,7 @@ class TournamentChannel():
 			elif player["result"] == "draw":
 				await self.match_winner(player["id"], data["error"], 0.5)
 
-		print("should continue?")
 		if len(self.now_playing) == 0 and len(self.now_waiting) > 0:
-			print("about to start: ", self.now_waiting)
 			await asyncio.sleep(4)
 			await self.matchmake()
 
@@ -387,8 +370,3 @@ class TournamentChannel():
 		wallet_address = self.get_wallet_address(player_id)
 		logger.debug(f"sending {amount} to {wallet_address}")
 		#TODO! LERA
-
-	# async def disconnect(self, consumer):
-	# 	print("touranment disconnect")
-		# await self.remove_player(consumer.user_id)
-

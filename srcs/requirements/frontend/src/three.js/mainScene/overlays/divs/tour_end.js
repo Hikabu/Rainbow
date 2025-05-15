@@ -187,7 +187,7 @@ function can_exit(){
 function enter(){
 	show_div();
 	show_buttons();
-	keyHandlerSwitchButtons.switch("prev");
+	//keyHandlerSwitchButtons.switch("prev");
 }
 
 function exit(){

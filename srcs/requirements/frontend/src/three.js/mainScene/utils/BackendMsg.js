@@ -54,7 +54,7 @@ export function msgRouter(event){
 			if (data["update_display"] == "start game")
 			{
 				//console.log("start game backend msg received ...")
-				pongGame["start_game"](data["gameID"]);
+				pongGame["start_game"](data["gameID"], data["game-type"]);
 				if (stateManager.currentStateIndex == 3)
 				{
 					//touranments go directly to game...

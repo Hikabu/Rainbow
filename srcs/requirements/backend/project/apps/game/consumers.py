@@ -13,51 +13,31 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# import logging
-
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format="%(asctime)s [%(levelname)s] %(message)s",
-#     handlers=[logging.StreamHandler()]
-# )
-
-# logger = logging.getLogger(__name__)
-#LERA use online
 def isUserOnline(user_id):
-	logger.info(f"is {user_id} online?")
 	active_users = cache.get('active_users')
-	logger.info(f"active users: {active_users}")
 	if active_users is None or str(user_id) not in map(str, active_users):
 		pending_users = cache.get('pending_users')
 		if pending_users is None or str(user_id) not in map(str, pending_users):
-			logger.info("false...")
 			return False
-	logger.info("true...")
 	return True
-
-#user bla connects-axios bla's friends-for every frined-send live update that bla is onlien
 
 #static global
 max_reconnection_time = 3
 all_consumers = {}
+
 class MainConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def get_friends_id(self, user_id):
 		try:
-			#take user with orm from db but on async so the loop will loop
-			#send to separate thread so it will not block the websocket perfomance
 			user = Profile.objects.get(id=user_id)
 			return list(user.friends.values_list('id', flat=True)) # only friends id[2,5,6]
 		except Profile.DoesNotExist:
 			return []
 
 	async def notify_friends(self, is_online):
-		logger.info(f"User ID {self.user_id} is now {'online' if is_online else 'offline'}.")
 		friends_id = await self.get_friends_id(self.user_id)
-		logger.debug(f"Fetched friends for user {self.user_id}: {friends_id}")
 		for friend_id in friends_id:
-			logger.debug(f"Sending status update to friend {friend_id} about user {self.user_id} being {'online' if is_online else 'offline'}.")
 			await self.channel_layer.group_send(
 				f"{friend_id}", #group name must be string
 				{
@@ -69,7 +49,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 					
 				}
 			)
-			logger.debug(f"Confirming status update in user {self.user_id}'s own group for tracking.")
 			await self.channel_layer.group_send(
 				f"{self.user_id}", #group name must be string
 				{
@@ -83,9 +62,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			)
 
 	async def check_user(self, user_id):
-		logger.info(f"check user: {user_id}")
 		if isUserOnline(user_id):
-			logger.info("sending user online")
 			await self.send_self({
 				"type" : "consumer.updates",
 				"user_status" : {
@@ -95,9 +72,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			})
 
 	async def check_friends(self):
-		logger.info("check friends")
 		friends_id = await self.get_friends_id(self.user_id)
-		logger.info(f"friends id {friends_id}")
 		for user in friends_id:
 			await self.check_user(user)
 
@@ -117,14 +92,11 @@ class MainConsumer(AsyncWebsocketConsumer):
   
 		await self.accept()
 		await self.notify_friends(is_online=True)
-		print(f"TESTING: User {self.user_id} connected")
 		if self.user_data :
-			print("retrieving consumer", self.user_data)
 			self.tournament = TournamentManager().get_tournament(self.user_data.get("tournament"))
 			self.dimensions = self.user_data.get("dimensions")
 			self.game = GameManager().get_game(self.user_data.get("game"))
 			for room in self.user_data.get("rooms"):
-				print("adding room: ", room)
 				await self.join_channel(room, False)	
 		else :
 			self.game = None
@@ -142,13 +114,10 @@ class MainConsumer(AsyncWebsocketConsumer):
 	async def should_exit_live(self):
 		global max_reconnection_time
 
-		print("crate task...")
 		await asyncio.sleep(max_reconnection_time)
-		print("exiting live?")
 		active_users = None
 		active_users = cache.get('active_users')
 		if active_users != None and self.user_id in active_users:
-			print("back online...")
 			return	
 		await self.exit_live()
 	
@@ -158,14 +127,9 @@ class MainConsumer(AsyncWebsocketConsumer):
 			active_users.remove(self.user_id)
 			cache.set('active_users', active_users)
 			await self.notify_friends(is_online=False)
-		print(f"TESTING: User {self.user_id} going offline")
-		print("yes, exiting live")
 		if self.game and self.game.status != "finished" and self.game.status != "end":
-			logger.debug("end game player exit live")
-			logger.debug(f"self.status {self.game.status}")
 			await self.game.disconnect(self)
 		if self.tournament :
-			print("end tournament")
 			await self.tournament.remove_player(self.user_id)
 		if self.user_id in all_consumers and all_consumers[self.user_id] == self:
 			del all_consumers[self.user_id]
@@ -182,7 +146,6 @@ class MainConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		logger.info(f"data received: {data}")
 		if data["channel"] == "friends":
 			if data["action"] == "user":
 				await self.check_user(data["user_id"])

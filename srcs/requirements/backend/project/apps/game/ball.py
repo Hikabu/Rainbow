@@ -34,7 +34,6 @@ class Ball:
 	def random_x_dir(self, axis):
 		self.dir["x"] = random.uniform(0.25 * axis, 0.5 * axis)
 		self.dir["y"] *= 2
-		# print("random dir: ", self.dir["x"])
 		length = math.sqrt(self.dir["x"] ** 2 + self.dir["y"] ** 2)
 		if (length != 0):
 			self.dir["x"] /= length

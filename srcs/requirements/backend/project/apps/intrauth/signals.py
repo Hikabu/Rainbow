@@ -23,6 +23,5 @@ def save_profile(sender, instance, **kwargs):
         instance.profile.save()
     except ObjectDoesNotExist:
         Profile.objects.create(user=instance)
-        print("Created profile which was not existed")
     except Exception as e:
         logger.error(f"Error creating profile: {e}")
