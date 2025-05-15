@@ -104,12 +104,12 @@ function create_exit_alert(info_message = null, exit_message = null){
 }
 
 function enter(self) {
-	let duration = 5000;
+	let duration = 13000;
 	let length_in_s = 1;
 	setTimeout(() => {
 		// new AlertManager().remove_latest_alert(self);
 		fadeout(self.div, length_in_s)
-	}, 5000);
+	}, duration - 3);
 	
 	setTimeout(() => {
 			// console.log("remove latest alert timeout")

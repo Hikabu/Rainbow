@@ -149,10 +149,12 @@ async def store_game_results(results):
 		if tour :
 			await tour.end_remote_game({
 				"players" :  [log['players']['1'], log['players']['2']],
-				"error" : results.get("error", "")
+				"error" : results.get("error", ""),
+				"date" : results["start_time"],
 			})
  
 	# logger.debug(f"the results are: {log}")
+
 
 	game_id = results["gameID"]
 	player1_data = log['players']['1']

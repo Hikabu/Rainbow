@@ -16,6 +16,7 @@ import { OnLoad } from './mainScene/utils/OnLoad';
 import { routerState } from '../router';
 import { nav_request } from '../components/nav_confirm';
 import { create_exit_alert } from './mainScene/overlays/alerts/exit_warning';
+import { fetchProfile } from '../stores/users';
 const engine = new MainEngine();
 
 let isAnimating = false;
@@ -51,6 +52,7 @@ document.addEventListener('keydown', (event) => {
 export async function preEnterScene(app_container){
 	console.log("pre enter")
 	in3js = true;
+	await fetchProfile()
 	if (Socket.instance)
 		new OnLoad().set_socket_ready();
 	else
