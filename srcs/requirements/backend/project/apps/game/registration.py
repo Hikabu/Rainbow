@@ -9,15 +9,42 @@ from .tournamentChannel import TournamentManager
 from asgiref.sync import sync_to_async
 from django.utils import timezone
 from datetime import datetime
-import requests
 import os
+import requests
+from dotenv import load_dotenv
+
 from channels.layers import get_channel_layer
 from project.apps.intrauth.models import GameResult, Profile
 import logging
 
+load_dotenv()
+
+PINATA_JWT_TOKEN = os.getenv('JWT_PINATA')
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+
+logger.debug(f"the pinata jwt token is {PINATA_JWT_TOKEN }")
+
+
+def upload_to_pinata(results, jwt_token):
+    
+	url = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
+	payload = {
+		"pinataOptions": {"cidVersion": 1},
+		"pinataMetadata": {"name": "pinnie.json"},
+		"pinataContent": results
+	}
+	headers = {
+		"Authorization": f"Bearer {jwt_token}",
+		"Content-Type": "application/json"
+	}
+	response = requests.request("POST", url, json=payload, headers=headers)
+
+	print(response.text)
+	logger.debug(f"the response from pinata is {response.text}")
+ 
+ 
 async def can_user_log_game(consumer, data):
 	playing_users = cache.get(f"playing_users")
 	if playing_users == None:
@@ -164,7 +191,21 @@ async def store_game_results(results):
 		player2 = await sync_to_async(User.objects.get)(id=player2_data['id'])
 	else:
 		logger.debug(f"hey no player 2? {player2_data['id']}, also-> {player2_data}")
+	logger.debug(f"player1: {player1}") 
+	logger.debug(f"player2: {player2}")
+	game_data = {
+		"player1_id": player1_data['id'],
+		"player2_id": player2_data['id'],
+		"player1_score": player1_data['score'],
+		"player2_score": player2_data['score'],
+		"timestamp": results["start_time"], 
+	}
+	logger.debug(f"the game_data is {game_data}")
+	logger.debug(f"going to pinanta")
+	upload_to_pinata(game_data, PINATA_JWT_TOKEN)
 
+ 
+	# logger.debug(f"theee ipfs is {ipfs_data}")
 	game = (GameResult(
   		game_id=game_id,
 		game_type=log["type"],
@@ -177,6 +218,8 @@ async def store_game_results(results):
 		player2_score = player2_data['score'],
 		player2_result = player2_data['result'],
 	))
+ 
+	
 	await sync_to_async(game.save)()
 	logger.debug(f"profile 1 status: {player1}, {player1_data['result']}")
 	await profile_status(player1, player1_data['result'])
@@ -243,3 +286,4 @@ def get_paddle_type(gameID, side):
 		if log["type"] == "remote" and side == 1:
 			return "player2"
 	return "local"
+
