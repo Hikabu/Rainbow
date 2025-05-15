@@ -14,27 +14,43 @@ import { MainEngine } from './mainScene/utils/MainEngine';
 import { Socket } from './mainScene/utils/Socket';
 import { OnLoad } from './mainScene/utils/OnLoad';
 import { routerState } from '../router';
+import { nav_request } from '../components/nav_confirm';
+import { create_exit_alert } from './mainScene/overlays/alerts/exit_warning';
 const engine = new MainEngine();
 
 let isAnimating = false;
-
-//developent:
+let in3js = false;
 document.addEventListener('keydown', (event) => {
-	if (event.key == "i")
+	if (event.key == "Escape")
 	{
-		const stateManager = new StateManager();
-		console.log("Now: ", stateManager.currentState.name);
-		stateManager.states.forEach(state=>
-			{
-				console.log("state ", state.name, "substate: ", state.currentSubstate.name);
-			}
-		)
+		if (in3js && new StateManager().currentState && new StateManager().currentStateIndex == 0)
+		{
+			nav_request({"name" : "logout"})
+			create_exit_alert("You are about to log out", "LOG-OUT")
+			//document.getElementById('to-logout').click();
+		}
+		else
+			document.getElementById('to-lobby').click();
 	}
-});
+})
+	//developent:
+// document.addEventListener('keydown', (event) => {
+// 	if (event.key == "i")
+// 	{
+// 		const stateManager = new StateManager();
+// 		console.log("Now: ", stateManager.currentState.name);
+// 		stateManager.states.forEach(state=>
+// 			{
+// 				console.log("state ", state.name, "substate: ", state.currentSubstate.name);
+// 			}
+// 		)
+// 	}
+// });
 
 // enterScene is called in mounted() or onMounted().
 export async function preEnterScene(app_container){
 	console.log("pre enter")
+	in3js = true;
 	if (Socket.instance)
 		new OnLoad().set_socket_ready();
 	else
@@ -101,6 +117,7 @@ export function animate() {
 
 //exitScene is called in beforeUnmount() or onBeforeUnmount().
 export function exitScene(){
+	in3js = false
 	isAnimating = false;
 	observer.unobserve(engine.wrapper);
 	engine.removeContainerWrapper();

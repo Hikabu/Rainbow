@@ -177,6 +177,12 @@ router.beforeEach(async (to, from, next) => {
 	 let sock = new Socket();
 	 await sock.init()
 	 routerState = null
+	 if (from.path == "/tournament" || from.path == "/ai-duel" || from.path == "/classic-game" || from.path == "/lobby")
+	{
+		console.log("")
+		console.log("exiting three js")
+		console.log("")
+	}
 	 if ((to.path == "/tournament" || to.path == "/ai-duel" || to.path == "/classic-game" || to.path == "/lobby") && 
 	 (from.path == "/tournament" || from.path == "/ai-duel" || from.path == "/classic-game" || from.path == "/lobby"))
 	 {

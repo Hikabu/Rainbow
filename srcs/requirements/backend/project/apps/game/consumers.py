@@ -238,7 +238,7 @@ class MainConsumer(AsyncWebsocketConsumer):
 			elif data["action"] == "join" and pending_tournament != None:
 					await pending_tournament.join(self)
 			elif data["action"] == "succesfull payment" and pending_tournament != None and data["tour_id"] == pending_tournament.tour_id:
-					await pending_tournament.confirm_payment(self, data["alias"])
+					await pending_tournament.confirm_payment(self, data["alias"], data["wallet_address"])
 
 	async def enter_scene(self):
 		state = None
