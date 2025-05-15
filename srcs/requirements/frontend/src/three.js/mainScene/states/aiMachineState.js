@@ -126,7 +126,9 @@ const aiMachineState = new State(
 	// null,
 	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
-	1.5
+	1.5,
+	"to-ai-duel",
+	aiMachineObj
 )
 
 export {aiMachineState}

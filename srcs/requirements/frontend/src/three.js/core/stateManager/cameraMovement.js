@@ -21,7 +21,7 @@ export function wheel_scroll_animations(event){
 		engine.isCamMoving = true;
 		let direction = scrollDelta > 0 ? 1 : -1;
 		scrollDelta = 0;
-		stateManager.changeState(new StateManager().currentStateIndex + direction);
+		stateManager.route_to(new StateManager().currentStateIndex + direction);
 	}
 }
 let tl = null;

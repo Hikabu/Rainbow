@@ -45,16 +45,22 @@ mainSceneObj.add(platform.self)
 
 mainSceneObj.add(localMachineObj.self)
 localMachineObj.self.rotation.y -= Math.PI/2
-localMachineObj.add_onclick(()=>{ new StateManager().changeState(1);})
+// localMachineObj.add_onclick(()=>{
+// 	document.getElementById('to-classic-game').click();
+// })
 
 mainSceneObj.add(aiMachineObj.self)
 aiMachineObj.self.rotation.y -= Math.PI/2
-aiMachineObj.add_onclick(()=>{ new StateManager().changeState(2);})
+// aiMachineObj.add_onclick(()=>{
+// 	document.getElementById('to-ai-duel').click();
+// })
 
 mainSceneObj.add(tourMachineObj.self)
 tourMachineObj.self.rotation.y -= Math.PI/2
 tourMachineObj.self.scale.set(1, 1.5, 2)
-tourMachineObj.add_onclick(()=>{ new StateManager().changeState(3);})
+// tourMachineObj.add_onclick(()=>{
+// 	document.getElementById('to-tournament').click();
+// })
 
 // mainScene.add(friends_machine.self)
 // friends_machine.self.rotation.x += Math.PI/2
@@ -66,7 +72,7 @@ aiMachineObj.self.position.set(localMachineObj.self.position.x + 4, 4 ,-0.25)
 tourMachineObj.self.position.set(aiMachineObj.self.position.x + 5, 4, 0.25)
 // friends_machine.self.position.set(tourMachineObj.self.position.x + 6, 4,- 0.75)
 
-new MainEngine().clickableObjects.push(localMachineObj.self, aiMachineObj.self, tourMachineObj.self)//, friends_machine.self)
+// new MainEngine().clickableObjects.push(localMachineObj.self, aiMachineObj.self, tourMachineObj.self)//, friends_machine.self)
 
 let floatTime = 0;
 const mainSub = new SubState(
@@ -108,6 +114,8 @@ const mainState = new State(
 	mainSceneObj,
 	new THREE.Vector3(0, 0, -1),
 	1.25,
+	"to-lobby",
+	null,
 );
 
 const stateManager = new StateManager(

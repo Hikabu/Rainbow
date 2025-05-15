@@ -146,7 +146,9 @@ const localMachineState = new State(
 	],
 	screenSurface.self,
 	new THREE.Vector3(0, 0, -1),
-	2.75
+	2.75,
+	"to-classic-game",
+	localMachineObj
 )
 
 export {localMachineState}

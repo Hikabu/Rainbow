@@ -8,33 +8,44 @@
         </div>
 
         <h3>Menu</h3>
-        <div class="menu">
-          <router-link class="button" to="/lobby">
-            <span class="Logo"><Icon icon="guidance:yoga"/> </span>
-            <span class="text">Home</span>
-          </router-link>
-          <router-link class="button" to="/profile">
-            <span class="Logo"><Icon icon="guidance:skate-park"/> </span>
-            <span class="text">Profile</span>
-          </router-link>
-          <router-link class="button" to="/results">
-            <span class="Logo"><Icon icon="guidance:bowling"/> </span>
-            <span class="text">History</span>
-          </router-link>
-          <router-link class="button" to="/friends">
-            <span class="Logo"><Icon icon="guidance:fishing-area-1"/> </span>
-            <span class="text">Friends</span>
-          </router-link>
-          <router-link class="button" to="/payment">
-            <span class="Logo"><Icon icon="arcticons:metamask"/> </span>
-            <span class="text">Payment</span>
-          </router-link>
-        </div>
+		<div class="menu">
+			<router-link class="button" to="/lobby" id="to-lobby"  @click.stop>
+				<span class="Logo"><Icon icon="ph:house-thin" /></span>
+				<span class="text">Lobby</span>
+			</router-link>
 
-        <div class="flex"></div>
+			<router-link class="button" to="/classic-game" id="to-classic-game" @click.stop>
+				<span class="Logo"><Icon icon="ph:game-controller-thin" /></span>
+				<span class="text">Game</span>
+			</router-link>
 
+			<router-link class="button" to="/ai-duel" id="to-ai-duel"  @click.stop>
+				<span class="Logo"><Icon icon="ph:cpu-thin" /></span>
+				<span class="text">Duel</span>
+			</router-link>
+
+			<router-link class="button" to="/tournament" id="to-tournament"  @click.stop>
+				<span class="Logo"><Icon icon="ph:trophy-thin" /></span>
+				<span class="text">Tournament</span>
+			</router-link>
+
+			<router-link class="button" to="/profile" @click.stop>
+				<span class="Logo"><Icon icon="ph:user-circle-thin" /></span>
+				<span class="text">Profile</span>
+			</router-link>
+
+			<router-link class="button" to="/results" @click.stop>
+				<span class="Logo"><Icon icon="ph:clock-counter-clockwise-thin" /></span>
+				<span class="text">History</span>
+			</router-link>
+
+			<router-link class="button" to="/friends" @click.stop>
+				<span class="Logo"><Icon icon="ph:users-thin" /></span>
+				<span class="text">Friends</span>
+			</router-link>
+			</div>
         <div class="menu">
-          <button class="button" @click="handleLogOut">
+          <button class="button" @click="handleLogOut" @click.stop>
             <span class="Logo"><Icon icon="guidance:pull"/></span>
             <span class="text">LogOut</span>
           </button>
@@ -137,6 +148,7 @@ aside {
     margin: 0 -1rem;
 
     .button {
+		background: none;
       display: flex;
       align-items: center;
       text-decoration: none;
