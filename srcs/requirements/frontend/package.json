@@ -22,6 +22,7 @@
     "ethers": "^6.13.7",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
+    "pinata": "^2.3.0",
     "require": "^2.4.20",
     "three": "^0.175.0",
     "three.meshline": "^1.4.0",

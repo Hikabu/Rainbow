@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import { onBoard } from '../../../../pages/PaymentPage/util/onBoard';
 import { StateManager } from "../../../core/stateManager/StateManager";
 import { State } from "../../../core/stateManager/States";
 import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
@@ -7,6 +8,8 @@ import { fadeout } from "../../../core/UIFactory/effects";
 import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 import { getUserAlias } from "../../utils/utils";
+//make same reactivity
+const { connectWallet, readContract, writeContract, currentAccount, message, contractResponse} = onBoard()
 import { user, fetchProfile } from '../../../../stores/users';
 
 const container = new Overlay([
@@ -112,14 +115,28 @@ function payment_error(){
 	}, 2000);//10 second
 }
 
-let wallet_address = null;
+async function payment_logic(){
+	show_div();
+	try {
+		console.log("payment")
 
-function payment_logic(){
-	//TODO
-	//just write here the payment logic anad call payment usscessfullk ft or payment error ft abd get rid of acccept bka bla bla buttons t the top thqat cll tghese
-	//update with wallet adress used for payment
-	wallet_address = "some-wallet";
-}
+		const connnectedAccount = await connectWallet();
+		console.log("Connected wallets:", connnectedAccount);
+
+		if (!connnectedAccount){
+			throw new Error("Wallet not connected")
+		}
+		container.getElementById("pay-message").element.textContent = `Connected to walllet: ${connnectedAccount.slice(0.6)}...${connnectedAccount.slice(-4)}`;
+		//blbla contract 
+		console.log("directly from container")
+		// payment_successful();
+	} catch (err) {
+		console.error("During payment", err)
+		container.getElementById("pay-message").element.textContent = `Walllet connection or payment failed`;
+	}
+
+	}
+	
 
 function pay_winner(){
 	//TODO
