@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7c119f15d4e4d2ce6ab3aa468277cfcc6aa2c54f13dec1bf1282be946c391c9a"
+            "sha256": "f40bfc4b06d068d7671f52a2cb93750e40cb4beaee9e23c3e79cebf373ab2b09"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1037,6 +1037,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==11.1.0"
+        },
+        "pinatapy-vourhey": {
+            "hashes": [
+                "sha256:453a32629ad11b92dd7153feb64d4302c8d17036cc17c5c3d8108809700bdc2b",
+                "sha256:86c204949eb9dd8e21ca28e5ee1f7b774a72f57f998ef7fba8a4ca41dd5a2554"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.6'",
+            "version": "==0.2.0"
         },
         "platformdirs": {
             "hashes": [
