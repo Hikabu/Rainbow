@@ -11,7 +11,7 @@ import History from './pages/smallPages/MatchHistory.vue';
 import Profile from './pages/smallPages/Profile.vue';
 import {Socket} from './three.js/mainScene/utils/Socket.js';
 import {previousRoute} from './stores/routerStore.js';
-
+import { StateManager } from './three.js/core/stateManager/StateManager.js';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -42,6 +42,12 @@ const router = createRouter({
 	{
 		path: '/ai-duel',
 		name: 'ai-duel',
+		component: MainPage,
+		meta: { requiresAuth: true }
+	},
+	{
+		path: '/tournament',
+		name: 'tournament',
 		component: MainPage,
 		meta: { requiresAuth: true }
 	},
@@ -152,6 +158,7 @@ function startRefrInterval() {
   }, time);
 }
 
+export let routerState;
 router.beforeEach(async (to, from, next) => {
 	previousRoute.value = from
   if (to.meta.requiresAuth) {
@@ -169,7 +176,27 @@ router.beforeEach(async (to, from, next) => {
       }
 	 let sock = new Socket();
 	 await sock.init()
-    } catch (error) {
+	 routerState = null
+	 if ((to.path == "/tournament" || to.path == "/ai-duel" || to.path == "/classic-game" || to.path == "/lobby") && 
+	 (from.path == "/tournament" || from.path == "/ai-duel" || from.path == "/classic-game" || from.path == "/lobby"))
+	 {
+		console.log("V to and from : ", to.path, from.path)
+			let states = {
+				"/lobby" : 0,
+				"/classic-game" : 1,
+				"/ai-duel" : 2,
+				"/tournament" : 3,
+		}
+		console.log("got", states[to.path])
+		console.log("state now", new StateManager().currentStateIndex)
+		if (to != from)
+			new StateManager().changeState(states[to.path]);
+		console.log("state after", new StateManager().currentStateIndex)
+		return;
+	 }
+	 else
+	 	console.log(" X to: ",to.path, "from: ", from.path)
+	} catch (error) {
       clearInterval(refreshTimeOut)
       console.error('Error during authentication check:', error);
       return next({ name: 'Login' });

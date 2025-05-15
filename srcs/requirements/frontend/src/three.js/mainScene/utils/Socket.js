@@ -7,7 +7,7 @@ export class Socket {
 		if (Socket.instance)
 			return Socket.instance
 		this.msgQueue = [];
-		console.log("first call socket");
+		//console.log("first call socket");
 		//this.init();
 		this.userID = null;
 		Socket.instance = this;
@@ -15,9 +15,9 @@ export class Socket {
 	async init(){
 		if (this.socket)
 			return;
-		console.log("init sokcet with user id")
+		//console.log("init sokcet with user id")
 		this.userID = await getUserID()
-		console.log("user: ", this.userID);
+		//console.log("user: ", this.userID);
 		//this.userID = user.id;
 		try {
 			this.socket = new WebSocket(`ws://localhost:8000/ws/${this.userID}/`);
@@ -31,7 +31,7 @@ export class Socket {
 		}
 	}
 	myError(err){
-		console.error("WebSocket error:", err);		
+		//console.error("WebSocket error:", err);		
 		//this.myRetry();	//TODO: after testing uncomment	
 	}
 	myOpen(){
@@ -47,7 +47,7 @@ export class Socket {
 		}, 1000);
 	}
 	myClose(){
-		console.log("close...");
+		//console.log("close...");
 		this.socket = null;
 		Socket.instance = null;
 	}

@@ -13,6 +13,7 @@ import { mainSceneObj,stateManager } from './mainScene/states/mainMenuState';
 import { MainEngine } from './mainScene/utils/MainEngine';
 import { Socket } from './mainScene/utils/Socket';
 import { OnLoad } from './mainScene/utils/OnLoad';
+import { routerState } from '../router';
 const engine = new MainEngine();
 
 let isAnimating = false;
@@ -62,7 +63,7 @@ export function uponEnter(){
 	window.dispatchEvent(new Event("resize"));
 	console.log("upon enter")
 	
-	window.addEventListener('popstate', popstate);
+	//window.addEventListener('popstate', popstate);
 	window.addEventListener("wheel", wheel_scroll_animations);
 	window.addEventListener('resize', onResize);
 	window.addEventListener('click', onClick);
@@ -103,7 +104,7 @@ export function exitScene(){
 	isAnimating = false;
 	observer.unobserve(engine.wrapper);
 	engine.removeContainerWrapper();
-	window.removeEventListener('popstate', popstate);
+	//window.removeEventListener('popstate', popstate);
 	window.removeEventListener("wheel", wheel_scroll_animations);
 	window.removeEventListener('resize', onResize);
 	window.removeEventListener('click', onClick);
@@ -111,10 +112,11 @@ export function exitScene(){
 	new OnLoad().reset();
 }
 
-function popstate(event){
-	if (event.state)
-		new StateManager().changeState(event.state.num, false);
-}
+// function popstate(event){
+// 	console.log("popping event", event)
+// 	if (event.state)
+// 		new StateManager().changeState(event.state, false);
+// }
 const observer = new ResizeObserver(() => {
 		console.log("observer working")
 		onResize();
@@ -137,6 +139,8 @@ function key_events(event){
 function init_scene_state(){
 	//console.log("init scene...")
 	let stateFromURL = window.location.pathname;
+	if (routerState)
+		stateFromURL = routerState
 	//console.log("state from url", stateFromURL)
 	if (stateFromURL){ 
 		const path = stateFromURL.slice(1); // "lobby"

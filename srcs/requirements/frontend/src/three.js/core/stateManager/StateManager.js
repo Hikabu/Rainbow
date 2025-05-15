@@ -18,6 +18,15 @@ class StateManager {
 		}
 		return -1;
 	}
+	route_to(index){
+		console.log("routing request ", index)
+		if (index >= this.states.length)
+			index = 0;
+		else if (index < 0)
+			index = this.states.length - 1
+		console.log("set routing request ", index)
+		this.states[index].route_to()
+	}
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true, slow = 0) {
         if (this.currentStateIndex == index || index < 0)
 			return;
@@ -28,12 +37,14 @@ class StateManager {
 			index = 0;
         this.currentStateIndex = index;
         this.currentState = this.states[this.currentStateIndex];
-		if (shouldPushHistory)
-		{
-			const path = `/${this.currentState.name}`;
-			window.history.pushState(null, '', path);
-			router.push(`/${this.currentState.name}`);
-		}
+		// if (shouldPushHistory && isClick)
+		// {
+		// 	console.log("pushing history..")
+			
+		// 	// const path = `/${this.currentState.name}`;
+		// 	// window.history.pushState(null, '', path);
+		// 	// router.push(`/${this.currentState.name}`);
+		// }
 		this.setAllowedDirection();
         this.currentState.enter(slow);
     }

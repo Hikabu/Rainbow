@@ -5,7 +5,7 @@ import { get_camera_animation, fitCameraToObject } from './cameraMovement';
 import * as THREE from 'three';
 
 class State {
-    constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials, targetObject, targetNormal, targetPadding = 1.25) {
+    constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials, targetObject, targetNormal, targetPadding = 1.25, router_link =null, click_obj = null) {
         this.name = name;
 		this.cameraMovement = cameraMovement;
         this.substates = substates;
@@ -21,7 +21,19 @@ class State {
 		this.targetPadding = targetPadding
 		this.blockedIndex = this.substates.length;
 		this.slowCameraMovement = slowCameraMovement
+		this.router_link = router_link;
+		if (click_obj && router_link)
+		{
+			click_obj.add_onclick(()=>{
+				document.getElementById(router_link).click();
+			})
+			new MainEngine().clickableObjects.push(click_obj.self)
+		}
     }
+	route_to(){
+		console.log("routing to ", this.router_link)
+		document.getElementById(this.router_link).click();
+	}
 	addSubstate(substates){
 		if (!(Array.isArray(substates)))
 			this.substates.push(substates)
