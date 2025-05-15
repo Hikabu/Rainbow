@@ -5,8 +5,6 @@ from uuid import uuid4, uuid1
 from django.utils import timezone
 from django.core.cache import cache
 import logging
-import os
-import requests
 
 
 logger = logging.getLogger(__name__)
@@ -66,7 +64,6 @@ class TournamentChannel():
 	def __init__(self, consumer):
 		global waitTime, _token
 
-		self.all_results = []
 		self.fadeOut = False
 		self.prize_pool = 0
 		self.tour_id = str(uuid4())
@@ -298,10 +295,8 @@ class TournamentChannel():
 				"error":error,
 				"button":"wait",
 			})
-	
-  
-	async def tournament_winner(self, player_id, error = ""):
 
+	async def tournament_winner(self, player_id, error = ""):
 		global _token
 
 		print("tournametn winner")
@@ -327,9 +322,6 @@ class TournamentChannel():
 			"participants" : self.registered,
 			"prize pool" : self.prize_pool,
 		}
-		logger.debug("tournametn winner")
-		self.upload_to_ifps(results)
-
 		#clean
 		self.status = "end"
 		TournamentManager().remove_tournament(self.tour_id, _token)
@@ -337,6 +329,7 @@ class TournamentChannel():
 
 	async def end_remote_game(self, data):
 		print("end remote game")
+	
 		#remove players from now_playing
 		for player in data["players"]:
 			if player["id"] in self.now_playing:
@@ -360,14 +353,3 @@ class TournamentChannel():
 	# async def disconnect(self, consumer):
 	# 	print("touranment disconnect")
 		# await self.remove_player(consumer.user_id)
-  
-	def upload_to_ifps(game_data):
-		pinyata_jwt = os.getenv("PINYATA_JWT")
-		url = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
-		headers = {'Authorization': f'Bearer {pinyata_jwt}'}
-		response = requests.post(url, headers=headers, json={"pinataContent": game_data})
-		if response.status_code == 200:
-			logger.debug(f"Game data uploaded to IPFS: {response.json()["IpfsHash"]}")
-			print(f"Game data uploaded to IPFS: {response.json()["IpfsHash"]}")
-			return response.json()["IpfsHash"]
-		else: Exception(f"Pinata upload fail: {response.text}")
