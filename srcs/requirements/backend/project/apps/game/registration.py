@@ -164,6 +164,7 @@ async def store_game_results(results):
 		player2 = await sync_to_async(User.objects.get)(id=player2_data['id'])
 	else:
 		logger.debug(f"hey no player 2? {player2_data['id']}, also-> {player2_data}")
+
 	game = (GameResult(
   		game_id=game_id,
 		game_type=log["type"],
