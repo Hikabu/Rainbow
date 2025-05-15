@@ -1,6 +1,5 @@
 import { fetchProfile, user } from '../../../stores/users'
 import { StateManager } from '../../core/stateManager/StateManager';
-import { create_info_alert } from '../overlays/alerts/info_alert';
 import { create_redirection_alert, delete_redirection_alert, fadeout_redirection_alert } from '../overlays/alerts/redirection_warning';
 import { end } from '../overlays/divs/tour_end';
 import { join } from '../overlays/divs/tour_join';
@@ -32,7 +31,7 @@ const updateStatus = (id, isOnline) => {
 
 export function msgRouter(event){
 	const data = JSON.parse(event.data);
-	console.log("data: ", data);
+	//console.log("data: ", data);
 	if (!data)
 		return ;
 	if (data.type == "switch tabs")
@@ -44,7 +43,6 @@ export function msgRouter(event){
 		let stateManager = new StateManager()
 		stateManager.forcedRedirect = true;
 		//console.log("you exited the game");
-		create_info_alert("you exited on another tab")
 		stateManager.changeState(0);
 		stateManager.forcedRedirect = false;
 	}
@@ -146,9 +144,8 @@ const tourActions = {
 			"refund": ()=> {
 				// console.log("refunding ...");
 				if (new StateManager().currentStateIndex != 3)
-					create_info_alert("Tournament was cancelled. You will be refunded", 5)
-				else
-					state.changeSubstate(7);
+					new StateManager().changeState(3)
+				state.changeSubstate(7);
 
 			},
 			"controls": ()=>{

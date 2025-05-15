@@ -20,9 +20,12 @@
 import { onBeforeUnmount, onMounted, ref, computed } from 'vue'
 
 import SideBar from '../../components/SideBar.vue'
+import {nav_request} from '../../components/nav_confirm.js'
 import { exitScene,preEnterScene } from '../../three.js/index.js'
 import { OnLoad } from '../../three.js/mainScene/utils/OnLoad.js'
 import {previousRoute} from '../../stores/routerStore.js';
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
+import {StateManager} from '../../three.js/core/stateManager/StateManager.js'
 
 const threeContainer = ref(null)
 const isLoading = ref(true);
@@ -37,8 +40,18 @@ onMounted(async () => {
 	new OnLoad().set_first_load(isLoading, appVisible, loadingOpacity, appOpacity)
   }
 })
-
+onBeforeRouteLeave((to, from, next) => {
+	console.log("on before :", to)
+	if (new StateManager().currentState.exit() == "cancelled") {
+		console.log('Preventing unmount...');
+		nav_request(to);
+		next(false)
+	} else {
+		next()
+	}
+})
 onBeforeUnmount(() => {
+	console.log("unmounting 3js..")
   exitScene()
 })
 </script>

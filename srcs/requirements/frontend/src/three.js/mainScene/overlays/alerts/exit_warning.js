@@ -1,3 +1,4 @@
+import { get_nav_id } from '../../../../components/nav_confirm';
 import { StateManager } from '../../../core/stateManager/StateManager';
 import { State } from '../../../core/stateManager/States';
 import { FlexBox,Overlay } from '../../../core/UIFactory/DivElements';
@@ -8,7 +9,6 @@ import { stateManager } from '../../states/mainMenuState';
 import { Socket } from '../../utils/Socket';
 import { join } from '../divs/tour_join';
 import { Alert, AlertManager } from './Alerts';
-
 const children = [
 	new FlexBox({
 		marginTop: "4%",
@@ -23,7 +23,7 @@ const children = [
 				marginBot: "8%",
 			}),
 			new Text({
-				content: "You will loose all progress",
+				content: "hello",
 				fontSize: 0.55,
 				marginBot: "8%",
 			}),
@@ -44,13 +44,16 @@ const children = [
 					new Button({
 						id : "button-exit",
 						fontSize: 0.85,
-						content: "EXIT",
+						content: "hello",
 						onClick: ()=>{
+							console.log("clicked exit")
 							// console.log("clicked exit")
 							new AlertManager().remove_latest_alert();
 							can_exit = true;
 							// console.log("exiting request");
-							new StateManager().changeState(new StateManager().scheduledStateIndex)
+							let nav_id = get_nav_id()
+							console.log("ok, going to ", nav_id)
+							document.getElementById(nav_id).click();
 						},
 					}),
 				]
@@ -60,10 +63,20 @@ const children = [
 	})
 	
 ]
+
 let can_exit = false;
-function create_exit_alert(){
+
+function create_exit_alert(info_message = null, exit_message = null){
 		console.log("create exit alert!");
 		// console.log("can exit is: ", can_exit)
+		if (!info_message)
+			info_message = "You will loose all progess"
+		if (!exit_message)
+			exit_message = "EXIT"
+		children[0].childElements[1].element.textContent = info_message
+		children[0].childElements[2].childElements[1].element.textContent = exit_message
+	
+
 		if (new StateManager().forcedRedirect == true)
 		{
 			console.log("dorced redirect!")

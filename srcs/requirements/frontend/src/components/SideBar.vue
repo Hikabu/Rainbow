@@ -19,7 +19,7 @@
 				<span class="text">Game</span>
 			</router-link>
 
-			<router-link class="button" to="/ai-duel" id="to-ai-duel"  @click.stop>
+			<router-link class="button" to="/ai-duel" id="to-ai-duel" @click.stop>
 				<span class="Logo"><Icon icon="ph:cpu-thin" /></span>
 				<span class="text">Duel</span>
 			</router-link>
@@ -29,23 +29,23 @@
 				<span class="text">Tournament</span>
 			</router-link>
 
-			<router-link class="button" to="/profile" @click.stop>
+			<router-link class="button" to="/profile" id="to-profile" @click.stop>
 				<span class="Logo"><Icon icon="ph:user-circle-thin" /></span>
 				<span class="text">Profile</span>
 			</router-link>
 
-			<router-link class="button" to="/results" @click.stop>
+			<router-link class="button" to="/results" id="to-results" @click.stop>
 				<span class="Logo"><Icon icon="ph:clock-counter-clockwise-thin" /></span>
 				<span class="text">History</span>
 			</router-link>
 
-			<router-link class="button" to="/friends" @click.stop>
+			<router-link class="button" to="/friends" id="to-friends" @click.stop>
 				<span class="Logo"><Icon icon="ph:users-thin" /></span>
 				<span class="text">Friends</span>
 			</router-link>
 			</div>
         <div class="menu">
-          <button class="button" @click="handleLogOut" @click.stop>
+          <button class="button" @click="handleLogOut" id="to-logout" @click.stop>
             <span class="Logo"><Icon icon="guidance:pull"/></span>
             <span class="text">LogOut</span>
           </button>

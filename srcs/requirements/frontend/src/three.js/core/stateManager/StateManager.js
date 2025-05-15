@@ -33,6 +33,9 @@ class StateManager {
 		this.scheduledStateIndex = index;
 		if (this.currentState && this.currentState.exit() == "cancelled" && !this.forcedRedirect)
 			return "cancelled";
+		console.log("")
+		console.log("exited state...")
+		console.log("")
 		if (index >= this.states.length)
 			index = 0;
         this.currentStateIndex = index;

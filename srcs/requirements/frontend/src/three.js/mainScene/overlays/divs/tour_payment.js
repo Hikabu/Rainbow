@@ -85,6 +85,7 @@ function payment_successful(){
 		"action": "succesfull payment",
 		"tour_id": 	new StateManager().currentState.currentSubstate.data["tour_id"],
 		"alias" : alias,
+		"wallet_address" : wallet_address
 	})
 	container.getElementById("pay-message").element.textContent = "Payment Successful";
 	let stateManager = new StateManager();
@@ -109,9 +110,13 @@ function payment_error(){
 	}, 2000);//10 second
 }
 
+let wallet_address = null;
+
 function payment_logic(){
 	//TODO
 	//just write here the payment logic anad call payment usscessfullk ft or payment error ft abd get rid of acccept bka bla bla buttons t the top thqat cll tghese
+	//update with wallet adress used for payment
+	wallet_address = "some-wallet";
 }
 
 function pay_winner(){

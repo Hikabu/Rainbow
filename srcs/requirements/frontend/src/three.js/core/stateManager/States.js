@@ -3,6 +3,7 @@ import { moveCamera } from './cameraMovement';
 import { StateManager } from './StateManager';
 import { get_camera_animation, fitCameraToObject } from './cameraMovement';
 import * as THREE from 'three';
+import { stateManager } from '../../mainScene/states/mainMenuState';
 
 class State {
     constructor(name, cameraMovement, slowCameraMovement, substates = [], enterState = ()=>{}, exitState=()=>{}, materials, targetObject, targetNormal, targetPadding = 1.25, router_link =null, click_obj = null) {
@@ -25,7 +26,8 @@ class State {
 		if (click_obj && router_link)
 		{
 			click_obj.add_onclick(()=>{
-				document.getElementById(router_link).click();
+				if (new StateManager().currentState != this)
+					document.getElementById(router_link).click();
 			})
 			new MainEngine().clickableObjects.push(click_obj.self)
 		}
