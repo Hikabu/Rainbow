@@ -63,6 +63,7 @@ django-redis = "*"
 pinatapy-vourhey = "*"
 requests = "*"
 python-dotenv = "*"
+web3 = "*"
 
 [dev-packages]
 black = "==25.1.0"
