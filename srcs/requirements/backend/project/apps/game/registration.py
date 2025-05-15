@@ -205,7 +205,6 @@ async def store_game_results(results):
 	upload_to_pinata(game_data, PINATA_JWT_TOKEN)
 
  
-	# logger.debug(f"theee ipfs is {ipfs_data}")
 	game = (GameResult(
   		game_id=game_id,
 		game_type=log["type"],
