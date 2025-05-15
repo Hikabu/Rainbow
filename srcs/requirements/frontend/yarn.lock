@@ -6099,6 +6099,11 @@ pify@^5.0.0:
   resolved "https://registry.yarnpkg.com/pify/-/pify-5.0.0.tgz#1f5eca3f5e87ebec28cc6d54a0e4aaf00acc127f"
   integrity sha512-eW/gHNMlxdSP6dmG6uJip6FXN0EQBwm2clYYd8Wul42Cwu/DK8HEftzsapcNdYe2MfLiIwZqsDk2RDEsTE79hA==
 
+pinata@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/pinata/-/pinata-2.3.0.tgz#4ca8ebb3d63329c653d750d827ca5b91f06551ea"
+  integrity sha512-WMS5Y5UsocoplZiMdpHP3WQ97BzM3GtM2BKr4kLYJz0ug/5sAZkLxDOoC9SSGpiGjacUwA0BU43nquIJ70YwZw==
+
 pino-abstract-transport@v0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/pino-abstract-transport/-/pino-abstract-transport-0.5.0.tgz#4b54348d8f73713bfd14e3dc44228739aa13d9c0"

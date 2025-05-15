@@ -42,11 +42,6 @@ const connect = async () => {
     console.log("Connected wallets:", connected);
 }
 
-// const disconnect = async () => {
-//     if (wallets.value.length) {
-//         await disconnectWallet({ label: wallets.value[0].label})
-//     }
-// }
 onMounted(async () => {
     await fetchProfile()
 })
