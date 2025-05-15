@@ -62,6 +62,7 @@ boto3 = "*"
 numpy = "*"
 channels-redis = "*"
 django-redis = "*"
+pinatapy-vourhey = "*"
 
 [dev-packages]
 black = "==25.1.0"

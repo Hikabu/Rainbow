@@ -164,29 +164,6 @@ async def store_game_results(results):
 		player2 = await sync_to_async(User.objects.get)(id=player2_data['id'])
 	else:
 		logger.debug(f"hey no player 2? {player2_data['id']}, also-> {player2_data}")
-	logger.debug(f"player1: {player1}") 
-	logger.debug(f"player2: {player2}")
-	logger.debug(f"the results are: {log}")
-	# game_data = {
-	# 	"player1_id": player1_data['id'],
-	# 	"player2_id": player2_data['id'],
-	# 	"player1_score": player1_data['score'],
-	# 	"player2_score": player2_data['score'],
-	# 	"timestamp": results["start_time"], 
-	# }
-	# ipfs_data = upload_to_ifps(game_data)
-	# logger.debug(f"theee ipfs is {ipfs_data}")
-	logger.debug("sending to game results : ")
-	logger.debug(f"game_id={game_id}")
-	logger.debug(f"game_type={log["type"]}")
-	logger.debug(f"start_time={results["start_time"]}")
-	logger.debug(f"user={player1}")
-	logger.debug(f"user_score={player1_data['score']}")
-	logger.debug(f"user_result={player1_data['result']}")
-	logger.debug(f"player2={player2}")
-	logger.debug(f"player2_alias={player2_data['alias'] if not player2 else ''}")
-	logger.debug(f"player2_score={player2_data['score']}")
-	logger.debug(f"player2_result={player2_data['result']}")
 	game = (GameResult(
   		game_id=game_id,
 		game_type=log["type"],
@@ -214,24 +191,6 @@ def profile_status(user, result):
 	elif result == "loose":
 		profile.losses +=1
 	profile.save()
-
-# def upload_to_ifps(game_data):
-#     api_key = os.getenv("PINYATA_KEY")
-#     api_secret = os.getenv("PINATA_API_SECRET")
-#     pinyata_jwt = os.getenv("PINYATA_JWT")
-#     url = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
-#     # headers = {'Authorization': f'Bearer {pinyata_jwt}'}
-#     headers = {
-# 		"pinata_api_key": api_key,
-# 		"pinata_api_secret": api_secret,
-# 		"Content-type": "application/json"
-# 	}
-#     response = requests.post(url, headers=headers, json={"pinataContent": game_data})
-#     if response.status_code == 200:
-#         logger.debug(f"Game data uploaded to IPFS: {response.json()["IpfsHash"]}")
-#         print(f"Game data uploaded to IPFS: {response.json()["IpfsHash"]}")
-#         return response.json()["IpfsHash"]
-#     else: Exception(f"Pinata upload fail: {response.text}")
     
 def create_new_log():
 	return {
