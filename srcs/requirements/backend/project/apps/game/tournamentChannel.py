@@ -74,6 +74,8 @@ class TournamentChannel():
 		self.players = {}
 		self.now_playing = []
 		self.now_waiting = []
+		self.match_history = []
+		self.round_history = None
 		cache.set("pending_tournament", self.tour_id)
 		TournamentManager().add_tournament(self, _token)
 		self.start_time = timezone.now() + timezone.timedelta(seconds=waitTime)
@@ -182,7 +184,9 @@ class TournamentChannel():
 
 		print("mathmake")
 		self.status = "matchmake"
-
+		if self.round_history:
+			self.match_history.append({f"Round {self.current_round}" : self.round_history})
+		self.round_history = []
 		#send next round plan
 		self.current_round += 1
 		self.total_matches = len(self.now_waiting) // 2
@@ -213,7 +217,7 @@ class TournamentChannel():
 					"type": "tour.updates",
 					"update_display" : 'waiting'
 				})
-	
+
 		self.status == "playing"
 
 
@@ -319,20 +323,37 @@ class TournamentChannel():
 			})
 			await self.remove_player(player_id)
 		#store results TODO
+		if self.round_history:
+			self.match_history.append({f"Round {self.current_round}" : self.round_history})
 		results = {
-			"winner" : self.get_player_info(player_id)
-			"participants" : self.registered,
-			"prize pool" : self.prize_pool,
+			"Tournament Winner" : self.get_player_info(player_id),
+			"Prize Pool" : self.prize_pool,
+			"Game Scores" : self.match_history,
+			"Participants" : [self.get_player_info(user_id) for user_id in self.registered],
 		}
-		logger.info("results: ", results)
+		logger.info(f"results: {results}")
 		await self.pay_user(player_id, self.prize_pool)
 		#clean
 		TournamentManager().remove_tournament(self.tour_id, _token)
 		return True
 
 	async def end_remote_game(self, data):
-		print("end remote game")
-		logger.debug(f"ended game: {data}")
+		logger.debug(f"received:{data} ")
+		logger.debug("end remote game")
+		if data["players"][0]["result"] == "loose":
+			l = 0
+			w = 1
+		else:
+			l = 1
+			w = 0
+		self.round_history.append({
+			"Game Score": f"{data['players'][0]['score']} - {data['players'][1]['score']}",
+			"Game Winner": f"{data['players'][w]['alias']} ({self.get_wallet_address(data['players'][w]['id'])})",
+			"Game Looser": f"{data['players'][l]['alias']} ({self.get_wallet_address(data['players'][l]['id'])})",
+			"Game Date": data["date"],
+		})
+				
+		logger.debug(f"round history: {self.round_history}")
 		#remove players from now_playing
 		for player in data["players"]:
 			if player["id"] in self.now_playing:
@@ -353,19 +374,20 @@ class TournamentChannel():
 			await asyncio.sleep(4)
 			await self.matchmake()
 
-	def get_player_info(self, player_id)
-	{
+	def get_player_info(self, player_id):
 		return {
 				"name" : self.registered[player_id]["alias"],
 				"wallet_address" : self.registered[player_id]["wallet_address"],
 			}
-	}
-	async def pay_user(self, player_id, amount)
-	{
-		wallet_address = self.registered[player_id]["wallet_address"]
+
+	def get_wallet_address(self, player_id):
+		return self.registered[player_id]["wallet_address"]\
+	
+	async def pay_user(self, player_id, amount):
+		wallet_address = self.get_wallet_address(player_id)
 		logger.debug(f"sending {amount} to {wallet_address}")
-		#TODO!
-	}
+		#TODO! LERA
+
 	# async def disconnect(self, consumer):
 	# 	print("touranment disconnect")
 		# await self.remove_player(consumer.user_id)

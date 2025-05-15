@@ -7,6 +7,7 @@ import { fadeout } from "../../../core/UIFactory/effects";
 import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 import { getUserAlias } from "../../utils/utils";
+import { user, fetchProfile } from '../../../../stores/users';
 
 const container = new Overlay([
 			new FlexBox({
@@ -78,7 +79,8 @@ function hide_div(){
 
 
 function payment_successful(){
-	let alias = getUserAlias()
+	console.log("user: ", user)
+	let alias = user.displayName || user.username || user.intraLogin
 	console.log("alias: ", alias)
 	new Socket().send({
 		"channel" : "tournament",
