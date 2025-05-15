@@ -12,19 +12,57 @@ from datetime import datetime
 import os
 import requests
 from dotenv import load_dotenv
+from web3 import Web3
 
 from channels.layers import get_channel_layer
 from project.apps.intrauth.models import GameResult, Profile
 import logging
+from django.views.decorators.csrf import csrf_exempt
 
 load_dotenv()
 
 PINATA_JWT_TOKEN = os.getenv('JWT_PINATA')
+private_key = os.getenv('PRIVATE_KEY')
+account_address = "0x0790248b39886759cA52dfCf44801E5AC0414c4f"
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
 logger.debug(f"the pinata jwt token is {PINATA_JWT_TOKEN }")
+alchemy_node = "https://eth-sepolia.g.alchemy.com/v2/B8xrqqACeRvTrRKCE8mp4YhHw1MRM9Au"
+web3 = Web3(Web3.HTTPProvider("https://eth-sepolia.g.alchemy.com/v2/B8xrqqACeRvTrRKCE8mp4YhHw1MRM9Au"))
+
+
+abi = [
+    {
+        "inputs": [{"internalType": "string", "name": "_cid", "type": "string"}],
+        "name": "addIpfsFileContract",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getIpfsFileContracts",
+        "outputs": [{"internalType": "string[]", "name": "", "type": "string[]"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "name": "ipfsFileContracts",
+        "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
+
+
+
+logger.debug(f"the pinata jwt token is {abi}")
+contract_address = web3.to_checksum_address('0xb6A59397b5C20cfc78963b7cAcab8eCc5284B164')
+contract = web3.eth.contract(address=contract_address, abi=abi)
+
 
 
 def upload_to_pinata(results, jwt_token):
@@ -43,8 +81,32 @@ def upload_to_pinata(results, jwt_token):
 
 	print(response.text)
 	logger.debug(f"the response from pinata is {response.text}")
+	if response.status_code == 200:
+		response_data = response.json()
+		ipfs_cid = response_data.get("IpfsHash")
+		logger.debug(f"IPFS CID: {ipfs_cid}")
+		return ipfs_cid
+	else:
+		logger.error(f"Failed to upload to Pinata: {response.text}")
+		return None
  
  
+def push_ipfs_to_contract(cid):
+	transaction = contract.functions.addIpfsFileContract(cid).build_transaction({
+	'from': account_address,
+	'nonce': web3.eth.get_transaction_count(account_address),
+	'gas': 2000000,
+	'gasPrice': web3.to_wei('10', 'gwei'),
+	'chainId': 11155111 
+})
+
+	signed_tx = web3.eth.account.sign_transaction(transaction, private_key)
+
+	tx_hash = web3.eth.send_raw_transaction(signed_tx.rawTransaction)
+	tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+	print("CID successfully pushed to contract:", tx_receipt.transactionHash.hex())
+
+
 async def can_user_log_game(consumer, data):
 	playing_users = cache.get(f"playing_users")
 	if playing_users == None:
@@ -198,11 +260,17 @@ async def store_game_results(results):
 		"player2_id": player2_data['id'],
 		"player1_score": player1_data['score'],
 		"player2_score": player2_data['score'],
+		"player1_result": player1_data['result'],
+		"player2_result": player2_data['result'],
+		"game_id": game_id,
 		"timestamp": results["start_time"], 
 	}
 	logger.debug(f"the game_data is {game_data}")
 	logger.debug(f"going to pinanta")
-	upload_to_pinata(game_data, PINATA_JWT_TOKEN)
+	ipfs_cid = upload_to_pinata(game_data, PINATA_JWT_TOKEN)
+	logger.debug(f"what is in the response of pinia {ipfs_cid}")
+	did = push_ipfs_to_contract(ipfs_cid)
+	logger.debug(f"oh please should be success {did}")
 
  
 	game = (GameResult(
