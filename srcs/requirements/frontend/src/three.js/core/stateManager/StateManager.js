@@ -29,13 +29,13 @@ class StateManager {
 	}
     changeState(index = this.currentStateIndex + 1, shouldPushHistory = true, slow = 0) {
         if (this.currentStateIndex == index || index < 0)
+		{
+			console.log("will not enter...")
 			return;
+		}
 		this.scheduledStateIndex = index;
 		if (this.currentState && this.currentState.exit() == "cancelled" && !this.forcedRedirect)
 			return "cancelled";
-		console.log("")
-		console.log("exited state...")
-		console.log("")
 		if (index >= this.states.length)
 			index = 0;
         this.currentStateIndex = index;
@@ -50,6 +50,7 @@ class StateManager {
 		// }
 		this.setAllowedDirection();
         this.currentState.enter(slow);
+		console.log("enter state ", this.currentState.name)
     }
 	setAllowedDirection(){
 		if (this.currentStateIndex === 0)

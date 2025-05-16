@@ -35,18 +35,18 @@ document.addEventListener('keydown', (event) => {
 	}
 })
 	//developent:
-// document.addEventListener('keydown', (event) => {
-// 	if (event.key == "i")
-// 	{
-// 		const stateManager = new StateManager();
-// 		console.log("Now: ", stateManager.currentState.name);
-// 		stateManager.states.forEach(state=>
-// 			{
-// 				console.log("state ", state.name, "substate: ", state.currentSubstate.name);
-// 			}
-// 		)
-// 	}
-// });
+document.addEventListener('keydown', (event) => {
+	if (event.key == "i")
+	{
+		const stateManager = new StateManager();
+		console.log("Now: ", stateManager.currentState.name, stateManager.currentState.currentSubstate.name, stateManager.currentState.currentSubstateIndex);
+		// stateManager.states.forEach(state=>
+		// 	{
+				// console.log("state ", state.name, "substate: ", state.currentSubstate.name);
+			// }
+		// )
+	}
+});
 
 // enterScene is called in mounted() or onMounted().
 export async function preEnterScene(app_container){
@@ -137,12 +137,12 @@ export function exitScene(){
 // 		new StateManager().changeState(event.state, false);
 // }
 const observer = new ResizeObserver(() => {
-		console.log("observer working")
+		// console.log("observer working")
 		onResize();
 });
 
 function onResize() {
-	console.log("resize")
+	// console.log("resize")
 	engine.resize();
 }
 

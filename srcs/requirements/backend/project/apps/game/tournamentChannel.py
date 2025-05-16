@@ -326,6 +326,7 @@ class TournamentChannel():
 		return True
 
 	async def end_remote_game(self, data):
+		logger.debug(f"end remote game: {data["date"]}")
 		if data["players"][0]["result"] == "loose":
 			l = 0
 			w = 1

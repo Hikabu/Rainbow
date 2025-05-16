@@ -57,6 +57,7 @@ export function msgRouter(event){
 				pongGame["start_game"](data["gameID"], data["game-type"]);
 				if (stateManager.currentStateIndex == 3)
 				{
+					console.log("tournament change state")
 					//touranments go directly to game...
 					stateManager.currentState.changeSubstate(10);
 				}

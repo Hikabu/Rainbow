@@ -61,12 +61,14 @@ class State {
 		this.currentSubstate.enter();
 		if (postCam)
 			this.currentSubstate.postCamEnter();
+		console.log("enter substate ", this.currentSubstateIndex, this.currentSubstate.name)
     }
 	get_camera_position(){
 		return fitCameraToObject(this.targetObject, this.targetNormal, this.targetPadding);
 	}
 	enter(slow) {
 		this.enterState();
+		console.log("changing substate ? to what", this.currentSubstateIndex + 1)
 		this.changeSubstate(this.currentSubstateIndex + 1, false);
 		if (slow  == 1 && this.slowCameraMovement)
 		{

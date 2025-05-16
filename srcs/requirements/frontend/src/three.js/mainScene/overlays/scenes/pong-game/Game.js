@@ -84,6 +84,7 @@ function	updatesFromBackend(msg){
 }
 
 function	countdown(){
+	console.log("countdown")
 	state = "countdown";
 	content_body.show();
 	ball.hide();
@@ -93,6 +94,7 @@ function	countdown(){
 }
 
 function	playing(){
+	console.log("playing")
 	end = false;
 	state = "playing";
 	ball.object.position.set(0, 0, 0);
@@ -104,6 +106,7 @@ function	playing(){
 }
 
 function completed(msg){
+	console.log("completed")
 	state = "completed";
 	ball.hide();
 	paddles.hide();

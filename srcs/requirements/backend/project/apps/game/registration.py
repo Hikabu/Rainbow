@@ -88,6 +88,7 @@ async def store_game_results(results):
 	log = cache.get(f"game_log:{results['gameID']}")
 	if log == None:
 		return
+	logger.debug(f"storing for game: ", results["gameID"])
 	cache.delete(f"game_log:{results['gameID']}")
 	playing_users = cache.get("playing_users")
 	if playing_users:
