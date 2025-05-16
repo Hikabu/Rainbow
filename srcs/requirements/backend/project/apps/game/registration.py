@@ -283,6 +283,12 @@ async def store_game_results(results):
 				"error" : results.get("error", ""),
 				"date" : results["start_time"],
 			})
+		cid = upload_to_pinata(results, PINATA_JWT_TOKEN)
+		if cid and isinstance(cid, str) and cid.strip():
+			push_ipfs_to_contract(cid)
+		else:
+			logger.error("Invalid CID, not pushing to contract.")
+
  
 	# logger.debug(f"the results are: {log}")
 
@@ -299,27 +305,6 @@ async def store_game_results(results):
 		logger.debug(f"hey no player 2? {player2_data['id']}, also-> {player2_data}")
 	logger.debug(f"player1: {player1}") 
 	logger.debug(f"player2: {player2}")
-	game_data = {
-		"player1_id": player1_data['id'],
-		"player2_id": player2_data['id'],
-		"player1_score": player1_data['score'],
-		"player2_score": player2_data['score'],
-		"player1_result": player1_data['result'],
-		"player2_result": player2_data['result'],
-		"game_id": game_id,
-		"timestamp": results["start_time"], 
-	}
-	# logger.debug(f"the game_data is {game_data}")
-	# logger.debug(f"going to pinanta")
-	# ipfs_cid = upload_to_pinata(game_data, PINATA_JWT_TOKEN)
-	# logger.debug(f"what is in the response of pinia {ipfs_cid}")
-	# did = push_ipfs_to_contract(ipfs_cid)
-	# logger.debug(f"oh please should be success {did}")
-	cid = upload_to_pinata(results, PINATA_JWT_TOKEN)
-	if cid and isinstance(cid, str) and cid.strip():
-		push_ipfs_to_contract(cid)
-	else:
-		logger.error("Invalid CID, not pushing to contract.")
 
 	game = (GameResult(
   		game_id=game_id,

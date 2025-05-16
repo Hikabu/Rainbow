@@ -164,7 +164,7 @@
           const otpSentSuccessfully = await sendOTP(username.value);
           if (otpSentSuccessfully) {
             isOTPSent.value = true;
-            console.log(isOTPSent.value, "isOTPSent"); //delete later
+            // console.log(isOTPSent.value, "isOTPSent"); //delete later
           }
         }
     }
@@ -173,7 +173,7 @@
       errors.value.push('Failed to send OTP. Please try again.');
     }
     loading.value = false;
-    console.log("Loading state after OTP send:", loading.value);
+    // console.log("Loading state after OTP send:", loading.value);
   };
 
 
@@ -182,7 +182,6 @@
     try{
       console.log("verifying OTP");
       const otp = otpArray.value.join(''); // make single string
-      console.log("Entered OTP:", otp);
       const isVerified = await checkOTP(username.value, password.value, otp);
       if (isVerified){
         console.log("boooomba");

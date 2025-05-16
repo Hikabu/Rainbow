@@ -19,7 +19,7 @@ export function useAuth() {
           withCredentials: true 
         });
         if (responseOTP.status >= 200 && responseOTP.status < 300) {
-          console.log('OTP Response:', responseOTP.data);
+          console.log("sended");
         } else {
           console.error('Failed to send OTP:', responseOTP.statusText);
           errors.value.push('Failed to send OTP');

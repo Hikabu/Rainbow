@@ -2,7 +2,15 @@
 import time, random, numpy as np
 from .ball import Ball
 from .paddle import Paddle
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()]
+)
+
+logger = logging.getLogger(__name__)
 class Game:
 	duration = 120.0
 
@@ -57,6 +65,7 @@ class Game:
 		if (time.time() - self.start_time >= self.duration):
 			self.active = False
 			update["state"] = "game end"
+			logger.debug("ended game!!!!!!!!!1")
 		update["x"] = [self.ball.pos["x"]]
 		update["y"] = [self.ball.pos["y"], self.paddles[-1].pos_y, self.paddles[1].pos_y]
 		update["score1"] = self.paddles[-1].score
