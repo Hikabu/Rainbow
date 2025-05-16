@@ -18,7 +18,7 @@ const container = new Overlay([
 						fontSize: 0.85
 					}),
 					new Text({
-						content: "Please bear in mind that refunds may take some time (up to 30 minutes) to go through to your account...",
+						content: "Please bear in mind that refunds may take some time (up to 30 days) to go through to your account...",
 						fontSize: 0.55
 					}),
 			 new Button({

@@ -76,7 +76,7 @@
 <script setup>
 import axios from 'axios'
 import { onMounted,ref, watch  } from 'vue'
-
+import {Socket} from '../../three.js/mainScene/utils/Socket.js'
 import logout from '../../assets/logout.png';
 import SideBar from '../../components/SideBar.vue';
 import { fetchProfile, user } from '../../stores/users'

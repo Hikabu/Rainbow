@@ -4,7 +4,7 @@ from .ball import Ball
 from .paddle import Paddle
 
 class Game:
-	duration = 15.0
+	duration = 120.0
 
 	def __init__(self, gameID):
 		self.id = gameID #needed for user validation for paddles

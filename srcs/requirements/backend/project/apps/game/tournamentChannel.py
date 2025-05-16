@@ -9,11 +9,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 #constants
-waitTime = 15
-notificationTime = 5
+waitTime = 900
+notificationTime = 60
 fadeOutTime = 0.5
-controlsTime = 1
-matchmakeTime = 1
+controlsTime = 10
+matchmakeTime = 10
 entry_price = 100
 max_players = 1024
 min_players = 2
