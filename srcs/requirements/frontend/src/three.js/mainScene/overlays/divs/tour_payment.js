@@ -144,16 +144,15 @@ async function payment_logic(){
 		});
 
 		console.log("Transaction successful:", response);
-		payment_successful(); // Notify backend + UI
+		payment_successful();
 	} catch (err) {
 		console.error("Payment failed:", err);
-		payment_error(); // Show error to user
+		payment_error();
 	}
 
 
 }
 	
-
 function pay_winner(){
 	//TODO
 	//pay the winner
