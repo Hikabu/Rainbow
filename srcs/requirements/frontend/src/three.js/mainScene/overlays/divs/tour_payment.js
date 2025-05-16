@@ -8,6 +8,7 @@ import { fadeout } from "../../../core/UIFactory/effects";
 import { Button, Input,Text } from '../../../core/UIFactory/Elements';
 import { Socket } from '../../utils/Socket'
 import { getUserAlias } from "../../utils/utils";
+import abi from './abi.json';
 //make same reactivity
 const { connectWallet, readContract, writeContract, currentAccount, message, contractResponse} = onBoard()
 const container = new Overlay([
@@ -130,8 +131,27 @@ async function payment_logic(){
 		console.error("During payment", err)
 		container.getElementById("pay-message").element.textContent = `Walllet connection or payment failed`;
 	}
+	const CONTRACT_ADDRESS = "0xa3dc1c883c58E3087a36aA2D3398d086F2fc7A4A";
+	const CONTRACT_ABI = abi;
 
+	try {
+		const response = await writeContract({
+			address: CONTRACT_ADDRESS,
+			abi: CONTRACT_ABI,
+			functionName: "", // empty because we're calling `receive()` by sending ETH directly
+			args: [],
+			value: "0.00000001", 
+		});
+
+		console.log("Transaction successful:", response);
+		payment_successful(); // Notify backend + UI
+	} catch (err) {
+		console.error("Payment failed:", err);
+		payment_error(); // Show error to user
 	}
+
+
+}
 	
 
 function pay_winner(){
