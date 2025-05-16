@@ -27,6 +27,22 @@
                             </div>
                         </div>
                     </div>
+                    <h1 class="text-white mb-5">Remote History</h1>
+                    <div 
+                        v-for="(cid, index) in cids"
+                        :key="index"
+                        class="row mb-4 p-3 border rounded text-white"
+                        >
+                        <div class="col mb-2">
+                            <strong>Remote Game Link:</strong> 
+                            <a 
+                                :href="`https://gateway.pinata.cloud/ipfs/${cid}`" 
+                                target="_blank" 
+                                class="text-primary text-decoration-underline">
+                                View Game Result
+                            </a>
+                        </div>
+                    </div>
                     <h1 class="text-white mb-5">My History</h1>
                     <!-- <div v-if="results?.lenght > 0"> -->
                         <div 
@@ -72,7 +88,7 @@ const results = ref(null)
 //User disconnects --> Remove user from active_users --> Send updated active_users to frontend
 //Frontend receives active_users list --> Display online users
 
-// const user = ref(null)
+const cids = ref(null)
 const gameResults = async() => {
     try{
         const response = await axios.get('api/results/result/')
@@ -83,9 +99,20 @@ const gameResults = async() => {
         console.error('You did not played, so no results: ', error)
     }
 }
+const remoteCid = async() => {
+    try {
+        const response = await axios.get('api/get-cids/')
+        cids.value = response.data.cids
+        console.log("the datas", response.data)
+        console.log("CIDs:", cids.value)
+    } catch(error){
+        console.error("Error", error)
+    }
+}
 onMounted(async () => {
     await gameResults(),
-    await fetchProfile()
+    await fetchProfile(),
+    await remoteCid()
 })
 </script>
 

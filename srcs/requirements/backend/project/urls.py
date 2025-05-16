@@ -5,6 +5,7 @@ from django.urls import path, include
 # tokens
 from project.apps.custom_auth.views import UserCreateView, GetOTPView, VerifyOTPView, AuthStatusView, ProfileViewSet, UserVerify, MyTokenObtainPairView, MyTokenRefreshView, UserLogOutView, FriendsViewSet, ResultsViewSet
 from project.apps.intrauth.views import home, intra_login, intra_login_redirect, get_authenticated_user
+from project.apps.game.registration import take_ipfs_cids
 from project.apps.game import consumers
 
 from rest_framework.routers import DefaultRouter
@@ -38,6 +39,7 @@ urlpatterns = [
     path('api/token/refresh/',(MyTokenRefreshView.as_view()), name='token_refresh'),  
     path('api/get-otp/', GetOTPView.as_view(), name='get_otp'),
     path('api/verify-otp/', VerifyOTPView.as_view(), name='verify_otp'),
+    path('api/get-cids/', take_ipfs_cids, name='cid'),
 
 	#game
 ]
